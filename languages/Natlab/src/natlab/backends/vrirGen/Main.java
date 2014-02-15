@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
+
+import natlab.backends.vrirGen.vrirCodeGen.CppCodeGen;
 import natlab.tame.AdvancedTamerTool;
 import natlab.tame.callgraph.StaticFunction;
 import natlab.tame.tamerplus.analysis.AnalysisEngine;
@@ -32,12 +34,12 @@ public class Main {
 		 * pass the type info of the input argument to the program, currently,
 		 * the type info is composed like double&3*3&REAL.
 		 */
-		String fileDir = "/home/2012/sjagda/mclab/";
+		String fileDir = "/home/sable/sjagda/mclab/mbrt/";
 		// String fileName = "drv_mbrt.m";
 		// String fileDir = File.separator + "home" + File.separator
 		// + "2012" + "sjagda" + File.separator + "mclab"
 		// + File.separator + "mbrt" + File.separator;
-		String fileName = "simple.m";
+		String fileName = "drv_mbrt.m";
 		String fileIn = fileDir + fileName;
 		GenericFile gFile = GenericFile.create(fileIn);
 		FileEnvironment env = new FileEnvironment(gFile); // get path
@@ -100,9 +102,21 @@ public class Main {
 
 		VrirXmlGen.genModuleXMLTail(genXML);
 		System.out.println(" print the generated VRIR in XML format  .\n");
-		 System.err.println(genXML);
+		// System.err.println(genXML);
+		// System.setProperty(
+		// "java.library.path",
+		// System.getProperty("java.library.path")
+		// +
+		// ":/home/2012/sjagda/mclab/languages/Natlab/src/natlab/backends/vrirGen/vrirCodeGen/jni/");
+		// System.out.println("library path"
+		// + System.getProperty("java.library.path"));
+
+		// String str = new CppCodeGen().genCode(genXML.toString());
+		// System.out.println(str);
+		// String str = new CppCodeGen().genCode(genXML.toString());
 
 		try {
+
 			BufferedWriter buffer = Files.newBufferedWriter(
 					Paths.get(fileName.split("\\.")[0] + ".xml"),
 					Charset.forName("US-ASCII"));
@@ -113,5 +127,4 @@ public class Main {
 		}
 
 	}
-
 }

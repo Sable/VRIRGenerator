@@ -49,7 +49,12 @@ public class ExprCaseHandler {
 				gen.appendToPrettyCode(toXMLHead("name",
 						gen.getSymbol(node.getName().getID()).getId(), "id"));
 
+			} else {
+				throw new NullPointerException("Symbol not found for "
+						+ node.getName().getID());
 			}
+			gen.appendToPrettyCode(gen.getSymbol(node.getName().getID())
+					.getVtype().toXML());
 		}
 
 		else {
@@ -303,7 +308,8 @@ public class ExprCaseHandler {
 	}
 
 	public static void handleLibCallExpr(ParameterizedExpr expr, VrirXmlGen gen) {
-		gen.appendToPrettyCode(toXMLHead("fncall", expr.getVarName(), "libfunc"));
+		gen.appendToPrettyCode(toXMLHead("libcall", expr.getVarName(),
+				"libfunc"));
 		VType vt = HelperClass.getExprType(expr, gen);
 		if (vt == null) {
 			throw new NullPointerException(

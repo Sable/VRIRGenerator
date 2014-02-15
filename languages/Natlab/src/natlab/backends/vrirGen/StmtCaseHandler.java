@@ -25,7 +25,7 @@ public class StmtCaseHandler {
 
 	public static void handleWhileStmt(WhileStmt node, VrirXmlGen gen) {
 
-		gen.appendToPrettyCode(toXMLHead("whileStmt"));
+		gen.appendToPrettyCode(toXMLHead("whilestmt"));
 		gen.appendToPrettyCode(HelperClass.toXML("test"));
 		node.getExpr().analyze(gen);
 		gen.appendToPrettyCode(HelperClass.toXML("/test"));
@@ -53,10 +53,9 @@ public class StmtCaseHandler {
 		gen.appendToPrettyCode(toXMLHead("forstmt"));
 		// TODO: Currently on range expressions are handled. Need to also handle
 		// DomainExpr and ArrayIterator.
-		// gen.appendToPrettyCode(HelperClass.toXML("domain"));
-
+		gen.appendToPrettyCode(HelperClass.toXML("domain"));
 		node.getAssignStmt().getRHS().analyze(gen);
-		// gen.appendToPrettyCode(HelperClass.toXML("/domain"));
+		gen.appendToPrettyCode(HelperClass.toXML("/domain"));
 		gen.appendToPrettyCode(HelperClass.toXML("itervars"));
 
 		if (node.getAssignStmt().getLHS() instanceof NameExpr) {

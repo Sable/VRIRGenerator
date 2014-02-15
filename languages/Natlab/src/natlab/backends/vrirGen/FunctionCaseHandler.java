@@ -40,6 +40,7 @@ public class FunctionCaseHandler {
 		}
 
 		for (int i = 0; i < node.getOutputParams().getNumChild(); i++) {
+			
 			Name param = node.getOutputParam(i);
 
 			VType vtype = HelperClass.generateVType(gen.getAnalysis(),

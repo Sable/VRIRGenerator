@@ -32,6 +32,11 @@ public class HelperClass {
 		@SuppressWarnings("rawtypes")
 		Value temp = analysis.getNodeList().get(graphIndex).getAnalysis()
 				.getArgs().get(paramIndx);
+		if (temp == null) {
+			throw new NullPointerException("type information for "
+					+ param.getID() + " not found");
+		}
+		
 		return generateVType(temp);
 
 	}
@@ -42,13 +47,16 @@ public class HelperClass {
 
 		AggrValue<?> temp = analysis.getNodeList().get(graphIndex)
 				.getAnalysis().getCurrentOutSet().get(name).getSingleton();
-
+		
 		return generateVType(temp);
 
 	}
 
 	public static VType generateVType(@SuppressWarnings("rawtypes") Value value) {
+
 		if ((Object) value instanceof AdvancedMatrixValue) {
+			// System.out.println("matlab class"
+			// + value.getMatlabClass().getName());
 			return new VTypeMatrix(
 					(((AdvancedMatrixValue) (Object) value)).getShape(),
 					(((AdvancedMatrixValue) (Object) value)).getMatlabClass(),
@@ -56,10 +64,12 @@ public class HelperClass {
 					(((AdvancedMatrixValue) (Object) value)).getisComplexInfo()
 							.geticType());
 		} else if ((Object) value instanceof CellValue) {
+			
 			VTypeTuple vtypeTuple = new VTypeTuple();
 			for (Value<?> val : (((CellValue<?>) (Object) value)).getValues()) {
 				vtypeTuple.addElement(generateVType(val));
 			}
+
 			return vtypeTuple;
 		}
 		return null;

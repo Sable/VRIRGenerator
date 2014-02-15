@@ -27,7 +27,7 @@ public class VrirTypeMapper {
 		typeMap.put("uint16", null);
 		typeMap.put("uint32", null);
 		typeMap.put("uint64", null);
-		typeMap.put("logical", "boolean");
+		typeMap.put("logical", "bool");
 
 	}
 
