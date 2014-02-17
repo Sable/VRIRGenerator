@@ -1,6 +1,7 @@
 package natlab.backends.vrirGen;
 
 import natlab.tame.classes.reference.PrimitiveClassReference;
+import ast.ColonExpr;
 import ast.Expr;
 import ast.FPLiteralExpr;
 import ast.IntLiteralExpr;
@@ -158,22 +159,27 @@ public class ExprCaseHandler {
 		gen.appendToPrettyCode(toXMLTail());
 	}
 
-	public static void handleRangeExpr(RangeExpr node, VrirXmlGen gen) {
-		gen.appendToPrettyCode(HelperClass.toXML("range"));
-		gen.appendToPrettyCode(HelperClass.toXML("start"));
-		node.getLower().analyze(gen);
-		gen.appendToPrettyCode(HelperClass.toXML("/start"));
-
-		if (node.hasIncr()) {
-
-			gen.appendToPrettyCode(HelperClass.toXML("step"));
-			node.getIncr().analyze(gen);
-			gen.appendToPrettyCode(HelperClass.toXML("/step"));
-		}
-		gen.appendToPrettyCode(HelperClass.toXML("stop"));
-		node.getUpper().analyze(gen);
-		gen.appendToPrettyCode(HelperClass.toXML("/stop"));
-		gen.appendToPrettyCode(HelperClass.toXML("/range"));
+	public static void handleRangeExpr(RangeExpr expr, VrirXmlGen gen) {
+		Expr start, step, stop;
+		// gen.appendToPrettyCode(HelperClass.toXML("range"));
+		// gen.appendToPrettyCode(HelperClass.toXML("start"));
+		// expr.getLower().analyze(gen);
+		// gen.appendToPrettyCode(HelperClass.toXML("/start"));
+		//
+		// if (expr.hasIncr()) {
+		//
+		// gen.appendToPrettyCode(HelperClass.toXML("step"));
+		// expr.getIncr().analyze(gen);
+		// gen.appendToPrettyCode(HelperClass.toXML("/step"));
+		// }
+		// gen.appendToPrettyCode(HelperClass.toXML("stop"));
+		// expr.getUpper().analyze(gen);
+		// gen.appendToPrettyCode(HelperClass.toXML("/stop"));
+		// gen.appendToPrettyCode(HelperClass.toXML("/range"));
+		start = expr.getLower();
+		step = expr.hasIncr() ? expr.getIncr() : null;
+		stop = expr.getUpper();
+		handleRange(start, step, stop, gen);
 	}
 
 	public static void handleIntLiteralExpr(IntLiteralExpr expr, VrirXmlGen gen) {
@@ -288,24 +294,98 @@ public class ExprCaseHandler {
 
 	}
 
-	public static void handleColonCall(ParameterizedExpr expr, VrirXmlGen gen) {
-		gen.appendToPrettyCode(HelperClass.toXML("range"));
-		int indx = 0;
-		gen.appendToPrettyCode(HelperClass.toXML("start"));
-		expr.getArg(indx).analyze(gen);
-		gen.appendToPrettyCode(HelperClass.toXML("/start"));
-		indx++;
-		if (expr.getArgList().getNumChild() > 2) {
-			gen.appendToPrettyCode(HelperClass.toXML("step"));
-			expr.getArg(indx).analyze(gen);
-			gen.appendToPrettyCode(HelperClass.toXML("/step"));
-			indx++;
+	public static void handleColonExpr(ColonExpr node, VrirXmlGen gen) {
+		System.out.println("in colon expression : Parent "
+				+ node.getParent().getParent());
+		if (node.getParent().getParent() instanceof ParameterizedExpr) {
+			ParameterizedExpr arrayExpr = (ParameterizedExpr) node.getParent()
+					.getParent();
+			int colonPos = Integer.MIN_VALUE;
+			for (int i = 0; i < arrayExpr.getArgList().getNumChild(); i++) {
+				if (arrayExpr.getArg(i) instanceof ColonExpr) {
+					colonPos = i;
+					break;
+				}
+			}
+			if (colonPos == Integer.MIN_VALUE) {
+				throw new RuntimeException(
+						"Colon Expression not found in array");
+			}
+			VType vt = gen.getSymbol(arrayExpr.getVarName()).getVtype();
+			if (vt == null) {
+				throw new NullPointerException(
+						"no entry of array in symbol table");
+			}
+			int end;
+
+			if (vt instanceof VTypeMatrix) {
+				int ndims = ((VTypeMatrix) vt).getShape().getDimensions()
+						.size();
+				end = ((VTypeMatrix) vt).getShape().getDimensions()
+						.get(colonPos).getIntValue();
+				if (ndims > arrayExpr.getArgList().getNumChild()
+						&& (colonPos == arrayExpr.getNumChild() - 1)) {
+					for (int i = colonPos + 1; i < ndims; i++) {
+						end *= ((VTypeMatrix) vt).getShape().getDimensions()
+								.get(i).getIntValue();
+					}
+				}
+			} else {
+				throw new UnsupportedOperationException(
+						"VType class is not VTypeMatrix but instead is "
+								+ vt.getClass());
+			}
+
+			gen.appendToPrettyCode(HelperClass.toXML("range"));
+
+			gen.appendToPrettyCode(HelperClass.toXML("start"));
+
+			gen.appendToPrettyCode(HelperClass.toXML("/start"));
+
+			// if (node.getArgList().getNumChild() > 2) {
+			// gen.appendToPrettyCode(HelperClass.toXML("step"));
+			// node.getArg(indx).analyze(gen);
+			// gen.appendToPrettyCode(HelperClass.toXML("/step"));
+			// indx++;
+			// }
+			// gen.appendToPrettyCode(HelperClass.toXML("stop"));
+			// node.getArg(indx).analyze(gen);
+			// gen.appendToPrettyCode(HelperClass.toXML("/stop"));
+			// indx++;
+			// gen.appendToPrettyCode(HelperClass.toXML("/range"));
 		}
-		gen.appendToPrettyCode(HelperClass.toXML("stop"));
-		expr.getArg(indx).analyze(gen);
-		gen.appendToPrettyCode(HelperClass.toXML("/stop"));
-		indx++;
-		gen.appendToPrettyCode(HelperClass.toXML("/range"));
+	}
+
+	public static void handleColonCall(ParameterizedExpr expr, VrirXmlGen gen) {
+		// gen.appendToPrettyCode(HelperClass.toXML("range"));
+		// int indx = 0;
+		// gen.appendToPrettyCode(HelperClass.toXML("start"));
+		// expr.getArg(indx).analyze(gen);
+		// gen.appendToPrettyCode(HelperClass.toXML("/start"));
+		// indx++;
+		// if (expr.getArgList().getNumChild() > 2) {
+		// gen.appendToPrettyCode(HelperClass.toXML("step"));
+		// expr.getArg(indx).analyze(gen);
+		// gen.appendToPrettyCode(HelperClass.toXML("/step"));
+		// indx++;
+		// }
+		// gen.appendToPrettyCode(HelperClass.toXML("stop"));
+		// expr.getArg(indx).analyze(gen);
+		// gen.appendToPrettyCode(HelperClass.toXML("/stop"));
+		// indx++;
+		// gen.appendToPrettyCode(HelperClass.toXML("/range"));
+		Expr start, step, stop;
+		int indx = 0;
+		start = expr.getArg(indx);
+		if (expr.getArgList().getNumChild() > 2) {
+			indx++;
+			step = expr.getArg(indx);
+		} else {
+			step = null;
+		}
+		++indx;
+		stop = expr.getArg(indx);
+		handleRange(start, step, stop, gen);
 	}
 
 	public static void handleLibCallExpr(ParameterizedExpr expr, VrirXmlGen gen) {
@@ -383,9 +463,30 @@ public class ExprCaseHandler {
 	public static void handleStringLiteralExpr(StringLiteralExpr expr,
 			VrirXmlGen gen) {
 
-		gen.appendToPrettyCode(toXMLHead("const", expr.getValue(), "value"));
-		gen.appendToPrettyCode(HelperClass.getExprType(expr, gen).toXML());
-		gen.appendToPrettyCode(toXMLTail());
+		// gen.appendToPrettyCode(toXMLHead("const", expr.getValue(), "value"));
+		// gen.appendToPrettyCode(HelperClass.getExprType(expr, gen).toXML());
+		// gen.appendToPrettyCode(toXMLTail());
+		throw new RuntimeException("VRIR Does Not Support Strings");
+	}
+
+	public static void handleRange(Expr start, Expr step, Expr stop,
+			VrirXmlGen gen) {
+		gen.appendToPrettyCode(HelperClass.toXML("range"));
+
+		gen.appendToPrettyCode(HelperClass.toXML("start"));
+		start.analyze(gen);
+		gen.appendToPrettyCode(HelperClass.toXML("/start"));
+
+		if (step != null) {
+			gen.appendToPrettyCode(HelperClass.toXML("step"));
+			step.analyze(gen);
+			gen.appendToPrettyCode(HelperClass.toXML("/step"));
+		}
+		gen.appendToPrettyCode(HelperClass.toXML("stop"));
+		stop.analyze(gen);
+		gen.appendToPrettyCode(HelperClass.toXML("/stop"));
+
+		gen.appendToPrettyCode(HelperClass.toXML("/range"));
 	}
 
 	public static StringBuffer toXMLHead(String name) {

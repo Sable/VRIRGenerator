@@ -3,7 +3,6 @@ package natlab.backends.vrirGen;
 import java.util.Set;
 
 import ast.ASTNode;
-import ast.AndExpr;
 import ast.ArrayTransposeExpr;
 import ast.AssignStmt;
 import ast.Attribute;
@@ -358,12 +357,24 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 								+ vt.getClass());
 			}
 			//TODO: Generating xml code left. Range expression requires a VType ? Should we replace it by a colon function call instead? 
-
+			gen.appendToPrettyCode(HelperClass.toXML("range"));
+			int indx = 0;
+			gen.appendToPrettyCode(HelperClass.toXML("start"));
+			
+			gen.appendToPrettyCode(HelperClass.toXML("/start"));
+			indx++;
+			if (expr.getArgList().getNumChild() > 2) {
+				gen.appendToPrettyCode(HelperClass.toXML("step"));
+				expr.getArg(indx).analyze(gen);
+				gen.appendToPrettyCode(HelperClass.toXML("/step"));
+				indx++;
+			}
+			gen.appendToPrettyCode(HelperClass.toXML("stop"));
+			expr.getArg(indx).analyze(gen);
+			gen.appendToPrettyCode(HelperClass.toXML("/stop"));
+			indx++;
+			gen.appendToPrettyCode(HelperClass.toXML("/range"));
 		}
-		caseExpr(node);
-	}
-
-	public void caseEndExpr(EndExpr node) {
 		caseExpr(node);
 	}
 

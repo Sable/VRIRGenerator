@@ -36,7 +36,7 @@ public class HelperClass {
 			throw new NullPointerException("type information for "
 					+ param.getID() + " not found");
 		}
-		
+
 		return generateVType(temp);
 
 	}
@@ -47,7 +47,7 @@ public class HelperClass {
 
 		AggrValue<?> temp = analysis.getNodeList().get(graphIndex)
 				.getAnalysis().getCurrentOutSet().get(name).getSingleton();
-		
+
 		return generateVType(temp);
 
 	}
@@ -64,7 +64,7 @@ public class HelperClass {
 					(((AdvancedMatrixValue) (Object) value)).getisComplexInfo()
 							.geticType());
 		} else if ((Object) value instanceof CellValue) {
-			
+
 			VTypeTuple vtypeTuple = new VTypeTuple();
 			for (Value<?> val : (((CellValue<?>) (Object) value)).getValues()) {
 				vtypeTuple.addElement(generateVType(val));
@@ -418,6 +418,8 @@ public class HelperClass {
 		}
 		return argList;
 	}
+
+	
 
 	public static boolean isVar(VrirXmlGen gen, String name) {
 		return gen.getRemainingVars().contains(name);
