@@ -97,8 +97,9 @@ import ast.WhileStmt;
 import natlab.tame.tamerplus.analysis.AnalysisEngine;
 import natlab.tame.valueanalysis.ValueAnalysis;
 import natlab.tame.valueanalysis.ValueFlowMap;
-import natlab.tame.valueanalysis.advancedMatrix.AdvancedMatrixValue;
+
 import natlab.tame.valueanalysis.aggrvalue.AggrValue;
+import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
 import nodecases.natlab.NatlabAbstractNodeCaseHandler;
 
 public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
@@ -107,16 +108,16 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	// private StringBuffer bodyCode;
 	private SymbolTable symTab;
 	private Set<String> remainingVars;
-	private ValueAnalysis<AggrValue<AdvancedMatrixValue>> analysis;
-	private ValueFlowMap<AggrValue<AdvancedMatrixValue>> currentOutSet;
+	private ValueAnalysis<AggrValue<BasicMatrixValue>> analysis;
+	private ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet;
 	private int size;
 	private int index;
 	final static public boolean onGPU = false;
 	private AnalysisEngine analysisEngine;
 
 	VrirXmlGen(Function functionNode, Set<String> remainVars,
-			ValueAnalysis<AggrValue<AdvancedMatrixValue>> analysis,
-			ValueFlowMap<AggrValue<AdvancedMatrixValue>> currentOutSet,
+			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis,
+			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet,
 			int size, int index, AnalysisEngine analysisEngine) {
 		prettyPrintedCode = new StringBuffer();
 		remainingVars = remainVars;
@@ -165,21 +166,21 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 		this.remainingVars = remainingVars;
 	}
 
-	public ValueAnalysis<AggrValue<AdvancedMatrixValue>> getAnalysis() {
+	public ValueAnalysis<AggrValue<BasicMatrixValue>> getAnalysis() {
 		return analysis;
 	}
 
 	public void setAnalysis(
-			ValueAnalysis<AggrValue<AdvancedMatrixValue>> analysis) {
+			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis) {
 		this.analysis = analysis;
 	}
 
-	public ValueFlowMap<AggrValue<AdvancedMatrixValue>> getCurrentOutSet() {
+	public ValueFlowMap<AggrValue<BasicMatrixValue>> getCurrentOutSet() {
 		return currentOutSet;
 	}
 
 	public void setCurrentOutSet(
-			ValueFlowMap<AggrValue<AdvancedMatrixValue>> currentOutSet) {
+			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet) {
 		this.currentOutSet = currentOutSet;
 	}
 
@@ -468,8 +469,8 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 
 	public static StringBuffer generateVrir(Function functionNode,
 			Set<String> remainingVars,
-			ValueAnalysis<AggrValue<AdvancedMatrixValue>> analysis,
-			ValueFlowMap<AggrValue<AdvancedMatrixValue>> currentOutSet,
+			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis,
+			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet,
 			int index, int size, AnalysisEngine analysisEngine) {
 		return (new VrirXmlGen(functionNode, remainingVars, analysis,
 				currentOutSet, size, index, analysisEngine))

@@ -5,8 +5,9 @@ import java.util.List;
 
 import natlab.backends.vrirGen.VTypeMatrix.Layout;
 import natlab.tame.classes.reference.PrimitiveClassReference;
-import natlab.tame.valueanalysis.advancedMatrix.AdvancedMatrixValue;
+
 import natlab.tame.valueanalysis.aggrvalue.AggrValue;
+import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
 import natlab.tame.valueanalysis.components.shape.DimValue;
 import natlab.tame.valueanalysis.components.shape.Shape;
 import ast.ColonExpr;
@@ -333,6 +334,9 @@ public class ExprCaseHandler {
 			if (vt instanceof VTypeMatrix) {
 				int ndims = ((VTypeMatrix) vt).getShape().getDimensions()
 						.size();
+				if (((VTypeMatrix) vt).getShape().getDimensions().get(colonPos) == null) {
+					throw new NullPointerException("Dimension is not known");
+				}
 				end = ((VTypeMatrix) vt).getShape().getDimensions()
 						.get(colonPos).getIntValue();
 				if (ndims > arrayExpr.getArgList().getNumChild()
@@ -357,7 +361,7 @@ public class ExprCaseHandler {
 			List<DimValue> list = new ArrayList<DimValue>();
 			list.add(new DimValue(1, null));
 			list.add(new DimValue(1, null));
-			Shape<AggrValue<AdvancedMatrixValue>> shape = new Shape<AggrValue<AdvancedMatrixValue>>(
+			Shape<AggrValue<BasicMatrixValue>> shape = new Shape<AggrValue<BasicMatrixValue>>(
 					list);
 			VType vtype = new VTypeMatrix(shape, PrimitiveClassReference.INT64,
 					VTypeMatrix.Layout.COLUMN_MAJOR, "REAL");

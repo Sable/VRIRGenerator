@@ -11,6 +11,7 @@ import java.util.Set;
 
 import natlab.backends.vrirGen.vrirCodeGen.CppCodeGen;
 import natlab.tame.AdvancedTamerTool;
+import natlab.tame.BasicTamerTool;
 import natlab.tame.callgraph.StaticFunction;
 import natlab.tame.tamerplus.analysis.AnalysisEngine;
 import natlab.tame.tamerplus.transformation.TransformationEngine;
@@ -18,6 +19,7 @@ import natlab.tame.valueanalysis.ValueAnalysis;
 import natlab.tame.valueanalysis.ValueFlowMap;
 import natlab.tame.valueanalysis.advancedMatrix.AdvancedMatrixValue;
 import natlab.tame.valueanalysis.aggrvalue.AggrValue;
+import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
 import natlab.toolkits.filehandling.GenericFile;
 import natlab.toolkits.path.FileEnvironment;
 import ast.ASTNode;
@@ -34,18 +36,18 @@ public class Main {
 		 * pass the type info of the input argument to the program, currently,
 		 * the type info is composed like double&3*3&REAL.
 		 */
-		String fileDir = "/home/sable/sjagda/mclab/";
+		String fileDir = "/home/sable/sjagda/mclab/nb1d/";
 		// String fileName = "drv_mbrt.m";
 		// String fileDir = File.separator + "home" + File.separator
 		// + "2012" + "sjagda" + File.separator + "mclab"
 		// + File.separator + "mbrt" + File.separator;
-		String fileName = "simple.m";
+		String fileName = "drv_nb1d.m";
 		String fileIn = fileDir + fileName;
 		GenericFile gFile = GenericFile.create(fileIn);
 		FileEnvironment env = new FileEnvironment(gFile); // get path
 															// environment obj
-		AdvancedTamerTool tool = new AdvancedTamerTool();
-		ValueAnalysis<AggrValue<AdvancedMatrixValue>> analysis = tool.analyze(
+		BasicTamerTool tool = new BasicTamerTool();
+		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = tool.analyze(
 				args, env);
 
 		int size = analysis.getNodeList().size();
@@ -63,7 +65,7 @@ public class Main {
 			 * type inference.
 			 */
 
-			ValueFlowMap<AggrValue<AdvancedMatrixValue>> currentOutSet = analysis
+			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet = analysis
 					.getNodeList().get(i).getAnalysis().getCurrentOutSet();
 
 			/*
@@ -90,10 +92,16 @@ public class Main {
 
 				System.out.println("\ntamer plus analysis result: \n"
 						+ fTree.getPrettyPrinted() + "\n");
-
-				sb = VrirXmlGen.generateVrir((Function) fTree, remainingVars,
-						analysis, currentOutSet, i, size, analysisEngine);
-				genXML.append(sb);
+				try {
+					sb = VrirXmlGen.generateVrir((Function) fTree,
+							remainingVars, analysis, currentOutSet, i, size,
+							analysisEngine);
+					genXML.append(sb);
+				} catch (RuntimeException e) {
+					System.out.println("did not work for " + fileName);
+					e.printStackTrace();
+				}
+				// genXML.append(sb);
 
 			}
 			funcSet.add(function);
@@ -121,11 +129,11 @@ public class Main {
 					Paths.get(fileName.split("\\.")[0] + ".xml"),
 					Charset.forName("US-ASCII"));
 			buffer.write(genXML.toString());
-//			BufferedWriter buffer = Files.newBufferedWriter(
-//					Paths.get(fileName.split("\\.")[0] + ".xml"),
-//					Charset.forName("US-ASCII"));
-			 buffer.write(genXML.toString());
-			//buffer.write(str);
+			// BufferedWriter buffer = Files.newBufferedWriter(
+			// Paths.get(fileName.split("\\.")[0] + ".xml"),
+			// Charset.forName("US-ASCII"));
+			buffer.write(genXML.toString());
+			// buffer.write(str);
 			buffer.close();
 		} catch (IOException e) {
 			e.printStackTrace();

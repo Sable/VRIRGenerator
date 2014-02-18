@@ -1,8 +1,8 @@
 package natlab.backends.vrirGen;
 
 import natlab.tame.classes.reference.PrimitiveClassReference;
-import natlab.tame.valueanalysis.advancedMatrix.AdvancedMatrixValue;
 import natlab.tame.valueanalysis.aggrvalue.AggrValue;
+import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
 import natlab.tame.valueanalysis.components.shape.Shape;
 
 public class VTypeMatrix extends VType {
@@ -25,13 +25,13 @@ public class VTypeMatrix extends VType {
 
 	}
 
-	Shape<AggrValue<AdvancedMatrixValue>> shape;
+	Shape<AggrValue<BasicMatrixValue>> shape;
 	PrimitiveClassReference type;
 	Layout layout;
 	String complexity;
 	boolean forceArray;
 
-	VTypeMatrix(Shape<AggrValue<AdvancedMatrixValue>> shape,
+	VTypeMatrix(Shape<AggrValue<BasicMatrixValue>> shape,
 			PrimitiveClassReference type, Layout layout, String complexity) {
 		this.shape = shape;
 		this.type = type;
@@ -41,7 +41,7 @@ public class VTypeMatrix extends VType {
 
 	}
 
-	VTypeMatrix(Shape<AggrValue<AdvancedMatrixValue>> shape,
+	VTypeMatrix(Shape<AggrValue<BasicMatrixValue>> shape,
 			PrimitiveClassReference type, Layout layout, String complexity,
 			boolean force) {
 		this.shape = shape;
@@ -59,11 +59,11 @@ public class VTypeMatrix extends VType {
 		this.complexity = complexity;
 	}
 
-	public Shape<AggrValue<AdvancedMatrixValue>> getShape() {
+	public Shape<AggrValue<BasicMatrixValue>> getShape() {
 		return shape;
 	}
 
-	public void setShape(Shape<AggrValue<AdvancedMatrixValue>> shape) {
+	public void setShape(Shape<AggrValue<BasicMatrixValue>> shape) {
 		this.shape = shape;
 	}
 
