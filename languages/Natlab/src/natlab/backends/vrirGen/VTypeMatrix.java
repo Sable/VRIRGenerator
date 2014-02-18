@@ -7,8 +7,7 @@ import natlab.tame.valueanalysis.components.shape.Shape;
 
 public class VTypeMatrix extends VType {
 	public static enum Layout {
-		ROW_MAJOR("rowmajor"), COLUMN_MAJOR("colmajor"), STRIDE_MAJOR(
-				"stride");
+		ROW_MAJOR("rowmajor"), COLUMN_MAJOR("colmajor"), STRIDE_MAJOR("stride");
 
 		private String str;
 
@@ -30,6 +29,7 @@ public class VTypeMatrix extends VType {
 	PrimitiveClassReference type;
 	Layout layout;
 	String complexity;
+	boolean forceArray;
 
 	VTypeMatrix(Shape<AggrValue<AdvancedMatrixValue>> shape,
 			PrimitiveClassReference type, Layout layout, String complexity) {
@@ -37,7 +37,18 @@ public class VTypeMatrix extends VType {
 		this.type = type;
 		this.layout = layout;
 		this.complexity = complexity;
+		forceArray = false;
 
+	}
+
+	VTypeMatrix(Shape<AggrValue<AdvancedMatrixValue>> shape,
+			PrimitiveClassReference type, Layout layout, String complexity,
+			boolean force) {
+		this.shape = shape;
+		this.type = type;
+		this.layout = layout;
+		this.complexity = complexity;
+		this.forceArray = force;
 	}
 
 	public String getComplexity() {
@@ -100,7 +111,7 @@ public class VTypeMatrix extends VType {
 	public StringBuffer toXML() {
 		StringBuffer vTypeXML = new StringBuffer();
 
-		if (shape.isScalar()) {
+		if (shape.isScalar() && !forceArray) {
 			genScalarXML(vTypeXML);
 
 		} else {

@@ -34,12 +34,12 @@ public class Main {
 		 * pass the type info of the input argument to the program, currently,
 		 * the type info is composed like double&3*3&REAL.
 		 */
-		String fileDir = "/home/sable/sjagda/mclab/mbrt/";
+		String fileDir = "/home/sable/sjagda/mclab/";
 		// String fileName = "drv_mbrt.m";
 		// String fileDir = File.separator + "home" + File.separator
 		// + "2012" + "sjagda" + File.separator + "mclab"
 		// + File.separator + "mbrt" + File.separator;
-		String fileName = "drv_mbrt.m";
+		String fileName = "simple.m";
 		String fileIn = fileDir + fileName;
 		GenericFile gFile = GenericFile.create(fileIn);
 		FileEnvironment env = new FileEnvironment(gFile); // get path
@@ -121,6 +121,11 @@ public class Main {
 					Paths.get(fileName.split("\\.")[0] + ".xml"),
 					Charset.forName("US-ASCII"));
 			buffer.write(genXML.toString());
+//			BufferedWriter buffer = Files.newBufferedWriter(
+//					Paths.get(fileName.split("\\.")[0] + ".xml"),
+//					Charset.forName("US-ASCII"));
+			 buffer.write(genXML.toString());
+			//buffer.write(str);
 			buffer.close();
 		} catch (IOException e) {
 			e.printStackTrace();

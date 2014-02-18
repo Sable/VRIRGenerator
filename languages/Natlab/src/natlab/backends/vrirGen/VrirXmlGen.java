@@ -316,65 +316,67 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	}
 
 	public void caseColonExpr(ColonExpr node) {
-		System.out.println("in colon expression : Parent "
-				+ node.getParent().getParent());
-		if (node.getParent().getParent() instanceof ParameterizedExpr) {
-			ParameterizedExpr arrayExpr = (ParameterizedExpr) node.getParent()
-					.getParent();
-			int colonPos = Integer.MIN_VALUE;
-			for (int i = 0; i < arrayExpr.getArgList().getNumChild(); i++) {
-				if (arrayExpr.getArg(i) instanceof ColonExpr) {
-					colonPos = i;
-					break;
-				}
-			}
-			if (colonPos == Integer.MIN_VALUE) {
-				throw new RuntimeException(
-						"Colon Expression not found in array");
-			}
-			VType vt = this.getSymbol(arrayExpr.getVarName()).getVtype();
-			if (vt == null) {
-				throw new NullPointerException(
-						"no entry of array in symbol table");
-			}
-			int end;
-
-			if (vt instanceof VTypeMatrix) {
-				int ndims = ((VTypeMatrix) vt).getShape().getDimensions()
-						.size();
-				end = ((VTypeMatrix) vt).getShape().getDimensions()
-						.get(colonPos).getIntValue();
-				if (ndims > arrayExpr.getArgList().getNumChild()
-						&& (colonPos == arrayExpr.getNumChild() - 1)) {
-					for (int i = colonPos + 1; i < ndims; i++) {
-						end *= ((VTypeMatrix) vt).getShape().getDimensions()
-								.get(i).getIntValue();
-					}
-				}
-			} else {
-				throw new UnsupportedOperationException(
-						"VType class is not VTypeMatrix but instead is "
-								+ vt.getClass());
-			}
-			//TODO: Generating xml code left. Range expression requires a VType ? Should we replace it by a colon function call instead? 
-			gen.appendToPrettyCode(HelperClass.toXML("range"));
-			int indx = 0;
-			gen.appendToPrettyCode(HelperClass.toXML("start"));
-			
-			gen.appendToPrettyCode(HelperClass.toXML("/start"));
-			indx++;
-			if (expr.getArgList().getNumChild() > 2) {
-				gen.appendToPrettyCode(HelperClass.toXML("step"));
-				expr.getArg(indx).analyze(gen);
-				gen.appendToPrettyCode(HelperClass.toXML("/step"));
-				indx++;
-			}
-			gen.appendToPrettyCode(HelperClass.toXML("stop"));
-			expr.getArg(indx).analyze(gen);
-			gen.appendToPrettyCode(HelperClass.toXML("/stop"));
-			indx++;
-			gen.appendToPrettyCode(HelperClass.toXML("/range"));
-		}
+		// System.out.println("in colon expression : Parent "
+		// + node.getParent().getParent());
+		// if (node.getParent().getParent() instanceof ParameterizedExpr) {
+		// ParameterizedExpr arrayExpr = (ParameterizedExpr) node.getParent()
+		// .getParent();
+		// int colonPos = Integer.MIN_VALUE;
+		// for (int i = 0; i < arrayExpr.getArgList().getNumChild(); i++) {
+		// if (arrayExpr.getArg(i) instanceof ColonExpr) {
+		// colonPos = i;
+		// break;
+		// }
+		// }
+		// if (colonPos == Integer.MIN_VALUE) {
+		// throw new RuntimeException(
+		// "Colon Expression not found in array");
+		// }
+		// VType vt = this.getSymbol(arrayExpr.getVarName()).getVtype();
+		// if (vt == null) {
+		// throw new NullPointerException(
+		// "no entry of array in symbol table");
+		// }
+		// int end;
+		//
+		// if (vt instanceof VTypeMatrix) {
+		// int ndims = ((VTypeMatrix) vt).getShape().getDimensions()
+		// .size();
+		// end = ((VTypeMatrix) vt).getShape().getDimensions()
+		// .get(colonPos).getIntValue();
+		// if (ndims > arrayExpr.getArgList().getNumChild()
+		// && (colonPos == arrayExpr.getNumChild() - 1)) {
+		// for (int i = colonPos + 1; i < ndims; i++) {
+		// end *= ((VTypeMatrix) vt).getShape().getDimensions()
+		// .get(i).getIntValue();
+		// }
+		// }
+		// } else {
+		// throw new UnsupportedOperationException(
+		// "VType class is not VTypeMatrix but instead is "
+		// + vt.getClass());
+		// }
+		// TODO: Generating xml code left. Range expression requires a VType ?
+		// Should we replace it by a colon function call instead?
+		// gen.appendToPrettyCode(HelperClass.toXML("range"));
+		// int indx = 0;
+		// gen.appendToPrettyCode(HelperClass.toXML("start"));
+		//
+		// gen.appendToPrettyCode(HelperClass.toXML("/start"));
+		// indx++;
+		// if (expr.getArgList().getNumChild() > 2) {
+		// gen.appendToPrettyCode(HelperClass.toXML("step"));
+		// expr.getArg(indx).analyze(gen);
+		// gen.appendToPrettyCode(HelperClass.toXML("/step"));
+		// indx++;
+		// }
+		// gen.appendToPrettyCode(HelperClass.toXML("stop"));
+		// expr.getArg(indx).analyze(gen);
+		// gen.appendToPrettyCode(HelperClass.toXML("/stop"));
+		// indx++;
+		// gen.appendToPrettyCode(HelperClass.toXML("/range"));
+		// }
+		ExprCaseHandler.handleColonExpr(node, this);
 		caseExpr(node);
 	}
 

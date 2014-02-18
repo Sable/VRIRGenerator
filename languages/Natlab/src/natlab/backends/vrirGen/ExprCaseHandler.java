@@ -1,6 +1,14 @@
 package natlab.backends.vrirGen;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import natlab.backends.vrirGen.VTypeMatrix.Layout;
 import natlab.tame.classes.reference.PrimitiveClassReference;
+import natlab.tame.valueanalysis.advancedMatrix.AdvancedMatrixValue;
+import natlab.tame.valueanalysis.aggrvalue.AggrValue;
+import natlab.tame.valueanalysis.components.shape.DimValue;
+import natlab.tame.valueanalysis.components.shape.Shape;
 import ast.ColonExpr;
 import ast.Expr;
 import ast.FPLiteralExpr;
@@ -190,6 +198,8 @@ public class ExprCaseHandler {
 		}
 		if (expr.getValue().isImaginary()) {
 			// TODO : Handle complex integers
+			throw new RuntimeException(
+					"Complex constants are not currently supported");
 		} else {
 			String field = "";
 			if (vt instanceof VTypeMatrix) {
@@ -226,6 +236,8 @@ public class ExprCaseHandler {
 		}
 		if (expr.getValue().isImaginary()) {
 			// TODO: Handle complex floats
+			throw new RuntimeException(
+					"Complex constants are not currently supported");
 		} else {
 			String field = "";
 			if (vt instanceof VTypeMatrix) {
@@ -326,6 +338,12 @@ public class ExprCaseHandler {
 				if (ndims > arrayExpr.getArgList().getNumChild()
 						&& (colonPos == arrayExpr.getNumChild() - 1)) {
 					for (int i = colonPos + 1; i < ndims; i++) {
+						DimValue val = ((VTypeMatrix) vt).getShape()
+								.getDimensions().get(i);
+						if (val == null) {
+							throw new NullPointerException(
+									"Dimension not known " + i);
+						}
 						end *= ((VTypeMatrix) vt).getShape().getDimensions()
 								.get(i).getIntValue();
 					}
@@ -333,26 +351,33 @@ public class ExprCaseHandler {
 			} else {
 				throw new UnsupportedOperationException(
 						"VType class is not VTypeMatrix but instead is "
-								+ vt.getClass());
+								+ vt.getClass()
+								+ ". This is not currently supported");
 			}
+			List<DimValue> list = new ArrayList<DimValue>();
+			list.add(new DimValue(1, null));
+			list.add(new DimValue(1, null));
+			Shape<AggrValue<AdvancedMatrixValue>> shape = new Shape<AggrValue<AdvancedMatrixValue>>(
+					list);
+			VType vtype = new VTypeMatrix(shape, PrimitiveClassReference.INT64,
+					VTypeMatrix.Layout.COLUMN_MAJOR, "REAL");
 
 			gen.appendToPrettyCode(HelperClass.toXML("range"));
 
 			gen.appendToPrettyCode(HelperClass.toXML("start"));
-
+			gen.appendToPrettyCode(toXMLHead("realconst", "0", "ival"));
+			gen.appendToPrettyCode(vtype.toXML());
+			gen.appendToPrettyCode(toXMLTail());
 			gen.appendToPrettyCode(HelperClass.toXML("/start"));
+			gen.appendToPrettyCode(HelperClass.toXML("stop"));
+			gen.appendToPrettyCode(toXMLHead("realconst",
+					Integer.toString(end), "ival"));
+			gen.appendToPrettyCode(vtype.toXML());
+			gen.appendToPrettyCode(toXMLTail());
+			gen.appendToPrettyCode(HelperClass.toXML("/stop"));
 
-			// if (node.getArgList().getNumChild() > 2) {
-			// gen.appendToPrettyCode(HelperClass.toXML("step"));
-			// node.getArg(indx).analyze(gen);
-			// gen.appendToPrettyCode(HelperClass.toXML("/step"));
-			// indx++;
-			// }
-			// gen.appendToPrettyCode(HelperClass.toXML("stop"));
-			// node.getArg(indx).analyze(gen);
-			// gen.appendToPrettyCode(HelperClass.toXML("/stop"));
-			// indx++;
-			// gen.appendToPrettyCode(HelperClass.toXML("/range"));
+			gen.appendToPrettyCode(HelperClass.toXML("/range"));
+
 		}
 	}
 

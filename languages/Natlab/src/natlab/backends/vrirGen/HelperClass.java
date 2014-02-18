@@ -117,11 +117,9 @@ public class HelperClass {
 			return (((AdvancedMatrixValue) (Object) val)).getMatlabClass();
 
 		} else {
-			System.out
-					.println("Analyses other than cell value and Advanced matrix value not supported. are currently not supported   ");
+			throw new NullPointerException("Analyses other than cell value and Advanced matrix value not supported. are currently not supported   ");
 
 		}
-		return null;
 	}
 
 	public static Shape<AggrValue<AdvancedMatrixValue>> getShape(NameExpr node,
