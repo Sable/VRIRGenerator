@@ -36,12 +36,12 @@ public class Main {
 		 * pass the type info of the input argument to the program, currently,
 		 * the type info is composed like double&3*3&REAL.
 		 */
-		String fileDir = "/home/sable/sjagda/mclab/nb1d/";
+		String fileDir = "/home/sable/sjagda/mclab/";
 		// String fileName = "drv_mbrt.m";
 		// String fileDir = File.separator + "home" + File.separator
 		// + "2012" + "sjagda" + File.separator + "mclab"
 		// + File.separator + "mbrt" + File.separator;
-		String fileName = "drv_nb1d.m";
+		String fileName = "simple.m";
 		String fileIn = fileDir + fileName;
 		GenericFile gFile = GenericFile.create(fileIn);
 		FileEnvironment env = new FileEnvironment(gFile); // get path
@@ -110,7 +110,7 @@ public class Main {
 
 		VrirXmlGen.genModuleXMLTail(genXML);
 		System.out.println(" print the generated VRIR in XML format  .\n");
-		// System.err.println(genXML);
+		System.err.println(genXML);
 		// System.setProperty(
 		// "java.library.path",
 		// System.getProperty("java.library.path")
@@ -128,7 +128,7 @@ public class Main {
 			BufferedWriter buffer = Files.newBufferedWriter(
 					Paths.get(fileName.split("\\.")[0] + ".xml"),
 					Charset.forName("US-ASCII"));
-			buffer.write(genXML.toString());
+			//buffer.write(genXML.toString());
 			// BufferedWriter buffer = Files.newBufferedWriter(
 			// Paths.get(fileName.split("\\.")[0] + ".xml"),
 			// Charset.forName("US-ASCII"));
