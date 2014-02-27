@@ -1,7 +1,6 @@
 package natlab.backends.vrirGen;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -10,14 +9,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 //import natlab.backends.vrirGen.vrirCodeGen.CppCodeGen;
-import natlab.tame.AdvancedTamerTool;
 import natlab.tame.BasicTamerTool;
 import natlab.tame.callgraph.StaticFunction;
 import natlab.tame.tamerplus.analysis.AnalysisEngine;
 import natlab.tame.tamerplus.transformation.TransformationEngine;
 import natlab.tame.valueanalysis.ValueAnalysis;
 import natlab.tame.valueanalysis.ValueFlowMap;
-import natlab.tame.valueanalysis.advancedMatrix.AdvancedMatrixValue;
 import natlab.tame.valueanalysis.aggrvalue.AggrValue;
 import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
 import natlab.toolkits.filehandling.GenericFile;
