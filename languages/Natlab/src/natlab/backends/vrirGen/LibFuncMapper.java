@@ -26,6 +26,7 @@ public class LibFuncMapper {
 		libFuncMap.put("minus", "minus");
 		libFuncMap.put("times", "mult");
 		libFuncMap.put("div", "div");
+		libFuncMap.put("trans", "trans");
 	}
 
 	public static String getFunc(String key) {
