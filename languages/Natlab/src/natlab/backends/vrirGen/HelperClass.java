@@ -117,7 +117,8 @@ public class HelperClass {
 			return (((BasicMatrixValue) (Object) val)).getMatlabClass();
 
 		} else {
-			throw new NullPointerException("Analyses other than cell value and Advanced matrix value not supported. are currently not supported   ");
+			throw new NullPointerException(
+					"Analyses other than cell value and Advanced matrix value not supported. are currently not supported   ");
 
 		}
 	}
@@ -417,8 +418,6 @@ public class HelperClass {
 		return argList;
 	}
 
-	
-
 	public static boolean isVar(VrirXmlGen gen, String name) {
 		return gen.getRemainingVars().contains(name);
 	}
@@ -435,6 +434,6 @@ public class HelperClass {
 	}
 
 	public static boolean isLibFunc(String name) {
-		return LibraryExprContainer.isLibExpr(name);
+		return LibFuncMapper.containsFunc(name);
 	}
 }

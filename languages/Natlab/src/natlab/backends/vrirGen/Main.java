@@ -33,12 +33,12 @@ public class Main {
 		 * pass the type info of the input argument to the program, currently,
 		 * the type info is composed like double&3*3&REAL.
 		 */
-		String fileDir = "/home/sable/sjagda/mclab/";
+		String fileDir = "/home/sable/sjagda/mclab/mbrt/";
 		// String fileName = "drv_mbrt.m";
 		// String fileDir = File.separator + "home" + File.separator
 		// + "2012" + "sjagda" + File.separator + "mclab"
 		// + File.separator + "mbrt" + File.separator;
-		String fileName = "simple.m";
+		String fileName = "drv_mbrt.m";
 		String fileIn = fileDir + fileName;
 		GenericFile gFile = GenericFile.create(fileIn);
 		FileEnvironment env = new FileEnvironment(gFile); // get path
@@ -54,7 +54,7 @@ public class Main {
 		genXML.append(HelperClass.toXML("fns"));
 		OperatorMapper.initMap();
 		VrirTypeMapper.initTypeMap();
-		LibraryExprContainer.init();
+
 		HashSet<StaticFunction> funcSet = new HashSet<StaticFunction>();
 		for (int i = 0; i < size; i++) {
 			StringBuffer sb;
@@ -125,7 +125,7 @@ public class Main {
 			BufferedWriter buffer = Files.newBufferedWriter(
 					Paths.get(fileName.split("\\.")[0] + ".xml"),
 					Charset.forName("US-ASCII"));
-			//buffer.write(genXML.toString());
+			// buffer.write(genXML.toString());
 			// BufferedWriter buffer = Files.newBufferedWriter(
 			// Paths.get(fileName.split("\\.")[0] + ".xml"),
 			// Charset.forName("US-ASCII"));

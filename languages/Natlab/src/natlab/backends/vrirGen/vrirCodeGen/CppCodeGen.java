@@ -16,7 +16,4 @@ public class CppCodeGen {
 		CppCodeGen gen = new CppCodeGen();
 
 	}
-
-
-
 }
