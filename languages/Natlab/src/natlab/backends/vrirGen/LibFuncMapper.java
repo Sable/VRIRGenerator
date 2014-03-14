@@ -33,6 +33,7 @@ public class LibFuncMapper {
 		return libFuncMap.get(key);
 	}
 
+	@SuppressWarnings("unused")
 	private static void putFunc(String key, String val) {
 		libFuncMap.put(key, val);
 	}

@@ -5,7 +5,6 @@ import java.util.List;
 
 import natlab.backends.vrirGen.VTypeMatrix.Layout;
 import natlab.tame.classes.reference.PrimitiveClassReference;
-
 import natlab.tame.valueanalysis.aggrvalue.AggrValue;
 import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
 import natlab.tame.valueanalysis.components.shape.DimValue;
@@ -120,7 +119,13 @@ public class ExprCaseHandler {
 			// tuple type for multiple elements
 
 			// gen.appendToPrettyCode(toXMLHead("tuple", "1", "ndims"));
+			VType vt = HelperClass.getExprType(node, gen);
+			if (vt == null) {
+				throw new NullPointerException(
+						"vtype for matrix expression is null");
+			}
 			gen.appendToPrettyCode(toXMLHead("tuple"));
+			gen.appendToPrettyCode(vt.toXML());
 			gen.appendToPrettyCode(HelperClass.toXML("elems"));
 			for (Expr expr : node.getRow(0).getElementList()) {
 

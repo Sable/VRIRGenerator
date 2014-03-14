@@ -167,7 +167,11 @@ public class HelperClass {
 		}
 
 		for (Row row : ((MatrixExpr) lhsExpr).getRowList()) {
+			if (row.getElementList().getNumChild() == 0) {
+				return new VoidType();
+			}
 			if (row.getNumChild() == 1) {
+
 				Expr expr = row.getElement(0);
 
 				if (expr instanceof NameExpr) {
@@ -176,6 +180,7 @@ public class HelperClass {
 				} else if (expr instanceof ParameterizedExpr) {
 					return getLhsType((ParameterizedExpr) expr, gen);
 				} else {
+
 					return null;
 				}
 

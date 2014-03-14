@@ -12,8 +12,8 @@ public class VoidType extends VType {
 	public StringBuffer toXML() {
 		// TODO Auto-generated method stub
 
-		return new StringBuffer(HelperClass.toXML("voidtype") + "\n"
-				+ HelperClass.toXML("/voidtype"));
+		return new StringBuffer(HelperClass.toXML("vtype name=\"void\"") + 
+				 HelperClass.toXML("/vtype"));
 	}
 
 }
