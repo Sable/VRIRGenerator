@@ -79,17 +79,23 @@ public class ExprCaseHandler {
 		for (Expr expr : node.getArgList()) {
 			VType vt = HelperClass.getExprType(expr, gen);
 			if (vt instanceof VTypeMatrix) {
-				if (!((((VTypeMatrix) vt).getShape().getDimensions().get(0)
-						.getIntValue() == 1)
-						&& (((VTypeMatrix) vt).getShape().getDimensions()
-								.get(1).getIntValue() == 1) && (((VTypeMatrix) vt)
-						.getShape().getDimensions().size() == 2))) {
-					flag = true;
+				if (((VTypeMatrix) vt).getShape().getDimensions().size() == 2) {
+
+					DimValue dim1 = ((VTypeMatrix) vt).getShape()
+							.getDimensions().get(0);
+					DimValue dim2 = ((VTypeMatrix) vt).getShape()
+							.getDimensions().get(1);
+					if (!dim1.hasIntValue()) {
+						System.out.println("expression " + expr.getClass()
+								+ " node " + node.getVarName());
+					}
+
+					if (!dim1.equalsOne() || !dim2.equalsOne()) {
+						flag = true;
+					}
 				} else {
 
-					System.out.println("ndims "
-							+ ((VTypeMatrix) vt).getShape().getDimensions()
-									.size());
+					//System.out.println("op name " + node.getVarName());
 				}
 			}
 		}
@@ -339,114 +345,111 @@ public class ExprCaseHandler {
 	public static void handleColonExpr(ColonExpr node, VrirXmlGen gen) {
 		System.out.println("in colon expression : Parent "
 				+ node.getParent().getParent());
-		// if (node.getParent().getParent() instanceof ParameterizedExpr) {
-		// ParameterizedExpr arrayExpr = (ParameterizedExpr) node.getParent()
-		// .getParent();
-		// int colonPos = Integer.MIN_VALUE;
-		// for (int i = 0; i < arrayExpr.getArgList().getNumChild(); i++) {
-		// if (arrayExpr.getArg(i) instanceof ColonExpr) {
-		// colonPos = i;
-		// break;
-		// }
-		// }
-		// if (colonPos == Integer.MIN_VALUE) {
-		// throw new RuntimeException(
-		// "Colon Expression not found in array");
-		// }
-		// VType vt = gen.getSymbol(arrayExpr.getVarName()).getVtype();
-		// if (vt == null) {
-		// throw new NullPointerException(
-		// "no entry of array in symbol table");
-		// }
-		// int end;
-		//
-		// if (vt instanceof VTypeMatrix) {
-		// int ndims = ((VTypeMatrix) vt).getShape().getDimensions()
-		// .size();
-		// if (((VTypeMatrix) vt).getShape().getDimensions().get(colonPos) ==
-		// null) {
-		// throw new NullPointerException("Dimension is not known");
-		// }
-		// end = ((VTypeMatrix) vt).getShape().getDimensions()
-		// .get(colonPos).getIntValue();
-		// if (ndims > arrayExpr.getArgList().getNumChild()
-		// && (colonPos == arrayExpr.getNumChild() - 1)) {
-		// for (int i = colonPos + 1; i < ndims; i++) {
-		// DimValue val = ((VTypeMatrix) vt).getShape()
-		// .getDimensions().get(i);
-		// if (val == null) {
-		// throw new NullPointerException(
-		// "Dimension not known " + i);
-		// }
-		// end *= ((VTypeMatrix) vt).getShape().getDimensions()
-		// .get(i).getIntValue();
-		// }
-		// }
-		// } else {
-		// throw new UnsupportedOperationException(
-		// "VType class is not VTypeMatrix but instead is "
-		// + vt.getClass()
-		// + ". This is not currently supported");
-		// }
-		// List<DimValue> list = new ArrayList<DimValue>();
-		// list.add(new DimValue(1, null));
-		// list.add(new DimValue(1, null));
-		// Shape<AggrValue<BasicMatrixValue>> shape = new
-		// Shape<AggrValue<BasicMatrixValue>>(
-		// list);
-		// VType vtype = new VTypeMatrix(shape, PrimitiveClassReference.INT64,
-		// VTypeMatrix.Layout.COLUMN_MAJOR, "REAL");
-		//
+		if (node.getParent().getParent() instanceof ParameterizedExpr) {
+			ParameterizedExpr arrayExpr = (ParameterizedExpr) node.getParent()
+					.getParent();
+			int colonPos = Integer.MIN_VALUE;
+			for (int i = 0; i < arrayExpr.getArgList().getNumChild(); i++) {
+				if (arrayExpr.getArg(i) instanceof ColonExpr) {
+					colonPos = i;
+					break;
+				}
+			}
+			if (colonPos == Integer.MIN_VALUE) {
+				throw new RuntimeException(
+						"Colon Expression not found in array");
+			}
+			VType vt = gen.getSymbol(arrayExpr.getVarName()).getVtype();
+			if (vt == null) {
+				throw new NullPointerException(
+						"no entry of array in symbol table");
+			}
+			int end;
+
+			if (vt instanceof VTypeMatrix) {
+				int ndims = ((VTypeMatrix) vt).getShape().getDimensions()
+						.size();
+				if (((VTypeMatrix) vt).getShape().getDimensions().get(colonPos) == null) {
+					throw new NullPointerException("Dimension is not known");
+				}
+				end = ((VTypeMatrix) vt).getShape().getDimensions()
+						.get(colonPos).getIntValue();
+				if (ndims > arrayExpr.getArgList().getNumChild()
+						&& (colonPos == arrayExpr.getNumChild() - 1)) {
+					for (int i = colonPos + 1; i < ndims; i++) {
+						DimValue val = ((VTypeMatrix) vt).getShape()
+								.getDimensions().get(i);
+						if (val == null) {
+							throw new NullPointerException(
+									"Dimension not known " + i);
+						}
+						end *= ((VTypeMatrix) vt).getShape().getDimensions()
+								.get(i).getIntValue();
+					}
+				}
+			} else {
+				throw new UnsupportedOperationException(
+						"VType class is not VTypeMatrix but instead is "
+								+ vt.getClass()
+								+ ". This is not currently supported");
+			}
+			List<DimValue> list = new ArrayList<DimValue>();
+			list.add(new DimValue(1, null));
+			list.add(new DimValue(1, null));
+			Shape<AggrValue<BasicMatrixValue>> shape = new Shape<AggrValue<BasicMatrixValue>>(
+					list);
+			VType vtype = new VTypeMatrix(shape, PrimitiveClassReference.INT64,
+					VTypeMatrix.Layout.COLUMN_MAJOR, "REAL");
+
+			gen.appendToPrettyCode(HelperClass.toXML("range"));
+
+			gen.appendToPrettyCode(HelperClass.toXML("start"));
+			gen.appendToPrettyCode(toXMLHead("realconst", "0", "ival"));
+			gen.appendToPrettyCode(vtype.toXML());
+			gen.appendToPrettyCode(toXMLTail());
+			gen.appendToPrettyCode(HelperClass.toXML("/start"));
+			gen.appendToPrettyCode(HelperClass.toXML("stop"));
+			gen.appendToPrettyCode(toXMLHead("realconst",
+					Integer.toString(end), "ival"));
+			gen.appendToPrettyCode(vtype.toXML());
+			gen.appendToPrettyCode(toXMLTail());
+			gen.appendToPrettyCode(HelperClass.toXML("/stop"));
+
+			gen.appendToPrettyCode(HelperClass.toXML("/range"));
+
+		}
+	}
+
+	public static void handleColonCall(ParameterizedExpr expr, VrirXmlGen gen) {
 		// gen.appendToPrettyCode(HelperClass.toXML("range"));
-		//
-		// gen.appendToPrettyCode(HelperClass.toXML("start"));
-		// gen.appendToPrettyCode(toXMLHead("realconst", "0", "ival"));
-		// gen.appendToPrettyCode(vtype.toXML());
-		// gen.appendToPrettyCode(toXMLTail());
-		// gen.appendToPrettyCode(HelperClass.toXML("/start"));
-		// gen.appendToPrettyCode(HelperClass.toXML("stop"));
-		// gen.appendToPrettyCode(toXMLHead("realconst",
-		// Integer.toString(end), "ival"));
-		// gen.appendToPrettyCode(vtype.toXML());
-		// gen.appendToPrettyCode(toXMLTail());
-		// gen.appendToPrettyCode(HelperClass.toXML("/stop"));
-		//
-		// gen.appendToPrettyCode(HelperClass.toXML("/range"));
-		//
-		// }
-		// }
-		//
-		// public static void handleColonCall(ParameterizedExpr expr, VrirXmlGen
-		// gen) {
-		// // gen.appendToPrettyCode(HelperClass.toXML("range"));
-		// // int indx = 0;
-		// // gen.appendToPrettyCode(HelperClass.toXML("start"));
-		// // expr.getArg(indx).analyze(gen);
-		// // gen.appendToPrettyCode(HelperClass.toXML("/start"));
-		// // indx++;
-		// // if (expr.getArgList().getNumChild() > 2) {
-		// // gen.appendToPrettyCode(HelperClass.toXML("step"));
-		// // expr.getArg(indx).analyze(gen);
-		// // gen.appendToPrettyCode(HelperClass.toXML("/step"));
-		// // indx++;
-		// // }
-		// // gen.appendToPrettyCode(HelperClass.toXML("stop"));
-		// // expr.getArg(indx).analyze(gen);
-		// // gen.appendToPrettyCode(HelperClass.toXML("/stop"));
-		// // indx++;
-		// // gen.appendToPrettyCode(HelperClass.toXML("/range"));
-		// Expr start, step, stop;
 		// int indx = 0;
-		// start = expr.getArg(indx);
-		// if (expr.getArgList().getNumChild() > 2) {
+		// gen.appendToPrettyCode(HelperClass.toXML("start"));
+		// expr.getArg(indx).analyze(gen);
+		// gen.appendToPrettyCode(HelperClass.toXML("/start"));
 		// indx++;
-		// step = expr.getArg(indx);
-		// } else {
-		// step = null;
+		// if (expr.getArgList().getNumChild() > 2) {
+		// gen.appendToPrettyCode(HelperClass.toXML("step"));
+		// expr.getArg(indx).analyze(gen);
+		// gen.appendToPrettyCode(HelperClass.toXML("/step"));
+		// indx++;
 		// }
-		// ++indx;
-		// stop = expr.getArg(indx);
-		// handleRange(start, step, stop, gen);
+		// gen.appendToPrettyCode(HelperClass.toXML("stop"));
+		// expr.getArg(indx).analyze(gen);
+		// gen.appendToPrettyCode(HelperClass.toXML("/stop"));
+		// indx++;
+		// gen.appendToPrettyCode(HelperClass.toXML("/range"));
+		Expr start, step, stop;
+		int indx = 0;
+		start = expr.getArg(indx);
+		if (expr.getArgList().getNumChild() > 2) {
+			indx++;
+			step = expr.getArg(indx);
+		} else {
+			step = null;
+		}
+		++indx;
+		stop = expr.getArg(indx);
+		handleRange(start, step, stop, gen);
 	}
 
 	public static void handleLibCallExpr(ParameterizedExpr expr, VrirXmlGen gen) {

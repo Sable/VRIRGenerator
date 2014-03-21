@@ -34,7 +34,21 @@ public class CppWrapperGenerator extends WrapperGenerator {
 		StringBuffer sb = new StringBuffer();
 		sb.append(genHeader());
 		sb.append("void mexFunction(int nlhs, mxArray *plhs[], \n int nrhs,const mxArray *prhs[]) \n {\n ");
-
+		sb.append(func.getName() + "(");
+		if (func.getAst().getInputParamList().getNumChild() > 0) {
+			sb.append("prhs[0]");
+			for (int i = 1; i < func.getAst().getInputParamList().getNumChild(); i++) {
+				sb.append(",prhs[" + i + "]");
+			}
+		}
+		if (func.getAst().getOutputParamList().getNumChild() > 0) {
+			sb.append("plhs[0]");
+			for (int i = 1; i < func.getAst().getOutputParamList()
+					.getNumChild(); i++) {
+				sb.append(",plhs[" + i + "]");
+			}
+		}
+		sb.append(");\n");
 		sb.append("}\n");
 
 		return sb.toString();
@@ -44,10 +58,10 @@ public class CppWrapperGenerator extends WrapperGenerator {
 	private String genAllocStmt(PrimitiveClassReference type,
 			boolean complexity, int ndims, int[] dims, String arrName) {
 		StringBuffer sb = new StringBuffer();
-		
+
 		sb.append("mxCreateNumericArray(" + MClassToClassIDMapper.get(type)
 				+ "," + " )\n");
-		
+
 		return sb.toString();
 	}
 
@@ -56,6 +70,7 @@ public class CppWrapperGenerator extends WrapperGenerator {
 		sb.append("#include<stdlib.h>\n");
 		sb.append("#include<stdio.h>\n");
 		sb.append("#include<mex.h>\n");
+		sb.append("#include\"matrix_ops.hpp\"\n");
 		// sb.append("#include\"" + func.getName() + "_impml.h \"");
 
 		return sb.toString();
