@@ -95,7 +95,7 @@ public class ExprCaseHandler {
 					}
 				} else {
 
-					//System.out.println("op name " + node.getVarName());
+					// System.out.println("op name " + node.getVarName());
 				}
 			}
 		}
@@ -259,7 +259,11 @@ public class ExprCaseHandler {
 			gen.appendToPrettyCode(toXMLHead("realconst", expr.getValue()
 					.getValue().toString(), field));
 		}
-		gen.appendToPrettyCode(vt.toXML());
+		if (vt instanceof VTypeMatrix) {
+			gen.appendToPrettyCode(((VTypeMatrix) vt).toXML(true));
+		} else {
+			gen.appendToPrettyCode(vt.toXML());
+		}
 		gen.appendToPrettyCode(toXMLTail());
 	}
 
@@ -364,7 +368,7 @@ public class ExprCaseHandler {
 				throw new NullPointerException(
 						"no entry of array in symbol table");
 			}
-			int end;
+			int end = 1;
 
 			if (vt instanceof VTypeMatrix) {
 				int ndims = ((VTypeMatrix) vt).getShape().getDimensions()
@@ -372,8 +376,11 @@ public class ExprCaseHandler {
 				if (((VTypeMatrix) vt).getShape().getDimensions().get(colonPos) == null) {
 					throw new NullPointerException("Dimension is not known");
 				}
-				end = ((VTypeMatrix) vt).getShape().getDimensions()
-						.get(colonPos).getIntValue();
+				if (((VTypeMatrix) vt).getShape().getDimensions().get(colonPos)
+						.hasIntValue()) {
+					end = ((VTypeMatrix) vt).getShape().getDimensions()
+							.get(colonPos).getIntValue();
+				}
 				if (ndims > arrayExpr.getArgList().getNumChild()
 						&& (colonPos == arrayExpr.getNumChild() - 1)) {
 					for (int i = colonPos + 1; i < ndims; i++) {

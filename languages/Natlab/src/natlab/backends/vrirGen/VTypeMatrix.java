@@ -120,4 +120,21 @@ public class VTypeMatrix extends VType {
 
 		return vTypeXML;
 	}
+
+	public StringBuffer toXML(boolean reqScal) {
+
+		StringBuffer vTypeXML = new StringBuffer();
+		if (reqScal) {
+			genScalarXML(vTypeXML);
+			return vTypeXML;
+		}
+		if (shape.isScalar() && !forceArray) {
+			genScalarXML(vTypeXML);
+
+		} else {
+			genArrayXML(vTypeXML);
+		}
+
+		return vTypeXML;
+	}
 }

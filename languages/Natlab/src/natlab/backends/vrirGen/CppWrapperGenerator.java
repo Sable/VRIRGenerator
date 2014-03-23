@@ -42,6 +42,7 @@ public class CppWrapperGenerator extends WrapperGenerator {
 			}
 		}
 		if (func.getAst().getOutputParamList().getNumChild() > 0) {
+			sb.append(',');
 			sb.append("plhs[0]");
 			for (int i = 1; i < func.getAst().getOutputParamList()
 					.getNumChild(); i++) {
