@@ -2,7 +2,7 @@ package natlab.backends.vrirGen;
 
 import natlab.tame.callgraph.StaticFunction;
 
-public class WrapperGenManager {
+public class WrapperGenFactory {
 	public enum TargetLang {
 		Cpp("C++");
 		private String str;
@@ -16,7 +16,7 @@ public class WrapperGenManager {
 		}
 	}
 
-	public WrapperGenManager() {
+	public WrapperGenFactory() {
 		// TODO Auto-generated constructor stub
 	}
 
