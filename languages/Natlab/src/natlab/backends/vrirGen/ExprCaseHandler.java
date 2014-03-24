@@ -3,7 +3,6 @@ package natlab.backends.vrirGen;
 import java.util.ArrayList;
 import java.util.List;
 
-import natlab.backends.vrirGen.VTypeMatrix.Layout;
 import natlab.tame.classes.reference.PrimitiveClassReference;
 import natlab.tame.valueanalysis.aggrvalue.AggrValue;
 import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
@@ -86,8 +85,8 @@ public class ExprCaseHandler {
 					DimValue dim2 = ((VTypeMatrix) vt).getShape()
 							.getDimensions().get(1);
 					if (!dim1.hasIntValue()) {
-						System.out.println("expression " + expr.getClass()
-								+ " node " + node.getVarName());
+						// System.out.println("expression " + expr.getClass()
+						// + " node " + node.getVarName());
 					}
 
 					if (!dim1.equalsOne() || !dim2.equalsOne()) {
@@ -307,13 +306,15 @@ public class ExprCaseHandler {
 			return;
 
 		}
+
 		if (LibFuncMapper.containsFunc(expr.getVarName())) {
+			System.out.println("var name " + expr.getVarName());
 			handleLibCallExpr(expr, gen);
 			return;
 		}
 		// TODO: Support colon expression calls separately
 		// if (expr.getVarName().equals("colon")) {
-		// //handleColonCall(expr, gen);
+		// handleColonCall(expr, gen);
 		// return;
 		// }
 		gen.appendToPrettyCode(toXMLHead("fncall", expr.getVarName(), "fnname"));
@@ -347,8 +348,8 @@ public class ExprCaseHandler {
 	}
 
 	public static void handleColonExpr(ColonExpr node, VrirXmlGen gen) {
-		System.out.println("in colon expression : Parent "
-				+ node.getParent().getParent());
+		// System.out.println("in colon expression : Parent "
+		// + node.getParent().getParent());
 		if (node.getParent().getParent() instanceof ParameterizedExpr) {
 			ParameterizedExpr arrayExpr = (ParameterizedExpr) node.getParent()
 					.getParent();
@@ -462,6 +463,11 @@ public class ExprCaseHandler {
 	public static void handleLibCallExpr(ParameterizedExpr expr, VrirXmlGen gen) {
 		gen.appendToPrettyCode(toXMLHead("libcall",
 				LibFuncMapper.getFunc(expr.getVarName()), "libfunc"));
+		if (LibFuncMapper.getFunc(expr.getVarName()) == null) {
+			System.out.println("lib call function" + expr.getVarName());
+			throw new NullPointerException("lib call could not be found "
+					+ expr.getVarName());
+		}
 		VType vt = HelperClass.getExprType(expr, gen);
 		if (vt == null) {
 			throw new NullPointerException(
@@ -495,7 +501,7 @@ public class ExprCaseHandler {
 	// TODO: Revisit . Problem with indices
 	public static void handleIndexExpr(ParameterizedExpr expr, VrirXmlGen gen) {
 		Symbol sym;
-
+		System.out.println("in index expr");
 		if ((sym = gen.getSymbol(expr.getVarName())) == null) {
 			VType vtype = HelperClass.getExprType(expr, gen);
 			if (vtype == null) {
@@ -520,11 +526,17 @@ public class ExprCaseHandler {
 		gen.appendToPrettyCode(HelperClass.toXML("indices"));
 
 		for (Expr args : expr.getArgList()) {
+
 			gen.appendToPrettyCode(HelperClass
 					.toXML("index boundscheck=\"1\" negative=\"0\""));
-
+			if (!(args instanceof RangeExpr)) {
+				System.out.println("expression class" + args.getClass());
+			} else {
+				System.out.println("is range expression");
+			}
 			args.analyze(gen);
 			gen.appendToPrettyCode(HelperClass.toXML("/index"));
+
 		}
 
 		gen.appendToPrettyCode(HelperClass.toXML("/indices"));

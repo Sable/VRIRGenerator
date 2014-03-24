@@ -26,6 +26,7 @@ public class LibFuncMapper {
 		libFuncMap.put("minus", "minus");
 		libFuncMap.put("times", "mult");
 		libFuncMap.put("div", "div");
+		libFuncMap.put("mrdivide", "div");
 		libFuncMap.put("trans", "trans");
 	}
 
