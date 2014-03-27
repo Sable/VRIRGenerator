@@ -2,7 +2,6 @@ package natlab.backends.vrirGen;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import natlab.tame.classes.reference.PrimitiveClassReference;
 import natlab.tame.valueanalysis.aggrvalue.AggrValue;
 import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
@@ -98,8 +97,7 @@ public class ExprCaseHandler {
 				}
 			}
 		}
-		if (flag) {
-
+		if (flag && LibFuncMapper.containsFunc(node.getVarName())) {
 			handleLibCallExpr(node, gen);
 		} else {
 			if (node.getArgList().getNumChild() == 2) {
@@ -294,8 +292,11 @@ public class ExprCaseHandler {
 			gen.appendToPrettyCode(toXMLHead("realconst", expr.getValue()
 					.getValue().toString(), field));
 		}
-		gen.appendToPrettyCode(vt.toXML());
-
+		if (vt instanceof VTypeMatrix) {
+			gen.appendToPrettyCode(((VTypeMatrix) vt).toXML(true));
+		} else {
+			gen.appendToPrettyCode(vt.toXML());
+		}
 		gen.appendToPrettyCode(toXMLTail());
 	}
 
@@ -407,7 +408,7 @@ public class ExprCaseHandler {
 			Shape<AggrValue<BasicMatrixValue>> shape = new Shape<AggrValue<BasicMatrixValue>>(
 					list);
 			VType vtype = new VTypeMatrix(shape, PrimitiveClassReference.INT64,
-					VTypeMatrix.Layout.COLUMN_MAJOR, "REAL");
+					VTypeMatrix.Layout.COLUMN_MAJOR, "real");
 
 			gen.appendToPrettyCode(HelperClass.toXML("range"));
 
@@ -463,8 +464,9 @@ public class ExprCaseHandler {
 	public static void handleLibCallExpr(ParameterizedExpr expr, VrirXmlGen gen) {
 		gen.appendToPrettyCode(toXMLHead("libcall",
 				LibFuncMapper.getFunc(expr.getVarName()), "libfunc"));
+		System.out.println("lib call function" + expr.getVarName());
 		if (LibFuncMapper.getFunc(expr.getVarName()) == null) {
-			System.out.println("lib call function" + expr.getVarName());
+			// System.out.println("lib call function" + expr.getVarName());
 			throw new NullPointerException("lib call could not be found "
 					+ expr.getVarName());
 		}
@@ -501,7 +503,7 @@ public class ExprCaseHandler {
 	// TODO: Revisit . Problem with indices
 	public static void handleIndexExpr(ParameterizedExpr expr, VrirXmlGen gen) {
 		Symbol sym;
-		System.out.println("in index expr");
+
 		if ((sym = gen.getSymbol(expr.getVarName())) == null) {
 			VType vtype = HelperClass.getExprType(expr, gen);
 			if (vtype == null) {
@@ -509,6 +511,7 @@ public class ExprCaseHandler {
 						"No Vtype found for paratemerized expression "
 								+ expr.getVarName());
 			}
+
 			gen.addToSymTab(vtype, expr.getVarName());
 			sym = gen.getSymbol(expr.getVarName());
 		}
@@ -522,7 +525,17 @@ public class ExprCaseHandler {
 		// gen.appendToPrettyCode(HelperClass.toXML("base"));
 		// expr.getChild(0).analyze(gen);
 		// gen.appendToPrettyCode(HelperClass.toXML("/base"));
-		gen.appendToPrettyCode(sym.getVtype().toXML());
+		VType vt = sym.getVtype();
+		if (vt instanceof VTypeMatrix) {
+			if (HelperClass.isScalar(((VTypeMatrix) vt).getShape()
+					.getDimensions())) {
+				gen.appendToPrettyCode(((VTypeMatrix) vt).toXML(true));
+			} else {
+				gen.appendToPrettyCode(sym.getVtype().toXML());
+			}
+		} else {
+			gen.appendToPrettyCode(sym.getVtype().toXML());
+		}
 		gen.appendToPrettyCode(HelperClass.toXML("indices"));
 
 		for (Expr args : expr.getArgList()) {

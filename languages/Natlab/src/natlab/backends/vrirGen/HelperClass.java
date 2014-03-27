@@ -3,6 +3,7 @@ package natlab.backends.vrirGen;
 import java.util.ArrayList;
 
 import ast.AssignStmt;
+import ast.ColonExpr;
 import ast.Expr;
 import ast.FPLiteralExpr;
 import ast.Function;
@@ -20,6 +21,7 @@ import natlab.tame.valueanalysis.ValueAnalysis;
 import natlab.tame.valueanalysis.aggrvalue.AggrValue;
 import natlab.tame.valueanalysis.aggrvalue.CellValue;
 import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
+import natlab.tame.valueanalysis.components.shape.DimValue;
 import natlab.tame.valueanalysis.components.shape.Shape;
 import natlab.tame.valueanalysis.value.Value;
 
@@ -44,7 +46,7 @@ public class HelperClass {
 	public static VType generateVType(
 			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis,
 			int graphIndex, String name) {
-
+		
 		AggrValue<?> temp = analysis.getNodeList().get(graphIndex)
 				.getAnalysis().getCurrentOutSet().get(name).getSingleton();
 
@@ -57,12 +59,13 @@ public class HelperClass {
 		if ((Object) value instanceof BasicMatrixValue) {
 			// System.out.println("matlab class"
 			// + value.getMatlabClass().getName());
+			String complexity = HelperClass
+					.getVrComplexity((((BasicMatrixValue) (Object) value))
+							.getisComplexInfo().geticType());
 			return new VTypeMatrix(
 					(((BasicMatrixValue) (Object) value)).getShape(),
 					(((BasicMatrixValue) (Object) value)).getMatlabClass(),
-					VTypeMatrix.Layout.COLUMN_MAJOR,
-					(((BasicMatrixValue) (Object) value)).getisComplexInfo()
-							.geticType());
+					VTypeMatrix.Layout.COLUMN_MAJOR, complexity);
 		} else if ((Object) value instanceof CellValue) {
 
 			VTypeTuple vtypeTuple = new VTypeTuple();
@@ -121,6 +124,19 @@ public class HelperClass {
 					"Analyses other than cell value and Advanced matrix value not supported. are currently not supported   ");
 
 		}
+	}
+
+	public static String getVrComplexity(String complexity) {
+		if (complexity.equals("REAL")) {
+			return "real";
+		} else if (complexity.equals("COMPLEX")) {
+			return "complex";
+		} else {
+			System.out.println("value is neither complex nor real "
+					+ complexity + " .Returning may complex ");
+			return "maycomplex";
+		}
+
 	}
 
 	public static Shape<AggrValue<BasicMatrixValue>> getShape(NameExpr node,
@@ -240,7 +256,16 @@ public class HelperClass {
 			AggrValue<?> val = gen.getAnalysis().getNodeList()
 					.get(gen.getIndex()).getAnalysis().getCurrentOutSet()
 					.get(tempName.getID()).getSingleton();
-			return generateVType(val);
+			VType vt = generateVType(val);
+			if (expr instanceof ParameterizedExpr
+					&& isVar(gen, ((ParameterizedExpr) expr).getVarName())) {
+				// return generateVType(gen.getAnalysis(), gen.getIndex(),
+				// ((ParameterizedExpr) expr).getVarName());
+				if (!gen.getSymTab().contains(expr.getVarName())) {
+					gen.addToSymTab(vt, expr.getVarName());
+				}
+			}
+			return vt;
 		}
 		return null;
 	}
@@ -440,5 +465,59 @@ public class HelperClass {
 
 	public static boolean isLibFunc(String name) {
 		return LibFuncMapper.containsFunc(name);
+	}
+
+	public static boolean isScalar(ParameterizedExpr expr, VrirXmlGen gen) {
+		VType vt = getExprType(expr, gen);
+		boolean flag = true;
+
+		if (vt instanceof VTypeMatrix) {
+			if (((VTypeMatrix) vt).getShape().isScalar()) {
+				return true;
+			}
+			for (DimValue val : ((VTypeMatrix) vt).getShape().getDimensions()) {
+				if ((!val.equalsOne()) && val.hasIntValue()) {
+					return false;
+				}
+				if (!val.hasIntValue()) {
+					flag = false;
+					break;
+				}
+			}
+		}
+		if (flag) {
+			return true;
+		}
+		for (Expr arg : expr.getArgList()) {
+			if (arg instanceof ColonExpr) {
+				return false;
+			}
+			if (arg instanceof ParameterizedExpr) {
+				if (arg.getVarName().equals("colon")) {
+					return false;
+				}
+				if (!isScalar((ParameterizedExpr) arg, gen)) {
+					return false;
+				}
+			}
+			vt = getExprType(arg, gen);
+			if (vt instanceof VTypeMatrix) {
+				if (!isScalar(((VTypeMatrix) vt).getShape().getDimensions())) {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public static boolean isScalar(java.util.List<DimValue> dimensions) {
+		for (DimValue dim : dimensions) {
+			if (!dim.equalsOne()) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
