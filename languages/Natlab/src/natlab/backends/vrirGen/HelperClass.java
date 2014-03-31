@@ -46,7 +46,7 @@ public class HelperClass {
 	public static VType generateVType(
 			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis,
 			int graphIndex, String name) {
-		
+
 		AggrValue<?> temp = analysis.getNodeList().get(graphIndex)
 				.getAnalysis().getCurrentOutSet().get(name).getSingleton();
 
@@ -227,10 +227,19 @@ public class HelperClass {
 			return generateVType(gen.getAnalysis(), gen.getIndex(),
 					((NameExpr) expr).getName().getID());
 		}
-		if (expr instanceof ParameterizedExpr
-				&& isVar(gen, ((ParameterizedExpr) expr).getVarName())) {
-			return generateVType(gen.getAnalysis(), gen.getIndex(),
-					((ParameterizedExpr) expr).getVarName());
+		if (expr instanceof ParameterizedExpr) {
+			Name tempName = (Name) gen.getAnalysisEngine()
+					.getTemporaryVariablesRemovalAnalysis()
+					.getExprToTempVarTable().get(expr);
+			if (tempName != null) {
+				AggrValue<?> val = gen.getAnalysis().getNodeList()
+						.get(gen.getIndex()).getAnalysis().getCurrentOutSet()
+						.get(tempName.getID()).getSingleton();
+				return generateVType(val);
+			} else if (isVar(gen, ((ParameterizedExpr) expr).getVarName())) {
+				return generateVType(gen.getAnalysis(), gen.getIndex(),
+						((ParameterizedExpr) expr).getVarName());
+			}
 		}
 		if (expr.getParent() instanceof AssignStmt) {
 			Expr lhsExpr = ((AssignStmt) expr.getParent()).getLHS();
@@ -257,14 +266,7 @@ public class HelperClass {
 					.get(gen.getIndex()).getAnalysis().getCurrentOutSet()
 					.get(tempName.getID()).getSingleton();
 			VType vt = generateVType(val);
-			if (expr instanceof ParameterizedExpr
-					&& isVar(gen, ((ParameterizedExpr) expr).getVarName())) {
-				// return generateVType(gen.getAnalysis(), gen.getIndex(),
-				// ((ParameterizedExpr) expr).getVarName());
-				if (!gen.getSymTab().contains(expr.getVarName())) {
-					gen.addToSymTab(vt, expr.getVarName());
-				}
-			}
+
 			return vt;
 		}
 		return null;
@@ -438,13 +440,12 @@ public class HelperClass {
 			}
 			argList.add(new Arg(sym.getId(), false));
 		}
-		for (int i = 0; i < outParamList.getNumChild(); i++) {
-			Symbol sym = gen.getSymbol(outParamList.getChild(i).getID());
-			if (sym == null) {
-				throw new NullPointerException("Symbol not found");
-			}
-			argList.add(new Arg(sym.getId(), false));
-		}
+		/*
+		 * for (int i = 0; i < outParamList.getNumChild(); i++) { Symbol sym =
+		 * gen.getSymbol(outParamList.getChild(i).getID()); if (sym == null) {
+		 * throw new NullPointerException("Symbol not found"); } argList.add(new
+		 * Arg(sym.getId(), false)); }
+		 */
 		return argList;
 	}
 
