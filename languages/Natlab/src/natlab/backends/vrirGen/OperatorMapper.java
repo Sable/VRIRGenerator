@@ -17,10 +17,11 @@ public class OperatorMapper {
 		opMap.put("or", "or");
 		// TODO : to be entered
 		opMap.put("eq", "");
-		opMap.put("leq", "leq");
-		opMap.put("geq", "geq");
+		opMap.put("le", "leq");
+		opMap.put("ge", "geq");
 		opMap.put("lt", "lt");
 		opMap.put("gt", "gt");
+		opMap.put("le", "lt");
 		// TODO: need to check all divisions and then add them
 		// TODO: check equivalents for Unary operators
 		opMap.put("uplus", "");
