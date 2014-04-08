@@ -16,7 +16,7 @@ public class OperatorMapper {
 		opMap.put("and", "and");
 		opMap.put("or", "or");
 		// TODO : to be entered
-		opMap.put("eq", "");
+		opMap.put("eq", "eq");
 		opMap.put("le", "leq");
 		opMap.put("ge", "geq");
 		opMap.put("lt", "lt");
