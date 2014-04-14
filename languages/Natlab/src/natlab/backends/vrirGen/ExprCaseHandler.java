@@ -74,6 +74,8 @@ public class ExprCaseHandler {
 	public static void handleOpExpr(ParameterizedExpr node, VrirXmlGen gen,
 			String name) {
 		boolean flag = false;
+		System.out.println("name = " + name + name.length());
+
 		for (Expr expr : node.getArgList()) {
 			VType vt = HelperClass.getExprType(expr, gen);
 			if (vt instanceof VTypeMatrix) {
@@ -154,39 +156,39 @@ public class ExprCaseHandler {
 	public static void handleBinExpr(ParameterizedExpr node, VrirXmlGen gen,
 			String name) {
 
-		if (name.trim().equalsIgnoreCase("mmult")) {
-			VType vt = HelperClass.getExprType(node.getArg(0), gen);
-			if (vt instanceof VTypeMatrix) {
-
-				if (((VTypeMatrix) vt).getShape().getDimensions().get(0)
-						.equalsOne()
-						&& ((VTypeMatrix) vt).getShape().getDimensions().get(1)
-								.equalsOne()
-						&& (((VTypeMatrix) vt).getShape().getDimensions()
-								.size() == 2)) {
-					name = "mult";
-				}
-			} else {
-				throw new UnsupportedOperationException(
-						"operations on cell arrays not supported");
-			}
-			vt = HelperClass.getExprType(node.getArg(1), gen);
-			if (vt instanceof VTypeMatrix) {
-
-				if (((VTypeMatrix) vt).getShape().getDimensions().get(0)
-						.equalsOne()
-						&& ((VTypeMatrix) vt).getShape().getDimensions().get(1)
-								.equalsOne()
-						&& (((VTypeMatrix) vt).getShape().getDimensions()
-								.size() == 2)) {
-					name = "mult";
-				}
-			} else {
-				throw new UnsupportedOperationException(
-						"operations on cell arrays not supported");
-			}
-
-		}
+		// if (name.trim().equalsIgnoreCase("mmult")) {
+		// VType vt = HelperClass.getExprType(node.getArg(0), gen);
+		// if (vt instanceof VTypeMatrix) {
+		//
+		// if (((VTypeMatrix) vt).getShape().getDimensions().get(0)
+		// .equalsOne()
+		// && ((VTypeMatrix) vt).getShape().getDimensions().get(1)
+		// .equalsOne()
+		// && (((VTypeMatrix) vt).getShape().getDimensions()
+		// .size() == 2)) {
+		// name = "mult";
+		// }
+		// } else {
+		// throw new UnsupportedOperationException(
+		// "operations on cell arrays not supported");
+		// }
+		// vt = HelperClass.getExprType(node.getArg(1), gen);
+		// if (vt instanceof VTypeMatrix) {
+		//
+		// if (((VTypeMatrix) vt).getShape().getDimensions().get(0)
+		// .equalsOne()
+		// && ((VTypeMatrix) vt).getShape().getDimensions().get(1)
+		// .equalsOne()
+		// && (((VTypeMatrix) vt).getShape().getDimensions()
+		// .size() == 2)) {
+		// name = "mult";
+		// }
+		// } else {
+		// throw new UnsupportedOperationException(
+		// "operations on cell arrays not supported");
+		// }
+		//
+		// }
 		gen.appendToPrettyCode(toXMLHead(name));
 
 		gen.appendToPrettyCode(HelperClass.getExprType(node, gen).toXML());
@@ -462,8 +464,41 @@ public class ExprCaseHandler {
 	}
 
 	public static void handleLibCallExpr(ParameterizedExpr expr, VrirXmlGen gen) {
-		gen.appendToPrettyCode(toXMLHead("libcall",
-				LibFuncMapper.getFunc(expr.getVarName()), "libfunc"));
+		String name = LibFuncMapper.getFunc(expr.getVarName());
+		if (name.trim().equalsIgnoreCase("mmult")) {
+			VType vt = HelperClass.getExprType(expr.getArg(0), gen);
+			if (vt instanceof VTypeMatrix) {
+
+				if (((VTypeMatrix) vt).getShape().getDimensions().get(0)
+						.equalsOne()
+						&& ((VTypeMatrix) vt).getShape().getDimensions().get(1)
+								.equalsOne()
+						&& (((VTypeMatrix) vt).getShape().getDimensions()
+								.size() == 2)) {
+					name = "mult";
+				}
+			} else {
+				throw new UnsupportedOperationException(
+						"operations on cell arrays not supported");
+			}
+			vt = HelperClass.getExprType(expr.getArg(1), gen);
+			if (vt instanceof VTypeMatrix) {
+
+				if (((VTypeMatrix) vt).getShape().getDimensions().get(0)
+						.equalsOne()
+						&& ((VTypeMatrix) vt).getShape().getDimensions().get(1)
+								.equalsOne()
+						&& (((VTypeMatrix) vt).getShape().getDimensions()
+								.size() == 2)) {
+					name = "mult";
+				}
+			} else {
+				throw new UnsupportedOperationException(
+						"operations on cell arrays not supported");
+			}
+
+		}
+		gen.appendToPrettyCode(toXMLHead("libcall", name, "libfunc"));
 		System.out.println("lib call function" + expr.getVarName());
 		if (LibFuncMapper.getFunc(expr.getVarName()) == null) {
 			// System.out.println("lib call function" + expr.getVarName());
