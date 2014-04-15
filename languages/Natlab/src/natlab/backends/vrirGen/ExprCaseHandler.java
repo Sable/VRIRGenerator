@@ -74,7 +74,7 @@ public class ExprCaseHandler {
 	public static void handleOpExpr(ParameterizedExpr node, VrirXmlGen gen,
 			String name) {
 		boolean flag = false;
-		System.out.println("name " + name );
+		System.out.println("name " + name);
 		if (name.trim().equalsIgnoreCase("mmult")) {
 			VType vt = HelperClass.getExprType(node.getArg(0), gen);
 			if (vt instanceof VTypeMatrix) {
@@ -482,6 +482,13 @@ public class ExprCaseHandler {
 		// gen.appendToPrettyCode(HelperClass.toXML("/stop"));
 		// indx++;
 		// gen.appendToPrettyCode(HelperClass.toXML("/range"));
+		if (expr.getParent().getParent() instanceof ParameterizedExpr) {
+			System.out.println("it is a paramaterized expr");
+		} else {
+			System.out.println("it is some random crap class "
+					+ expr.getParent().getParent());
+		}
+
 		Expr start, step, stop;
 		int indx = 0;
 		start = expr.getArg(indx);
@@ -610,12 +617,14 @@ public class ExprCaseHandler {
 
 			gen.appendToPrettyCode(HelperClass
 					.toXML("index boundscheck=\"1\" negative=\"0\""));
-			if (!(args instanceof RangeExpr)) {
-				System.out.println("expression class" + args.getClass());
+			if (args instanceof ParameterizedExpr) {
+				if (args.getVarName().equals("colon")) {
+					handleColonCall((ParameterizedExpr) args, gen);
+
+				}
 			} else {
-				System.out.println("is range expression");
+				args.analyze(gen);
 			}
-			args.analyze(gen);
 			gen.appendToPrettyCode(HelperClass.toXML("/index"));
 
 		}
