@@ -74,8 +74,40 @@ public class ExprCaseHandler {
 	public static void handleOpExpr(ParameterizedExpr node, VrirXmlGen gen,
 			String name) {
 		boolean flag = false;
-		System.out.println("name = " + name + name.length());
+		System.out.println("name " + name );
+		if (name.trim().equalsIgnoreCase("mmult")) {
+			VType vt = HelperClass.getExprType(node.getArg(0), gen);
+			if (vt instanceof VTypeMatrix) {
 
+				if (((VTypeMatrix) vt).getShape().getDimensions().get(0)
+						.equalsOne()
+						&& ((VTypeMatrix) vt).getShape().getDimensions().get(1)
+								.equalsOne()
+						&& (((VTypeMatrix) vt).getShape().getDimensions()
+								.size() == 2)) {
+					name = "mult";
+				}
+			} else {
+				throw new UnsupportedOperationException(
+						"operations on cell arrays not supported");
+			}
+			vt = HelperClass.getExprType(node.getArg(1), gen);
+			if (vt instanceof VTypeMatrix) {
+
+				if (((VTypeMatrix) vt).getShape().getDimensions().get(0)
+						.equalsOne()
+						&& ((VTypeMatrix) vt).getShape().getDimensions().get(1)
+								.equalsOne()
+						&& (((VTypeMatrix) vt).getShape().getDimensions()
+								.size() == 2)) {
+					name = "mult";
+				}
+			} else {
+				throw new UnsupportedOperationException(
+						"operations on cell arrays not supported");
+			}
+
+		}
 		for (Expr expr : node.getArgList()) {
 			VType vt = HelperClass.getExprType(expr, gen);
 			if (vt instanceof VTypeMatrix) {
@@ -92,6 +124,7 @@ public class ExprCaseHandler {
 
 					if (!dim1.equalsOne() || !dim2.equalsOne()) {
 						flag = true;
+						break;
 					}
 				} else {
 
