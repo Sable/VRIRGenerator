@@ -604,7 +604,7 @@ public class ExprCaseHandler {
 		if (vt instanceof VTypeMatrix) {
 			if (HelperClass.isScalar(((VTypeMatrix) vt).getShape()
 					.getDimensions())) {
-				gen.appendToPrettyCode(((VTypeMatrix) vt).toXML(true));
+				gen.appendToPrettyCode(((VTypeMatrix) vt).toXML());
 			} else {
 				gen.appendToPrettyCode(sym.getVtype().toXML());
 			}
