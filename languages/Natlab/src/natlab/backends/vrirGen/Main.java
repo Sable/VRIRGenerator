@@ -36,12 +36,12 @@ public class Main {
 		 */
 		// String fileDir =
 		// "/home/sable/sjagda/mclab/calgo-benchmarks/694/Matlab/Sp/Src/";
-		String fileDir = "/home/sable/sjagda/mclab/bbai/";
+		String fileDir = "/home/sable/sjagda/mclab/nb1d/";
 		// String fileName = "drv_mbrt.m";
 		// String fileDir = File.separator + "home" + File.separator
 		// + "2012" + "sjagda" + File.separator + "mclab"
 		// + File.separator + "mbrt" + File.separator;
-		String fileName = "drv_babai.m";
+		String fileName = "drv_nb1d.m";
 		String fileIn = fileDir + fileName;
 		GenericFile gFile = GenericFile.create(fileIn);
 		FileEnvironment env = new FileEnvironment(gFile); // get path
@@ -81,10 +81,10 @@ public class Main {
 			if (!funcSet.contains(function)) {
 				// TamerPlusUtils.debugMode();
 				// System.out.println("tamer pretty print: \n"+function.getAst().getPrettyPrinted());
-//				if (function.equals(analysis.getMainNode().getFunction())) {
-//					funcSet.add(function);
-//					continue;
-//				}
+				if (function.equals(analysis.getMainNode().getFunction())) {
+					funcSet.add(function);
+					continue;
+				}
 				TransformationEngine transformationEngine = TransformationEngine
 						.forAST(function.getAst());
 
