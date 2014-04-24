@@ -13,7 +13,8 @@ public class OperatorMapper {
 		opMap.put("rdivide", "div");
 		opMap.put("mtimes", "mmult");
 		opMap.put("times", "mult");
-		opMap.put("mrdivide", "mdiv");
+		opMap.put("mrdivide", "mrdiv");
+		opMap.put("mldivide", "mldiv");
 		opMap.put("and", "and");
 		opMap.put("or", "or");
 		// TODO : to be entered

@@ -28,6 +28,7 @@ public class StmtCaseHandler {
 		gen.appendToPrettyCode(toXMLHead("whilestmt"));
 		gen.appendToPrettyCode(HelperClass.toXML("test"));
 		node.getExpr().analyze(gen);
+		
 		gen.appendToPrettyCode(HelperClass.toXML("/test"));
 		gen.appendToPrettyCode(toListXMLHead(VrirXmlGen.onGPU));
 		for (int i = 0; i < node.getStmtList().getNumChild(); i++) {

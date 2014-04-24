@@ -12,28 +12,12 @@ import ast.BreakStmt;
 import ast.CSLExpr;
 import ast.CellArrayExpr;
 import ast.CellIndexExpr;
-import ast.CheckScalarStmt;
-import ast.ClassBody;
-import ast.ClassDef;
-import ast.ClassEvents;
 import ast.ColonExpr;
-import ast.CompilationUnits;
 import ast.ContinueStmt;
-import ast.DefaultCaseBlock;
 import ast.DotExpr;
-import ast.EDivExpr;
-import ast.ELDivExpr;
-import ast.EPowExpr;
-import ast.EQExpr;
-import ast.ETimesExpr;
 import ast.ElseBlock;
-import ast.EmptyProgram;
 import ast.EmptyStmt;
-import ast.EndCallExpr;
-import ast.EndExpr;
-import ast.Event;
 import ast.Expr;
-import ast.ExprStmt;
 import ast.FPLiteralExpr;
 import ast.ForStmt;
 import ast.Function;
@@ -52,52 +36,21 @@ import ast.LTExpr;
 import ast.LValueExpr;
 import ast.LambdaExpr;
 import ast.List;
-import ast.LiteralExpr;
-import ast.MDivExpr;
-import ast.MLDivExpr;
-import ast.MPowExpr;
-import ast.MTimesExpr;
-import ast.MTransposeExpr;
 import ast.MatrixExpr;
-import ast.Methods;
-import ast.MinusExpr;
-import ast.MultiLineHelpComment;
-import ast.NEExpr;
-import ast.Name;
 import ast.NameExpr;
-import ast.NotExpr;
-import ast.OneLineHelpComment;
-import ast.OrExpr;
 import ast.ParameterizedExpr;
-import ast.PersistentStmt;
-import ast.PlusExpr;
-import ast.Program;
-import ast.Properties;
-import ast.Property;
-import ast.PropertyAccess;
 import ast.RangeExpr;
 import ast.ReturnStmt;
 import ast.Row;
-import ast.Script;
-import ast.ShellCommandStmt;
-import ast.ShortCircuitAndExpr;
-import ast.ShortCircuitOrExpr;
-import ast.Signature;
 import ast.Stmt;
 import ast.StringLiteralExpr;
-import ast.SuperClass;
 import ast.SuperClassMethodExpr;
-import ast.SwitchCaseBlock;
 import ast.SwitchStmt;
 import ast.TryStmt;
-import ast.UMinusExpr;
-import ast.UPlusExpr;
-import ast.UnaryExpr;
 import ast.WhileStmt;
 import natlab.tame.tamerplus.analysis.AnalysisEngine;
 import natlab.tame.valueanalysis.ValueAnalysis;
 import natlab.tame.valueanalysis.ValueFlowMap;
-
 import natlab.tame.valueanalysis.aggrvalue.AggrValue;
 import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
 import nodecases.natlab.NatlabAbstractNodeCaseHandler;
@@ -207,7 +160,7 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	@Override
 	@SuppressWarnings("rawtypes")
 	public void caseASTNode(ASTNode node) {
-		// System.out.println("unsupported ast node" + node.getClass());
+		//System.out.println("unsupported ast node" + node.getClass());
 	}
 
 	@Override
@@ -293,7 +246,7 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	public void caseWhileStmt(WhileStmt node) {
 
 		StmtCaseHandler.handleWhileStmt(node, this);
-		caseStmt(node);
+		//caseStmt(node);
 	}
 
 	public void caseTryStmt(TryStmt node) {

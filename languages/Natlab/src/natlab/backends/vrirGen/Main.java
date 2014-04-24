@@ -36,12 +36,12 @@ public class Main {
 		 */
 		// String fileDir =
 		// "/home/sable/sjagda/mclab/calgo-benchmarks/694/Matlab/Sp/Src/";
-		String fileDir = "/home/sable/sjagda/mclab/nb1d/";
+		String fileDir = "/home/sable/sjagda/mclab/fft/";
 		// String fileName = "drv_mbrt.m";
 		// String fileDir = File.separator + "home" + File.separator
 		// + "2012" + "sjagda" + File.separator + "mclab"
 		// + File.separator + "mbrt" + File.separator;
-		String fileName = "drv_nb1d.m";
+		String fileName = "drv_fft.m";
 		String fileIn = fileDir + fileName;
 		GenericFile gFile = GenericFile.create(fileIn);
 		FileEnvironment env = new FileEnvironment(gFile); // get path
@@ -61,7 +61,7 @@ public class Main {
 		VrirTypeMapper.initTypeMap();
 
 		HashSet<StaticFunction> funcSet = new HashSet<StaticFunction>();
-
+		
 		for (int i = 0; i < size; i++) {
 			StringBuffer sb;
 			/*
@@ -76,11 +76,10 @@ public class Main {
 			 */
 			StaticFunction function = analysis.getNodeList().get(i)
 					.getFunction();
-			System.out.flush();
+			
 			System.out.println("Analysis function  " + function.getName());
 			if (!funcSet.contains(function)) {
-				// TamerPlusUtils.debugMode();
-				// System.out.println("tamer pretty print: \n"+function.getAst().getPrettyPrinted());
+			
 				if (function.equals(analysis.getMainNode().getFunction())) {
 					funcSet.add(function);
 					continue;
@@ -105,10 +104,10 @@ public class Main {
 							analysisEngine);
 					genXML.append(sb);
 				} catch (RuntimeException e) {
-					System.out.println("did not work for " + fileName);
+					System.out.println("did not work for " + function.getName());
 					System.out.println(fTree.getPrettyPrinted());
 					e.printStackTrace();
-					break;
+					System.exit(0);
 				}
 				// genXML.append(sb);
 

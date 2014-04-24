@@ -108,6 +108,39 @@ public class ExprCaseHandler {
 			}
 
 		}
+		if (name.trim().equalsIgnoreCase("mviv")) {
+			VType vt = HelperClass.getExprType(node.getArg(0), gen);
+			if (vt instanceof VTypeMatrix) {
+
+				if (((VTypeMatrix) vt).getShape().getDimensions().get(0)
+						.equalsOne()
+						&& ((VTypeMatrix) vt).getShape().getDimensions().get(1)
+								.equalsOne()
+						&& (((VTypeMatrix) vt).getShape().getDimensions()
+								.size() == 2)) {
+					name = "div";
+				}
+			} else {
+				throw new UnsupportedOperationException(
+						"operations on cell arrays not supported");
+			}
+			vt = HelperClass.getExprType(node.getArg(1), gen);
+			if (vt instanceof VTypeMatrix) {
+
+				if (((VTypeMatrix) vt).getShape().getDimensions().get(0)
+						.equalsOne()
+						&& ((VTypeMatrix) vt).getShape().getDimensions().get(1)
+								.equalsOne()
+						&& (((VTypeMatrix) vt).getShape().getDimensions()
+								.size() == 2)) {
+					name = "div";
+				}
+			} else {
+				throw new UnsupportedOperationException(
+						"operations on cell arrays not supported");
+			}
+
+		}
 		for (Expr expr : node.getArgList()) {
 			VType vt = HelperClass.getExprType(expr, gen);
 			if (vt instanceof VTypeMatrix) {
@@ -371,6 +404,7 @@ public class ExprCaseHandler {
 	public static void handleFunCallExpr(NameExpr expr, VrirXmlGen gen) {
 		gen.appendToPrettyCode(toXMLHead("fncall", expr.getName().getID(),
 				"fnname"));
+		System.out.println("name  of function " + expr.getName().getID());
 		VType vt = HelperClass.getExprType(expr, gen);
 		if (vt == null) {
 			throw new NullPointerException(
@@ -613,18 +647,19 @@ public class ExprCaseHandler {
 		}
 		gen.appendToPrettyCode(HelperClass.toXML("indices"));
 
-		for (Expr args : expr.getArgList()) {
+		for (Expr arg : expr.getArgList()) {
 
 			gen.appendToPrettyCode(HelperClass
 					.toXML("index boundscheck=\"1\" negative=\"0\""));
-			if (args instanceof ParameterizedExpr) {
-				if (args.getVarName().equals("colon")) {
-					handleColonCall((ParameterizedExpr) args, gen);
-
+			if (arg instanceof ParameterizedExpr) {
+				if (arg.getVarName().equals("colon")) {
+					handleColonCall((ParameterizedExpr) arg, gen);
+					// gen.appendToPrettyCode(HelperClass.toXML("/index"));
+					continue;
 				}
-			} else {
-				args.analyze(gen);
 			}
+			arg.analyze(gen);
+
 			gen.appendToPrettyCode(HelperClass.toXML("/index"));
 
 		}
