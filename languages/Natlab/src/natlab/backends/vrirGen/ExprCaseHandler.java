@@ -108,7 +108,7 @@ public class ExprCaseHandler {
 			}
 
 		}
-		if (name.trim().equalsIgnoreCase("mviv")) {
+		if (name.trim().equalsIgnoreCase("mrdiv")||name.trim().equalsIgnoreCase("mldiv")) {
 			VType vt = HelperClass.getExprType(node.getArg(0), gen);
 			if (vt instanceof VTypeMatrix) {
 
