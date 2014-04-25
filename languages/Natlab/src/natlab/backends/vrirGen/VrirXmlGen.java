@@ -227,8 +227,9 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 				}
 				this.appendToPrettyCode(this.getSymbol(rvar.getID()).getVtype()
 						.toXML());
+				this.appendToPrettyCode(ExprCaseHandler.toXMLTail());
 			}
-			this.appendToPrettyCode(ExprCaseHandler.toXMLTail());
+			
 			this.appendToPrettyCode(HelperClass.toXML("/rvars"));
 			this.appendToPrettyCode(StmtCaseHandler.toXMLTail());
 		}
