@@ -66,7 +66,7 @@ public class FunctionCaseHandler {
 
 	public static void handleParams(Function node, VrirXmlGen gen) {
 		handleFuncType(node, gen);
-
+		
 	}
 
 	public static void handleArgs(Function node, VrirXmlGen gen) {

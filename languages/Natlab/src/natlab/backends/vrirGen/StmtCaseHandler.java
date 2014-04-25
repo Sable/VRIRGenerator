@@ -108,7 +108,7 @@ public class StmtCaseHandler {
 			gen.appendToPrettyCode(gen.getSymbol(rvar.getID()).getVtype()
 					.toXML());
 		}
-		gen.getFunctionNode().getOutputParamList();
+		
 		gen.appendToPrettyCode(HelperClass.toXML("/rvars"));
 		gen.appendToPrettyCode(toXMLTail());
 	}

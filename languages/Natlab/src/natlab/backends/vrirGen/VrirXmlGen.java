@@ -37,6 +37,7 @@ import ast.LValueExpr;
 import ast.LambdaExpr;
 import ast.List;
 import ast.MatrixExpr;
+import ast.Name;
 import ast.NameExpr;
 import ast.ParameterizedExpr;
 import ast.RangeExpr;
@@ -207,6 +208,29 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 		for (Stmt stmt : node.getStmts()) {
 
 			stmt.analyze(this);
+		}
+		if (node.getOutputParamList().getNumChild() > 0) {
+			this.appendToPrettyCode(StmtCaseHandler.toXMLHead("returnstmt"));
+			this.appendToPrettyCode(HelperClass.toXML("rvars"));
+			for (Name rvar : this.getFunctionNode().getOutputParamList()) {
+				if (!this.getSymTab().contains(rvar.getID())) {
+					VType vtype = HelperClass.generateVType(this.getAnalysis(),
+							this.getIndex(), rvar.getID());
+					this.getSymTab().putSymbol(vtype, rvar.getID());
+				}
+				if (this.getSymbol(rvar.getID()) != null) {
+					this.appendToPrettyCode(ExprCaseHandler.toXMLHead("name",
+							this.getSymbol(rvar.getID()).getId(), "id"));
+				} else {
+					throw new NullPointerException("Symbol not found for "
+							+ rvar.getID());
+				}
+				this.appendToPrettyCode(this.getSymbol(rvar.getID()).getVtype()
+						.toXML());
+			}
+			this.appendToPrettyCode(ExprCaseHandler.toXMLTail());
+			this.appendToPrettyCode(HelperClass.toXML("/rvars"));
+			this.appendToPrettyCode(StmtCaseHandler.toXMLTail());
 		}
 		this.appendToPrettyCode(StmtCaseHandler.toListXMLTail());
 		this.appendToPrettyCode(HelperClass.toXML("/body"));
