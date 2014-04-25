@@ -67,11 +67,12 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	private int index;
 	final static public boolean onGPU = false;
 	private AnalysisEngine analysisEngine;
+	private Function functionNode;
 
 	VrirXmlGen(Function functionNode, Set<String> remainVars,
 			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis,
-			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet,
-			int size, int index, AnalysisEngine analysisEngine) {
+			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet, int size,
+			int index, AnalysisEngine analysisEngine) {
 		prettyPrintedCode = new StringBuffer();
 		remainingVars = remainVars;
 		this.analysis = analysis;
@@ -81,9 +82,17 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 		symTab = new SymbolTable();
 		// indent = 0;
 		this.analysisEngine = analysisEngine;
-
+		this.functionNode = functionNode;
 		functionNode.analyze(this);
 
+	}
+
+	public Function getFunctionNode() {
+		return functionNode;
+	}
+
+	public void setFunctionNode(Function functionNode) {
+		this.functionNode = functionNode;
 	}
 
 	public static void genModuleXMLHead(StringBuffer target, String moduleName) {
@@ -123,8 +132,7 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 		return analysis;
 	}
 
-	public void setAnalysis(
-			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis) {
+	public void setAnalysis(ValueAnalysis<AggrValue<BasicMatrixValue>> analysis) {
 		this.analysis = analysis;
 	}
 
@@ -160,7 +168,7 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	@Override
 	@SuppressWarnings("rawtypes")
 	public void caseASTNode(ASTNode node) {
-		//System.out.println("unsupported ast node" + node.getClass());
+		// System.out.println("unsupported ast node" + node.getClass());
 	}
 
 	@Override
@@ -246,7 +254,7 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	public void caseWhileStmt(WhileStmt node) {
 
 		StmtCaseHandler.handleWhileStmt(node, this);
-		//caseStmt(node);
+		// caseStmt(node);
 	}
 
 	public void caseTryStmt(TryStmt node) {
@@ -423,8 +431,8 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	public static StringBuffer generateVrir(Function functionNode,
 			Set<String> remainingVars,
 			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis,
-			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet,
-			int index, int size, AnalysisEngine analysisEngine) {
+			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet, int index,
+			int size, AnalysisEngine analysisEngine) {
 		return (new VrirXmlGen(functionNode, remainingVars, analysis,
 				currentOutSet, size, index, analysisEngine))
 				.getPrettyPrintedCode();
