@@ -55,7 +55,7 @@ public class FunctionCaseHandler {
 			if (vtype == null) {
 				throw new NullPointerException("VType is null");
 			}
-			inParamType.add(vtype);
+			outParamType.add(vtype);
 			gen.addToSymTab(vtype, param.getID());
 
 		}

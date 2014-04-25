@@ -442,13 +442,13 @@ public class HelperClass {
 			argList.add(new Arg(sym.getId(), false));
 		}
 
-		for (int i = 0; i < outParamList.getNumChild(); i++) {
-			Symbol sym = gen.getSymbol(outParamList.getChild(i).getID());
-			if (sym == null) {
-				throw new NullPointerException("Symbol not found");
-			}
-			argList.add(new Arg(sym.getId(), false));
-		}
+//		for (int i = 0; i < outParamList.getNumChild(); i++) {
+//			Symbol sym = gen.getSymbol(outParamList.getChild(i).getID());
+//			if (sym == null) {
+//				throw new NullPointerException("Symbol not found");
+//			}
+//			argList.add(new Arg(sym.getId(), false));
+//		}
 
 		return argList;
 	}
