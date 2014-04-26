@@ -37,6 +37,7 @@ import ast.LValueExpr;
 import ast.LambdaExpr;
 import ast.List;
 import ast.MatrixExpr;
+import ast.Name;
 import ast.NameExpr;
 import ast.ParameterizedExpr;
 import ast.RangeExpr;
@@ -67,11 +68,12 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	private int index;
 	final static public boolean onGPU = false;
 	private AnalysisEngine analysisEngine;
+	private Function functionNode;
 
 	VrirXmlGen(Function functionNode, Set<String> remainVars,
 			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis,
-			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet,
-			int size, int index, AnalysisEngine analysisEngine) {
+			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet, int size,
+			int index, AnalysisEngine analysisEngine) {
 		prettyPrintedCode = new StringBuffer();
 		remainingVars = remainVars;
 		this.analysis = analysis;
@@ -81,9 +83,17 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 		symTab = new SymbolTable();
 		// indent = 0;
 		this.analysisEngine = analysisEngine;
-
+		this.functionNode = functionNode;
 		functionNode.analyze(this);
 
+	}
+
+	public Function getFunctionNode() {
+		return functionNode;
+	}
+
+	public void setFunctionNode(Function functionNode) {
+		this.functionNode = functionNode;
 	}
 
 	public static void genModuleXMLHead(StringBuffer target, String moduleName) {
@@ -123,8 +133,7 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 		return analysis;
 	}
 
-	public void setAnalysis(
-			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis) {
+	public void setAnalysis(ValueAnalysis<AggrValue<BasicMatrixValue>> analysis) {
 		this.analysis = analysis;
 	}
 
@@ -160,7 +169,7 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	@Override
 	@SuppressWarnings("rawtypes")
 	public void caseASTNode(ASTNode node) {
-		//System.out.println("unsupported ast node" + node.getClass());
+		// System.out.println("unsupported ast node" + node.getClass());
 	}
 
 	@Override
@@ -199,6 +208,30 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 		for (Stmt stmt : node.getStmts()) {
 
 			stmt.analyze(this);
+		}
+		if (node.getOutputParamList().getNumChild() > 0) {
+			this.appendToPrettyCode(StmtCaseHandler.toXMLHead("returnstmt"));
+			this.appendToPrettyCode(HelperClass.toXML("rvars"));
+			for (Name rvar : this.getFunctionNode().getOutputParamList()) {
+				if (!this.getSymTab().contains(rvar.getID())) {
+					VType vtype = HelperClass.generateVType(this.getAnalysis(),
+							this.getIndex(), rvar.getID());
+					this.getSymTab().putSymbol(vtype, rvar.getID());
+				}
+				if (this.getSymbol(rvar.getID()) != null) {
+					this.appendToPrettyCode(ExprCaseHandler.toXMLHead("name",
+							this.getSymbol(rvar.getID()).getId(), "id"));
+				} else {
+					throw new NullPointerException("Symbol not found for "
+							+ rvar.getID());
+				}
+				this.appendToPrettyCode(this.getSymbol(rvar.getID()).getVtype()
+						.toXML());
+				this.appendToPrettyCode(ExprCaseHandler.toXMLTail());
+			}
+			
+			this.appendToPrettyCode(HelperClass.toXML("/rvars"));
+			this.appendToPrettyCode(StmtCaseHandler.toXMLTail());
 		}
 		this.appendToPrettyCode(StmtCaseHandler.toListXMLTail());
 		this.appendToPrettyCode(HelperClass.toXML("/body"));
@@ -246,7 +279,7 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	public void caseWhileStmt(WhileStmt node) {
 
 		StmtCaseHandler.handleWhileStmt(node, this);
-		//caseStmt(node);
+		// caseStmt(node);
 	}
 
 	public void caseTryStmt(TryStmt node) {
@@ -423,8 +456,8 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	public static StringBuffer generateVrir(Function functionNode,
 			Set<String> remainingVars,
 			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis,
-			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet,
-			int index, int size, AnalysisEngine analysisEngine) {
+			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet, int index,
+			int size, AnalysisEngine analysisEngine) {
 		return (new VrirXmlGen(functionNode, remainingVars, analysis,
 				currentOutSet, size, index, analysisEngine))
 				.getPrettyPrintedCode();

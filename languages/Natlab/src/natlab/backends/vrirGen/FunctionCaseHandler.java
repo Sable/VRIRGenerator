@@ -55,7 +55,7 @@ public class FunctionCaseHandler {
 			if (vtype == null) {
 				throw new NullPointerException("VType is null");
 			}
-			inParamType.add(vtype);
+			outParamType.add(vtype);
 			gen.addToSymTab(vtype, param.getID());
 
 		}
@@ -66,7 +66,7 @@ public class FunctionCaseHandler {
 
 	public static void handleParams(Function node, VrirXmlGen gen) {
 		handleFuncType(node, gen);
-
+		
 	}
 
 	public static void handleArgs(Function node, VrirXmlGen gen) {
