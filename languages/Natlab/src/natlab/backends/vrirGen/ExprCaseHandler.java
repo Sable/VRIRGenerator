@@ -654,7 +654,7 @@ public class ExprCaseHandler {
 			if (arg instanceof ParameterizedExpr) {
 				if (arg.getVarName().equals("colon")) {
 					handleColonCall((ParameterizedExpr) arg, gen);
-					// gen.appendToPrettyCode(HelperClass.toXML("/index"));
+					 gen.appendToPrettyCode(HelperClass.toXML("/index"));
 					continue;
 				}
 			}

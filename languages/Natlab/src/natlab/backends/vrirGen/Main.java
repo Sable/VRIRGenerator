@@ -36,13 +36,13 @@ public class Main {
 		 */
 		// String fileDir =
 		// "/home/sable/sjagda/mclab/calgo-benchmarks/694/Matlab/Sp/Src/";
-		String fileDir = "capr/";//"capr/";
+		String fileDir = "bbai/";//"capr/";
 
 		// String fileName = "drv_mbrt.m";
 		// String fileDir = File.separator + "home" + File.separator
 		// + "2012" + "sjagda" + File.separator + "mclab"
 		// + File.separator + "mbrt" + File.separator;
-		String fileName = "drv_capr.m";
+		String fileName = "drv_babai.m";
 		String fileIn = fileDir + fileName;
 		File file= new File(fileIn);
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
