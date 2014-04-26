@@ -1,13 +1,13 @@
 package natlab.backends.vrirGen;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-
 import natlab.backends.vrirGen.WrapperGenFactory.TargetLang;
 //import natlab.backends.vrirGen.vrirCodeGen.CppCodeGen;
 import natlab.tame.BasicTamerTool;
@@ -36,14 +36,15 @@ public class Main {
 		 */
 		// String fileDir =
 		// "/home/sable/sjagda/mclab/calgo-benchmarks/694/Matlab/Sp/Src/";
-		String fileDir = "/home/sable/sjagda/mclab/fft/";
+		String fileDir = "capr/";//"capr/";
 		// String fileName = "drv_mbrt.m";
 		// String fileDir = File.separator + "home" + File.separator
 		// + "2012" + "sjagda" + File.separator + "mclab"
 		// + File.separator + "mbrt" + File.separator;
-		String fileName = "drv_fft.m";
+		String fileName = "drv_capr.m";
 		String fileIn = fileDir + fileName;
-		GenericFile gFile = GenericFile.create(fileIn);
+		File file= new File(fileIn);
+		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
 		FileEnvironment env = new FileEnvironment(gFile); // get path
 		// environment obj
 		BasicTamerTool tool = new BasicTamerTool();
