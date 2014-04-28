@@ -36,13 +36,13 @@ public class Main {
 		 */
 		// String fileDir =
 		// "/home/sable/sjagda/mclab/calgo-benchmarks/694/Matlab/Sp/Src/";
-		String fileDir = "bbai/";//"capr/";
+		String fileDir = "";//"capr/";
 
 		// String fileName = "drv_mbrt.m";
 		// String fileDir = File.separator + "home" + File.separator
 		// + "2012" + "sjagda" + File.separator + "mclab"
 		// + File.separator + "mbrt" + File.separator;
-		String fileName = "drv_babai.m";
+		String fileName = "simple.m";
 		String fileIn = fileDir + fileName;
 		File file= new File(fileIn);
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
@@ -82,10 +82,10 @@ public class Main {
 			System.out.println("Analysis function  " + function.getName());
 			if (!funcSet.contains(function)) {
 			
-				if (function.equals(analysis.getMainNode().getFunction())) {
-					funcSet.add(function);
-					continue;
-				}
+//				if (function.getName().equals(analysis.getMainNode().getFunction().getName())) {
+//					funcSet.add(function);
+//					continue;
+//				}
 				TransformationEngine transformationEngine = TransformationEngine
 						.forAST(function.getAst());
 

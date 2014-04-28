@@ -386,6 +386,7 @@ public class ExprCaseHandler {
 		// handleColonCall(expr, gen);
 		// return;
 		// }
+		System.out.println(expr.getVarName());
 		gen.appendToPrettyCode(toXMLHead("fncall", expr.getVarName(), "fnname"));
 		VType vt = HelperClass.getExprType(expr, gen);
 		if (vt == null) {
@@ -404,7 +405,7 @@ public class ExprCaseHandler {
 	public static void handleFunCallExpr(NameExpr expr, VrirXmlGen gen) {
 		gen.appendToPrettyCode(toXMLHead("fncall", expr.getName().getID(),
 				"fnname"));
-		System.out.println("name  of function " + expr.getName().getID());
+		
 		VType vt = HelperClass.getExprType(expr, gen);
 		if (vt == null) {
 			throw new NullPointerException(

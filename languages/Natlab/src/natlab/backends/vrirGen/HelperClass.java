@@ -186,6 +186,7 @@ public class HelperClass {
 			if (row.getElementList().getNumChild() == 0) {
 				return new VoidType();
 			}
+			System.out.println("number of children" + row.getNumChild());
 			if (row.getNumChild() == 1) {
 
 				Expr expr = row.getElement(0);
@@ -442,13 +443,13 @@ public class HelperClass {
 			argList.add(new Arg(sym.getId(), false));
 		}
 
-//		for (int i = 0; i < outParamList.getNumChild(); i++) {
-//			Symbol sym = gen.getSymbol(outParamList.getChild(i).getID());
-//			if (sym == null) {
-//				throw new NullPointerException("Symbol not found");
-//			}
-//			argList.add(new Arg(sym.getId(), false));
-//		}
+		// for (int i = 0; i < outParamList.getNumChild(); i++) {
+		// Symbol sym = gen.getSymbol(outParamList.getChild(i).getID());
+		// if (sym == null) {
+		// throw new NullPointerException("Symbol not found");
+		// }
+		// argList.add(new Arg(sym.getId(), false));
+		// }
 
 		return argList;
 	}
