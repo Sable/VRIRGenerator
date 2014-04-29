@@ -187,7 +187,7 @@ public class HelperClass {
 				return new VoidType();
 			}
 			System.out.println("number of children" + row.getNumChild());
-			if (row.getNumChild() == 1) {
+			if (row.getElementList().getNumChild() == 1) {
 
 				Expr expr = row.getElement(0);
 
