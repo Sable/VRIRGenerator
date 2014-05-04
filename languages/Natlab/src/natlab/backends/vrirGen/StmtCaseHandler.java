@@ -90,6 +90,7 @@ public class StmtCaseHandler {
 	}
 
 	public static void handleReturnStmt(ReturnStmt node, VrirXmlGen gen) {
+		gen.setHasReturnStmt(true);
 		gen.appendToPrettyCode(toXMLHead("returnstmt"));
 		gen.appendToPrettyCode(HelperClass.toXML("exprs"));
 		for (Name rvar : gen.getFunctionNode().getOutputParamList()) {
@@ -109,7 +110,7 @@ public class StmtCaseHandler {
 					.toXML());
 			gen.appendToPrettyCode(ExprCaseHandler.toXMLTail());
 		}
-		
+
 		gen.appendToPrettyCode(HelperClass.toXML("/exprs"));
 		gen.appendToPrettyCode(toXMLTail());
 	}

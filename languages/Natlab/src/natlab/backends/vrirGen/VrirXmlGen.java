@@ -69,6 +69,7 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	final static public boolean onGPU = false;
 	private AnalysisEngine analysisEngine;
 	private Function functionNode;
+	private boolean hasReturnStmt = false;
 
 	VrirXmlGen(Function functionNode, Set<String> remainVars,
 			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis,
@@ -210,28 +211,33 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 			stmt.analyze(this);
 		}
 		if (node.getOutputParamList().getNumChild() > 0) {
-			this.appendToPrettyCode(StmtCaseHandler.toXMLHead("returnstmt"));
-			this.appendToPrettyCode(HelperClass.toXML("exprs"));
-			for (Name rvar : this.getFunctionNode().getOutputParamList()) {
-				if (!this.getSymTab().contains(rvar.getID())) {
-					VType vtype = HelperClass.generateVType(this.getAnalysis(),
-							this.getIndex(), rvar.getID());
-					this.getSymTab().putSymbol(vtype, rvar.getID());
+			if (!hasReturnStmt) {
+
+				this.appendToPrettyCode(StmtCaseHandler.toXMLHead("returnstmt"));
+				this.appendToPrettyCode(HelperClass.toXML("exprs"));
+				for (Name rvar : this.getFunctionNode().getOutputParamList()) {
+					if (!this.getSymTab().contains(rvar.getID())) {
+						VType vtype = HelperClass.generateVType(
+								this.getAnalysis(), this.getIndex(),
+								rvar.getID());
+						this.getSymTab().putSymbol(vtype, rvar.getID());
+					}
+					if (this.getSymbol(rvar.getID()) != null) {
+						this.appendToPrettyCode(ExprCaseHandler.toXMLHead(
+								"name", this.getSymbol(rvar.getID()).getId(),
+								"id"));
+					} else {
+						throw new NullPointerException("Symbol not found for "
+								+ rvar.getID());
+					}
+					this.appendToPrettyCode(this.getSymbol(rvar.getID())
+							.getVtype().toXML());
+					this.appendToPrettyCode(ExprCaseHandler.toXMLTail());
 				}
-				if (this.getSymbol(rvar.getID()) != null) {
-					this.appendToPrettyCode(ExprCaseHandler.toXMLHead("name",
-							this.getSymbol(rvar.getID()).getId(), "id"));
-				} else {
-					throw new NullPointerException("Symbol not found for "
-							+ rvar.getID());
-				}
-				this.appendToPrettyCode(this.getSymbol(rvar.getID()).getVtype()
-						.toXML());
-				this.appendToPrettyCode(ExprCaseHandler.toXMLTail());
+
+				this.appendToPrettyCode(HelperClass.toXML("/exprs"));
+				this.appendToPrettyCode(StmtCaseHandler.toXMLTail());
 			}
-			
-			this.appendToPrettyCode(HelperClass.toXML("/exprs"));
-			this.appendToPrettyCode(StmtCaseHandler.toXMLTail());
 		}
 		this.appendToPrettyCode(StmtCaseHandler.toListXMLTail());
 		this.appendToPrettyCode(HelperClass.toXML("/body"));
@@ -239,7 +245,16 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 		this.appendToPrettyCode(symTab.toXML());
 
 		FunctionCaseHandler.handleTail(node, this);
+		this.setHasReturnStmt(false);
 
+	}
+
+	public boolean isHasReturnStmt() {
+		return hasReturnStmt;
+	}
+
+	public void setHasReturnStmt(boolean hasReturnStmt) {
+		this.hasReturnStmt = hasReturnStmt;
 	}
 
 	public void caseAssignStmt(AssignStmt node) {
