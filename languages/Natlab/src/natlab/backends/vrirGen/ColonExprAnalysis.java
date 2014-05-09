@@ -1,6 +1,7 @@
 package natlab.backends.vrirGen;
 
 import java.io.File;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -8,6 +9,8 @@ import ast.ASTNode;
 import ast.AssignStmt;
 import ast.ColonExpr;
 import ast.Expr;
+import ast.FPLiteralExpr;
+import ast.IntLiteralExpr;
 import ast.List;
 import ast.Name;
 import ast.NameExpr;
@@ -16,6 +19,8 @@ import ast.Program;
 import ast.RangeExpr;
 import ast.Stmt;
 import natlab.CompilationProblem;
+import natlab.FPNumericLiteralValue;
+import natlab.IntNumericLiteralValue;
 import natlab.Parse;
 import natlab.toolkits.filehandling.GenericFile;
 import nodecases.natlab.NatlabAbstractNodeCaseHandler;
@@ -48,6 +53,7 @@ public class ColonExprAnalysis extends NatlabAbstractNodeCaseHandler {
 		List<Expr> args = arrayExpr.getArgList();
 		if (args.getIndexOfChild(node) < (args.getNumChild() - 1)) {
 			int colonIndex = args.getIndexOfChild(node);
+			@SuppressWarnings("rawtypes")
 			ASTNode parentNode = currStmt.getParent();
 			String colonTemp = tempName + tempNum++;
 			NameExpr lhsExpr = new NameExpr(new Name(colonTemp));
@@ -58,7 +64,13 @@ public class ColonExprAnalysis extends NatlabAbstractNodeCaseHandler {
 					(Expr) (new NameExpr(new Name("size"))), argList);
 			AssignStmt stmt = new AssignStmt(lhsExpr, rhsExpr);
 			parentNode.insertChild(stmt, parentNode.getIndexOfChild(currStmt));
+			RangeExpr rangeExpr = new RangeExpr();
+			Expr lower = new FPLiteralExpr(new FPNumericLiteralValue(
+					Integer.toString(1)));
 
+			rangeExpr.setLower(lower);
+			rangeExpr.setUpper(lhsExpr.fullCopy());
+			args.setChild(rangeExpr, colonIndex);
 		} else {
 			System.out.println("flatten array");
 		}
