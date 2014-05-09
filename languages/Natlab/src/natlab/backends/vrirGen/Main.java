@@ -8,9 +8,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
+
 import natlab.backends.vrirGen.WrapperGenFactory.TargetLang;
 //import natlab.backends.vrirGen.vrirCodeGen.CppCodeGen;
 import natlab.tame.BasicTamerTool;
+import natlab.tame.callgraph.SimpleFunctionCollection;
 import natlab.tame.callgraph.StaticFunction;
 import natlab.tame.tamerplus.analysis.AnalysisEngine;
 import natlab.tame.tamerplus.transformation.TransformationEngine;
@@ -36,18 +38,19 @@ public class Main {
 		 */
 		// String fileDir =
 		// "/home/sable/sjagda/mclab/calgo-benchmarks/694/Matlab/Sp/Src/";
-		String fileDir = "diff/";//"capr/";
+		String fileDir = "adpt/";//"capr/";
 
 		// String fileName = "drv_mbrt.m";
 		// String fileDir = File.separator + "home" + File.separator
 		// + "2012" + "sjagda" + File.separator + "mclab"
 		// + File.separator + "mbrt" + File.separator;
-		String fileName = "drv_diff.m";
+		String fileName = "drv_adpt.m";
 		String fileIn = fileDir + fileName;
 		File file= new File(fileIn);
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
 		FileEnvironment env = new FileEnvironment(gFile); // get path
 		// environment obj
+		SimpleFunctionCollection.convertColonToRange=true;
 		BasicTamerTool tool = new BasicTamerTool();
 		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = tool.analyze(
 				args, env);
