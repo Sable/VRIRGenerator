@@ -56,23 +56,26 @@ public class ColonExprAnalysis extends NatlabAbstractNodeCaseHandler {
 			@SuppressWarnings("rawtypes")
 			ASTNode parentNode = currStmt.getParent();
 			String colonTemp = tempName + tempNum++;
-			NameExpr lhsExpr = new NameExpr(new Name(colonTemp));
-			ast.List<Expr> argList = new ast.List<>();
-			argList.add(new NameExpr(new Name(arrayExpr.getVarName())));
-			argList.add(new NameExpr(new Name(Integer.toString(colonIndex + 1))));
-			ParameterizedExpr rhsExpr = new ParameterizedExpr(
-					(Expr) (new NameExpr(new Name("size"))), argList);
-			AssignStmt stmt = new AssignStmt(lhsExpr, rhsExpr);
+			// NameExpr lhsExpr = new NameExpr(new Name(colonTemp));
+			// ast.List<Expr> argList = new ast.List<>();
+			// argList.add(new NameExpr(new Name(arrayExpr.getVarName())));
+			// argList.add(new NameExpr(new Name(Integer.toString(colonIndex +
+			// 1))));
+			// ParameterizedExpr rhsExpr = new ParameterizedExpr(
+			// (Expr) (new NameExpr(new Name("size"))), argList);
+			// AssignStmt stmt = new AssignStmt(lhsExpr, rhsExpr);
+			AssignStmt stmt = genAssignStmt(node, colonIndex,
+					arrayExpr.getVarName(), colonTemp);
 			parentNode.insertChild(stmt, parentNode.getIndexOfChild(currStmt));
 			RangeExpr rangeExpr = new RangeExpr();
 			Expr lower = new FPLiteralExpr(new FPNumericLiteralValue(
 					Integer.toString(1)));
 
 			rangeExpr.setLower(lower);
-			rangeExpr.setUpper(lhsExpr.fullCopy());
+			rangeExpr.setUpper(new NameExpr(new Name(colonTemp)));
 			args.setChild(rangeExpr, colonIndex);
 		} else {
-			System.out.println("flatten array");
+
 		}
 		colonExprSet.add(node);
 		// caseExpr(node);
@@ -81,6 +84,19 @@ public class ColonExprAnalysis extends NatlabAbstractNodeCaseHandler {
 	public void caseStmt(Stmt node) {
 		currStmt = node;
 		caseFunctionOrSignatureOrPropertyAccessOrStmt(node);
+	}
+
+	public AssignStmt genAssignStmt(ColonExpr node, int colonIndex,
+			String arrayName, String colonTemp) {
+
+		NameExpr lhsExpr = new NameExpr(new Name(colonTemp));
+		ast.List<Expr> argList = new ast.List<>();
+		argList.add(new NameExpr(new Name(arrayName)));
+		argList.add(new NameExpr(new Name(Integer.toString(colonIndex + 1))));
+		ParameterizedExpr rhsExpr = new ParameterizedExpr((Expr) (new NameExpr(
+				new Name("size"))), argList);
+		AssignStmt stmt = new AssignStmt(lhsExpr, rhsExpr);
+		return stmt;
 	}
 
 	public static void analyze(Program program) {
