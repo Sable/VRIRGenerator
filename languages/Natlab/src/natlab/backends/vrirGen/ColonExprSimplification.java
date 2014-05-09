@@ -24,7 +24,7 @@ import natlab.Parse;
 import natlab.toolkits.filehandling.GenericFile;
 import nodecases.natlab.NatlabAbstractNodeCaseHandler;
 
-public class ColonExprAnalysis extends NatlabAbstractNodeCaseHandler {
+public class ColonExprSimplification extends NatlabAbstractNodeCaseHandler {
 	private Stmt currStmt = null;
 	private final String tempName = "dim_temp";
 	private int tempNum = 1;
@@ -156,7 +156,7 @@ public class ColonExprAnalysis extends NatlabAbstractNodeCaseHandler {
 	}
 
 	public static void analyze(Program program) {
-		ColonExprAnalysis colonAnalysis = new ColonExprAnalysis();
+		ColonExprSimplification colonAnalysis = new ColonExprSimplification();
 		program.analyze(colonAnalysis);
 		
 	}
@@ -170,7 +170,7 @@ public class ColonExprAnalysis extends NatlabAbstractNodeCaseHandler {
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
 		Program program = Parse.parseMatlabFile(gFile,
 				new ArrayList<CompilationProblem>());
-		ColonExprAnalysis.analyze(program);
+		ColonExprSimplification.analyze(program);
 		System.out.println(program.getPrettyPrinted());
 	}
 

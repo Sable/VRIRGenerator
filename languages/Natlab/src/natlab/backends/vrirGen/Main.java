@@ -38,7 +38,7 @@ public class Main {
 		 */
 		// String fileDir =
 		// "/home/sable/sjagda/mclab/calgo-benchmarks/694/Matlab/Sp/Src/";
-		String fileDir = "adpt/";//"capr/";
+		String fileDir = "adpt/";// "capr/";
 
 		// String fileName = "drv_mbrt.m";
 		// String fileDir = File.separator + "home" + File.separator
@@ -46,11 +46,11 @@ public class Main {
 		// + File.separator + "mbrt" + File.separator;
 		String fileName = "drv_adpt.m";
 		String fileIn = fileDir + fileName;
-		File file= new File(fileIn);
+		File file = new File(fileIn);
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
 		FileEnvironment env = new FileEnvironment(gFile); // get path
 		// environment obj
-		SimpleFunctionCollection.convertColonToRange=true;
+		SimpleFunctionCollection.convertColonToRange = true;
 		BasicTamerTool tool = new BasicTamerTool();
 		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = tool.analyze(
 				args, env);
@@ -66,7 +66,7 @@ public class Main {
 		VrirTypeMapper.initTypeMap();
 
 		HashSet<StaticFunction> funcSet = new HashSet<StaticFunction>();
-		
+
 		for (int i = 0; i < size; i++) {
 			StringBuffer sb;
 			/*
@@ -81,11 +81,12 @@ public class Main {
 			 */
 			StaticFunction function = analysis.getNodeList().get(i)
 					.getFunction();
-			
+
 			System.out.println("Analysis function  " + function.getName());
 			if (!funcSet.contains(function)) {
-			
-				if (function.getName().equals(analysis.getMainNode().getFunction().getName())) {
+
+				if (function.getName().equals(
+						analysis.getMainNode().getFunction().getName())) {
 					funcSet.add(function);
 					continue;
 				}
@@ -109,7 +110,8 @@ public class Main {
 							analysisEngine);
 					genXML.append(sb);
 				} catch (RuntimeException e) {
-					System.out.println("did not work for " + function.getName());
+					System.out
+							.println("did not work for " + function.getName());
 					System.out.println(fTree.getPrettyPrinted());
 					e.printStackTrace();
 					System.exit(0);
