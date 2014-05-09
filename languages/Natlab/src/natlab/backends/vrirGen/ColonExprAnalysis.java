@@ -1,16 +1,13 @@
 package natlab.backends.vrirGen;
 
 import java.io.File;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
-
 import ast.ASTNode;
 import ast.AssignStmt;
 import ast.ColonExpr;
 import ast.Expr;
 import ast.FPLiteralExpr;
-import ast.IntLiteralExpr;
 import ast.List;
 import ast.Name;
 import ast.NameExpr;
@@ -20,7 +17,6 @@ import ast.RangeExpr;
 import ast.Stmt;
 import natlab.CompilationProblem;
 import natlab.FPNumericLiteralValue;
-import natlab.IntNumericLiteralValue;
 import natlab.Parse;
 import natlab.toolkits.filehandling.GenericFile;
 import nodecases.natlab.NatlabAbstractNodeCaseHandler;
@@ -56,23 +52,10 @@ public class ColonExprAnalysis extends NatlabAbstractNodeCaseHandler {
 			@SuppressWarnings("rawtypes")
 			ASTNode parentNode = currStmt.getParent();
 			String colonTemp = tempName + tempNum++;
-			// NameExpr lhsExpr = new NameExpr(new Name(colonTemp));
-			// ast.List<Expr> argList = new ast.List<>();
-			// argList.add(new NameExpr(new Name(arrayExpr.getVarName())));
-			// argList.add(new NameExpr(new Name(Integer.toString(colonIndex +
-			// 1))));
-			// ParameterizedExpr rhsExpr = new ParameterizedExpr(
-			// (Expr) (new NameExpr(new Name("size"))), argList);
-			// AssignStmt stmt = new AssignStmt(lhsExpr, rhsExpr);
 			AssignStmt stmt = genAssignStmt(node, colonIndex,
 					arrayExpr.getVarName(), colonTemp);
 			parentNode.insertChild(stmt, parentNode.getIndexOfChild(currStmt));
-			RangeExpr rangeExpr = new RangeExpr();
-			Expr lower = new FPLiteralExpr(new FPNumericLiteralValue(
-					Integer.toString(1)));
-
-			rangeExpr.setLower(lower);
-			rangeExpr.setUpper(new NameExpr(new Name(colonTemp)));
+			RangeExpr rangeExpr = genRangeExr(node, colonIndex, colonTemp);
 			args.setChild(rangeExpr, colonIndex);
 		} else {
 
@@ -84,6 +67,17 @@ public class ColonExprAnalysis extends NatlabAbstractNodeCaseHandler {
 	public void caseStmt(Stmt node) {
 		currStmt = node;
 		caseFunctionOrSignatureOrPropertyAccessOrStmt(node);
+	}
+
+	public RangeExpr genRangeExr(ColonExpr node, int colonIndex,
+			String colonTemp) {
+		ASTNode parentNode = currStmt.getParent();
+		RangeExpr rangeExpr = new RangeExpr();
+		Expr lower = new FPLiteralExpr(new FPNumericLiteralValue(
+				Integer.toString(1)));
+		rangeExpr.setLower(lower);
+		rangeExpr.setUpper(new NameExpr(new Name(colonTemp)));
+		return rangeExpr;
 	}
 
 	public AssignStmt genAssignStmt(ColonExpr node, int colonIndex,
