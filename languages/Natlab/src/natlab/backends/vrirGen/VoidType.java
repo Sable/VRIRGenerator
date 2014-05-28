@@ -1,6 +1,5 @@
 package natlab.backends.vrirGen;
 
-import natlab.backends.x10.codegen.Helper;
 
 public class VoidType extends VType {
 

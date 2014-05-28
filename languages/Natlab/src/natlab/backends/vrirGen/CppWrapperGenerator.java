@@ -1,7 +1,5 @@
 package natlab.backends.vrirGen;
 
-import java.util.ArrayList;
-
 import natlab.tame.callgraph.StaticFunction;
 import natlab.tame.classes.reference.PrimitiveClassReference;
 
