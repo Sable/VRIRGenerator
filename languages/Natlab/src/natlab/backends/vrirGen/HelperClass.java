@@ -2,6 +2,16 @@ package natlab.backends.vrirGen;
 
 import java.util.ArrayList;
 
+import natlab.tame.builtin.Builtin;
+import natlab.tame.callgraph.StaticFunction;
+import natlab.tame.classes.reference.PrimitiveClassReference;
+import natlab.tame.valueanalysis.ValueAnalysis;
+import natlab.tame.valueanalysis.aggrvalue.AggrValue;
+import natlab.tame.valueanalysis.aggrvalue.CellValue;
+import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
+import natlab.tame.valueanalysis.components.shape.DimValue;
+import natlab.tame.valueanalysis.components.shape.Shape;
+import natlab.tame.valueanalysis.value.Value;
 import ast.AssignStmt;
 import ast.ColonExpr;
 import ast.Expr;
@@ -14,16 +24,6 @@ import ast.Name;
 import ast.NameExpr;
 import ast.ParameterizedExpr;
 import ast.Row;
-import natlab.tame.builtin.Builtin;
-import natlab.tame.callgraph.StaticFunction;
-import natlab.tame.classes.reference.PrimitiveClassReference;
-import natlab.tame.valueanalysis.ValueAnalysis;
-import natlab.tame.valueanalysis.aggrvalue.AggrValue;
-import natlab.tame.valueanalysis.aggrvalue.CellValue;
-import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
-import natlab.tame.valueanalysis.components.shape.DimValue;
-import natlab.tame.valueanalysis.components.shape.Shape;
-import natlab.tame.valueanalysis.value.Value;
 
 public class HelperClass {
 
