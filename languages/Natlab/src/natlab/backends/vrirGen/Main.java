@@ -36,8 +36,8 @@ public class Main {
 		 * pass the type info of the input argument to the program, currently,
 		 * the type info is composed like double&3*3&REAL.
 		 */
-		String fileDir = "adpt/";
-		String fileName = "drv_adpt.m";
+		String fileDir = "crni/";
+		String fileName = "drv_crni.m";
 		String fileIn = fileDir + fileName;
 		File file = new File(fileIn);
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
@@ -45,6 +45,7 @@ public class Main {
 		// environment obj
 		SimpleFunctionCollection.convertColonToRange = true;
 		BasicTamerTool tool = new BasicTamerTool();
+		tool.setDoIntOk(false);
 		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = tool.analyze(
 				args, env);
 		int size = analysis.getNodeList().size();

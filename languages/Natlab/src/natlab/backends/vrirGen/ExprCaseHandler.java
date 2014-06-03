@@ -145,8 +145,6 @@ public class ExprCaseHandler {
 		for (Expr expr : node.getArgList()) {
 			VType vt = HelperClass.getExprType(expr, gen);
 			if (vt instanceof VTypeMatrix) {
-				if (((VTypeMatrix) vt).getShape().getDimensions().size() == 2) {
-
 					DimValue dim1 = ((VTypeMatrix) vt).getShape()
 							.getDimensions().get(0);
 					DimValue dim2 = ((VTypeMatrix) vt).getShape()
@@ -160,10 +158,6 @@ public class ExprCaseHandler {
 						flag = true;
 						break;
 					}
-				} else {
-
-					// System.out.println("op name " + node.getVarName());
-				}
 			}
 		}
 		if (flag && LibFuncMapper.containsFunc(node.getVarName())) {
@@ -641,9 +635,8 @@ public class ExprCaseHandler {
 		// gen.appendToPrettyCode(HelperClass.toXML("/base"));
 		VType vt = sym.getVtype();
 		if (vt instanceof VTypeMatrix) {
-			if (HelperClass.isScalar(((VTypeMatrix) vt).getShape()
-					.getDimensions())) {
-				gen.appendToPrettyCode(((VTypeMatrix) vt).toXML());
+			if (HelperClass.isScalar(expr,gen)) {
+				gen.appendToPrettyCode(((VTypeMatrix) vt).toXML(true));
 			} else {
 				gen.appendToPrettyCode(sym.getVtype().toXML());
 			}
@@ -653,7 +646,7 @@ public class ExprCaseHandler {
 		gen.appendToPrettyCode(HelperClass.toXML("indices"));
 
 		for (Expr arg : expr.getArgList()) {
-
+	
 			gen.appendToPrettyCode(HelperClass
 					.toXML("index boundscheck=\"1\" negative=\"0\""));
 			if (arg instanceof ParameterizedExpr) {

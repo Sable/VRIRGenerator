@@ -163,8 +163,8 @@ public class ColonExprSimplification extends NatlabAbstractNodeCaseHandler {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		String fileDir = "";// "capr/";
-		String fileName = "simple.m";
+		String fileDir = "adpt/";// "capr/";
+		String fileName = "adapt.m";
 		String fileIn = fileDir + fileName;
 		File file = new File(fileIn);
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
