@@ -109,7 +109,7 @@ public class StmtCaseHandler {
 					.toXML());
 			gen.appendToPrettyCode(ExprCaseHandler.toXMLTail());
 		}
-		
+
 		gen.appendToPrettyCode(HelperClass.toXML("/exprs"));
 		gen.appendToPrettyCode(toXMLTail());
 	}
@@ -132,12 +132,13 @@ public class StmtCaseHandler {
 			gen.appendToPrettyCode(HelperClass.toXML("/if"));
 
 		}
-		if (node.hasElseBlock()) {
+		if (node.hasElseBlock() && node.getElseBlock().getStmtList().getNumChild() > 0) {
 			gen.appendToPrettyCode(HelperClass.toXML("else"));
-
+			gen.appendToPrettyCode(toListXMLHead(false));
 			for (Stmt stmt : node.getElseBlock().getStmtList()) {
 				stmt.analyze(gen);
 			}
+			gen.appendToPrettyCode(toListXMLTail());
 			gen.appendToPrettyCode(HelperClass.toXML("/else"));
 		}
 		gen.appendToPrettyCode(toXMLTail());

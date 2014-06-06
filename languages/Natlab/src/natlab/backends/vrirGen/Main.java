@@ -12,6 +12,7 @@ import java.util.Set;
 import natlab.backends.vrirGen.WrapperGenFactory.TargetLang;
 //import natlab.backends.vrirGen.vrirCodeGen.CppCodeGen;
 import natlab.tame.BasicTamerTool;
+import natlab.tame.callgraph.SimpleFunctionCollection;
 import natlab.tame.callgraph.StaticFunction;
 import natlab.tame.tamerplus.analysis.AnalysisEngine;
 import natlab.tame.tamerplus.transformation.TransformationEngine;
@@ -35,42 +36,32 @@ public class Main {
 		 * pass the type info of the input argument to the program, currently,
 		 * the type info is composed like double&3*3&REAL.
 		 */
-		// String fileDir =
-		// "/home/sable/sjagda/mclab/calgo-benchmarks/694/Matlab/Sp/Src/";
-		String fileDir = "";//"capr/";
-
-		// String fileName = "drv_mbrt.m";
-		// String fileDir = File.separator + "home" + File.separator
-		// + "2012" + "sjagda" + File.separator + "mclab"
-		// + File.separator + "mbrt" + File.separator;
-		String fileName = "simple.m";
+		String fileDir = "crni/";
+		String fileName = "drv_crni.m";
 		String fileIn = fileDir + fileName;
-		File file= new File(fileIn);
+		File file = new File(fileIn);
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
 		FileEnvironment env = new FileEnvironment(gFile); // get path
 		// environment obj
+		SimpleFunctionCollection.convertColonToRange = true;
 		BasicTamerTool tool = new BasicTamerTool();
+		tool.setDoIntOk(false);
 		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = tool.analyze(
 				args, env);
-
 		int size = analysis.getNodeList().size();
 		WrapperGenerator wrapper = WrapperGenFactory.getWrapperGen(
 				TargetLang.Cpp, analysis.getMainNode().getFunction());
-
 		StringBuffer genXML = new StringBuffer();
 		VrirXmlGen.genModuleXMLHead(genXML, fileName.split("\\.")[0]);
 		genXML.append(HelperClass.toXML("fns"));
 		OperatorMapper.initMap();
 		VrirTypeMapper.initTypeMap();
-
 		HashSet<StaticFunction> funcSet = new HashSet<StaticFunction>();
-		
 		for (int i = 0; i < size; i++) {
 			StringBuffer sb;
 			/*
 			 * type inference.
 			 */
-
 			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet = analysis
 					.getNodeList().get(i).getAnalysis().getCurrentOutSet();
 
@@ -79,14 +70,14 @@ public class Main {
 			 */
 			StaticFunction function = analysis.getNodeList().get(i)
 					.getFunction();
-			
 			System.out.println("Analysis function  " + function.getName());
 			if (!funcSet.contains(function)) {
-			
-//				if (function.getName().equals(analysis.getMainNode().getFunction().getName())) {
-//					funcSet.add(function);
-//					continue;
-//				}
+
+				if (function.getName().equals(
+						analysis.getMainNode().getFunction().getName())) {
+					funcSet.add(function);
+					continue;
+				}
 				TransformationEngine transformationEngine = TransformationEngine
 						.forAST(function.getAst());
 
@@ -107,13 +98,12 @@ public class Main {
 							analysisEngine);
 					genXML.append(sb);
 				} catch (RuntimeException e) {
-					System.out.println("did not work for " + function.getName());
+					System.out
+							.println("did not work for " + function.getName());
 					System.out.println(fTree.getPrettyPrinted());
 					e.printStackTrace();
 					System.exit(0);
 				}
-				// genXML.append(sb);
-
 			}
 			funcSet.add(function);
 		}
@@ -121,33 +111,14 @@ public class Main {
 
 		VrirXmlGen.genModuleXMLTail(genXML);
 		System.out.println(" print the generated VRIR in XML format  .\n");
-		// System.err.println(genXML);
 		System.out.println("main function "
 				+ analysis.getMainNode().getFunction().getName());
 		System.out.println(wrapper.genWrapper());
-		// System.setProperty(
-		// "java.library.path",
-		// System.getProperty("java.library.path")
-		// +
-		// ":/home/2012/sjagda/mclab/languages/Natlab/src/natlab/backends/vrirGen/vrirCodeGen/jni/");
-		// System.out.println("library path"
-		// + System.getProperty("java.library.path"));
-
-		// String str = new CppCodeGen().genCode(genXML.toString());
-		// System.out.println(str);
-		// String str = new CppCodeGen().genCode(genXML.toString());
-
 		try {
-
 			BufferedWriter buffer = Files.newBufferedWriter(
 					Paths.get(fileName.split("\\.")[0] + ".xml"),
 					Charset.forName("US-ASCII"));
-			// buffer.write(genXML.toString());
-			// BufferedWriter buffer = Files.newBufferedWriter(
-			// Paths.get(fileName.split("\\.")[0] + ".xml"),
-			// Charset.forName("US-ASCII"));
 			buffer.write(genXML.toString());
-			// buffer.write(str);
 			buffer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
