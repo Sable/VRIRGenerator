@@ -23,7 +23,7 @@ public class OperatorMapper {
 		opMap.put("ge", "geq");
 		opMap.put("lt", "lt");
 		opMap.put("gt", "gt");
-		opMap.put("le", "lt");
+		opMap.put("lt", "lt");
 		// TODO: need to check all divisions and then add them
 		// TODO: check equivalents for Unary operators
 		opMap.put("uplus", "");

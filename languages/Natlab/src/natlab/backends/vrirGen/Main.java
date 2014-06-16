@@ -32,14 +32,16 @@ public class Main {
 		/**
 		 * This main method is just for testing, doesn't follow the convention
 		 * when passing a file to a program, please replace "fileDir and fileIn"
-		 * below with your real testing file directory and its name, and you can
+		 * below with your real testing file directory and its 
+		 * name, and you can
 		 * pass the type info of the input argument to the program, currently,
 		 * the type info is composed like double&3*3&REAL.
 		 */
-		String fileDir = "crni/";
-		String fileName = "drv_crni.m";
+		String fileDir = "";
+		String fileName = "simple.m";
 		String fileIn = fileDir + fileName;
 		File file = new File(fileIn);
+		//System.out.println(file.getAbsolutePath());
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
 		FileEnvironment env = new FileEnvironment(gFile); // get path
 		// environment obj
