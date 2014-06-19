@@ -11,7 +11,7 @@ import ast.Name;
 public class FunctionCaseHandler {
 	public static void handleHeader(Function node, VrirXmlGen gen) {
 		gen.appendToPrettyCode(HelperClass.toXML("function name=\""
-				+ node.getName() + "\" "));
+				+ node.getName().getID() + "\" "));
 		handleParams(node, gen);
 		handleArgs(node, gen);
 
