@@ -133,12 +133,13 @@ public class StmtCaseHandler {
 			gen.appendToPrettyCode(HelperClass.toXML("/if"));
 
 		}
-		if (node.hasElseBlock()) {
+		if (node.hasElseBlock() && node.getElseBlock().getStmtList().getNumChild() > 0) {
 			gen.appendToPrettyCode(HelperClass.toXML("else"));
-
+			gen.appendToPrettyCode(toListXMLHead(false));
 			for (Stmt stmt : node.getElseBlock().getStmtList()) {
 				stmt.analyze(gen);
 			}
+			gen.appendToPrettyCode(toListXMLTail());
 			gen.appendToPrettyCode(HelperClass.toXML("/else"));
 		}
 		gen.appendToPrettyCode(toXMLTail());

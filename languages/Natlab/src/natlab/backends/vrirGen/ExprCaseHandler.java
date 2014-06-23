@@ -2,6 +2,7 @@ package natlab.backends.vrirGen;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import natlab.tame.classes.reference.PrimitiveClassReference;
 import natlab.tame.valueanalysis.aggrvalue.AggrValue;
 import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
@@ -144,8 +145,6 @@ public class ExprCaseHandler {
 		for (Expr expr : node.getArgList()) {
 			VType vt = HelperClass.getExprType(expr, gen);
 			if (vt instanceof VTypeMatrix) {
-				if (((VTypeMatrix) vt).getShape().getDimensions().size() == 2) {
-
 					DimValue dim1 = ((VTypeMatrix) vt).getShape()
 							.getDimensions().get(0);
 					DimValue dim2 = ((VTypeMatrix) vt).getShape()
@@ -159,10 +158,6 @@ public class ExprCaseHandler {
 						flag = true;
 						break;
 					}
-				} else {
-
-					// System.out.println("op name " + node.getVarName());
-				}
 			}
 		}
 		if (flag && LibFuncMapper.containsFunc(node.getVarName())) {
@@ -349,6 +344,8 @@ public class ExprCaseHandler {
 					field = "dval";
 				} else if (((VTypeMatrix) vt).getType() == PrimitiveClassReference.SINGLE) {
 					field = "fval";
+				} else if(((VTypeMatrix) vt).getType() == PrimitiveClassReference.INT64){
+					field = "ival";
 				} else {
 					throw new UnsupportedOperationException(
 							"cant identify type" + ((VTypeMatrix) vt).getType());
@@ -421,82 +418,83 @@ public class ExprCaseHandler {
 	public static void handleColonExpr(ColonExpr node, VrirXmlGen gen) {
 		// System.out.println("in colon expression : Parent "
 		// + node.getParent().getParent());
-		if (node.getParent().getParent() instanceof ParameterizedExpr) {
-			ParameterizedExpr arrayExpr = (ParameterizedExpr) node.getParent()
-					.getParent();
-			int colonPos = Integer.MIN_VALUE;
-			for (int i = 0; i < arrayExpr.getArgList().getNumChild(); i++) {
-				if (arrayExpr.getArg(i) instanceof ColonExpr) {
-					colonPos = i;
-					break;
-				}
-			}
-			if (colonPos == Integer.MIN_VALUE) {
-				throw new RuntimeException(
-						"Colon Expression not found in array");
-			}
-			VType vt = gen.getSymbol(arrayExpr.getVarName()).getVtype();
-			if (vt == null) {
-				throw new NullPointerException(
-						"no entry of array in symbol table");
-			}
-			int end = 1;
-
-			if (vt instanceof VTypeMatrix) {
-				int ndims = ((VTypeMatrix) vt).getShape().getDimensions()
-						.size();
-				if (((VTypeMatrix) vt).getShape().getDimensions().get(colonPos) == null) {
-					throw new NullPointerException("Dimension is not known");
-				}
-				if (((VTypeMatrix) vt).getShape().getDimensions().get(colonPos)
-						.hasIntValue()) {
-					end = ((VTypeMatrix) vt).getShape().getDimensions()
-							.get(colonPos).getIntValue();
-				}
-				if (ndims > arrayExpr.getArgList().getNumChild()
-						&& (colonPos == arrayExpr.getNumChild() - 1)) {
-					for (int i = colonPos + 1; i < ndims; i++) {
-						DimValue val = ((VTypeMatrix) vt).getShape()
-								.getDimensions().get(i);
-						if (val == null) {
-							throw new NullPointerException(
-									"Dimension not known " + i);
-						}
-						end *= ((VTypeMatrix) vt).getShape().getDimensions()
-								.get(i).getIntValue();
-					}
-				}
-			} else {
-				throw new UnsupportedOperationException(
-						"VType class is not VTypeMatrix but instead is "
-								+ vt.getClass()
-								+ ". This is not currently supported");
-			}
-			List<DimValue> list = new ArrayList<DimValue>();
-			list.add(new DimValue(1, null));
-			list.add(new DimValue(1, null));
-			Shape<AggrValue<BasicMatrixValue>> shape = new Shape<AggrValue<BasicMatrixValue>>(
-					list);
-			VType vtype = new VTypeMatrix(shape, PrimitiveClassReference.INT64,
-					VTypeMatrix.Layout.COLUMN_MAJOR, "real");
-
-			gen.appendToPrettyCode(HelperClass.toXML("range"));
-
-			gen.appendToPrettyCode(HelperClass.toXML("start"));
-			gen.appendToPrettyCode(toXMLHead("realconst", "0", "ival"));
-			gen.appendToPrettyCode(vtype.toXML());
-			gen.appendToPrettyCode(toXMLTail());
-			gen.appendToPrettyCode(HelperClass.toXML("/start"));
-			gen.appendToPrettyCode(HelperClass.toXML("stop"));
-			gen.appendToPrettyCode(toXMLHead("realconst",
-					Integer.toString(end), "ival"));
-			gen.appendToPrettyCode(vtype.toXML());
-			gen.appendToPrettyCode(toXMLTail());
-			gen.appendToPrettyCode(HelperClass.toXML("/stop"));
-
-			gen.appendToPrettyCode(HelperClass.toXML("/range"));
-
-		}
+//		if (node.getParent().getParent() instanceof ParameterizedExpr) {
+//			ParameterizedExpr arrayExpr = (ParameterizedExpr) node.getParent()
+//					.getParent();
+//			int colonPos = Integer.MIN_VALUE;
+//			for (int i = 0; i < arrayExpr.getArgList().getNumChild(); i++) {
+//				if (arrayExpr.getArg(i) instanceof ColonExpr) {
+//					colonPos = i;
+//					break;
+//				}
+//			}
+//			if (colonPos == Integer.MIN_VALUE) {
+//				throw new RuntimeException(
+//						"Colon Expression not found in array");
+//			}
+//			VType vt = gen.getSymbol(arrayExpr.getVarName()).getVtype();
+//			if (vt == null) {
+//				throw new NullPointerException(
+//						"no entry of array in symbol table");
+//			}
+//			int end = 1;
+//
+//			if (vt instanceof VTypeMatrix) {
+//				int ndims = ((VTypeMatrix) vt).getShape().getDimensions()
+//						.size();
+//				if (((VTypeMatrix) vt).getShape().getDimensions().get(colonPos) == null) {
+//					throw new NullPointerException("Dimension is not known");
+//				}
+//				if (((VTypeMatrix) vt).getShape().getDimensions().get(colonPos)
+//						.hasIntValue()) {
+//					end = ((VTypeMatrix) vt).getShape().getDimensions()
+//							.get(colonPos).getIntValue();
+//				}
+//				if (ndims > arrayExpr.getArgList().getNumChild()
+//						&& (colonPos == arrayExpr.getNumChild() - 1)) {
+//					for (int i = colonPos + 1; i < ndims; i++) {
+//						DimValue val = ((VTypeMatrix) vt).getShape()
+//								.getDimensions().get(i);
+//						if (val == null) {
+//							throw new NullPointerException(
+//									"Dimension not known " + i);
+//						}
+//						end *= ((VTypeMatrix) vt).getShape().getDimensions()
+//								.get(i).getIntValue();
+//					}
+//				}
+//			} else {
+//				throw new UnsupportedOperationException(
+//						"VType class is not VTypeMatrix but instead is "
+//								+ vt.getClass()
+//								+ ". This is not currently supported");
+//			}
+//			List<DimValue> list = new ArrayList<DimValue>();
+//			list.add(new DimValue(1, null));
+//			list.add(new DimValue(1, null));
+//			Shape<AggrValue<BasicMatrixValue>> shape = new Shape<AggrValue<BasicMatrixValue>>(
+//					list);
+//			VType vtype = new VTypeMatrix(shape, PrimitiveClassReference.INT64,
+//					VTypeMatrix.Layout.COLUMN_MAJOR, "real");
+//
+//			gen.appendToPrettyCode(HelperClass.toXML("range"));
+//
+//			gen.appendToPrettyCode(HelperClass.toXML("start"));
+//			gen.appendToPrettyCode(toXMLHead("realconst", "0", "ival"));
+//			gen.appendToPrettyCode(vtype.toXML());
+//			gen.appendToPrettyCode(toXMLTail());
+//			gen.appendToPrettyCode(HelperClass.toXML("/start"));
+//			gen.appendToPrettyCode(HelperClass.toXML("stop"));
+//			gen.appendToPrettyCode(toXMLHead("realconst",
+//					Integer.toString(end), "ival"));
+//			gen.appendToPrettyCode(vtype.toXML());
+//			gen.appendToPrettyCode(toXMLTail());
+//			gen.appendToPrettyCode(HelperClass.toXML("/stop"));
+//
+//			gen.appendToPrettyCode(HelperClass.toXML("/range"));
+//
+//		}
+		throw new UnsupportedOperationException("Colon be baddd");
 	}
 
 	public static void handleColonCall(ParameterizedExpr expr, VrirXmlGen gen) {
@@ -637,9 +635,8 @@ public class ExprCaseHandler {
 		// gen.appendToPrettyCode(HelperClass.toXML("/base"));
 		VType vt = sym.getVtype();
 		if (vt instanceof VTypeMatrix) {
-			if (HelperClass.isScalar(((VTypeMatrix) vt).getShape()
-					.getDimensions())) {
-				gen.appendToPrettyCode(((VTypeMatrix) vt).toXML());
+			if (HelperClass.isScalar(expr,gen)) {
+				gen.appendToPrettyCode(((VTypeMatrix) vt).toXML(true));
 			} else {
 				gen.appendToPrettyCode(sym.getVtype().toXML());
 			}
@@ -649,7 +646,7 @@ public class ExprCaseHandler {
 		gen.appendToPrettyCode(HelperClass.toXML("indices"));
 
 		for (Expr arg : expr.getArgList()) {
-
+	
 			gen.appendToPrettyCode(HelperClass
 					.toXML("index boundscheck=\"1\" negative=\"0\""));
 			if (arg instanceof ParameterizedExpr) {
