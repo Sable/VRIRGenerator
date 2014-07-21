@@ -37,8 +37,8 @@ public class Main {
 		 * pass the type info of the input argument to the program, currently,
 		 * the type info is composed like double&3*3&REAL.
 		 */
-		String fileDir = "";
-		String fileName = "simple.m";
+		String fileDir = "fft/";
+		String fileName = "drv_fft.m";
 		String fileIn = fileDir + fileName;
 		File file = new File(fileIn);
 		//System.out.println(file.getAbsolutePath());
