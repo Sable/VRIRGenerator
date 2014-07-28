@@ -282,7 +282,6 @@ public class HelperClass {
 	}
 
 	public static VType getLhsType(ParameterizedExpr lhsExpr, VrirXmlGen gen) {
-		System.out.println("skjdhaskjdahslkdhaskldh" + lhsExpr.getVarName());
 		AggrValue<?> val = gen.getAnalysis().getNodeList().get(gen.getIndex())
 				.getAnalysis().getCurrentOutSet().get(lhsExpr.getVarName())
 				.getSingleton();
