@@ -15,7 +15,7 @@ public class OperatorMapper {
 		opMap.put("times", "mult");
 		opMap.put("mrdivide", "mrdiv");
 		opMap.put("mldivide", "mldiv");
-		opMap.put("and", "and");
+		//opMap.put("and", "and");
 		opMap.put("or", "or");
 		// TODO : to be entered
 		opMap.put("eq", "eq");

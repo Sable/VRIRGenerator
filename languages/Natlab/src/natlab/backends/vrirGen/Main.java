@@ -38,8 +38,8 @@ public class Main {
 		 * the type info is composed like double&3*3&REAL.
 		 */
 
-		String fileDir = "fft/";
-		String fileName = "drv_fft.m";
+		String fileDir = "mbrt/";
+		String fileName = "drv_mbrt.m";
 
 		String fileIn = fileDir + fileName;
 		File file = new File(fileIn);
