@@ -221,7 +221,6 @@ public class HelperClass {
 	}
 
 	public static VType getExprType(Expr expr, VrirXmlGen gen) {
-
 		if (expr instanceof NameExpr
 				&& isVar(gen, ((NameExpr) expr).getName().getID())) {
 
@@ -242,8 +241,10 @@ public class HelperClass {
 						((ParameterizedExpr) expr).getVarName());
 			}
 		}
+		System.out.println("Parent Expression" + expr.getParent());
 		if (expr.getParent() instanceof AssignStmt) {
 			Expr lhsExpr = ((AssignStmt) expr.getParent()).getLHS();
+			System.out.println("lhsExpr" + lhsExpr);
 			if (lhsExpr instanceof MatrixExpr) {
 				return getLhsType((MatrixExpr) lhsExpr, gen);
 			} else if (lhsExpr instanceof NameExpr) {

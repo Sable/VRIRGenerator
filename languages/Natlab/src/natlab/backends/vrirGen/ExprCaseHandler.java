@@ -17,6 +17,7 @@ import ast.NameExpr;
 import ast.ParameterizedExpr;
 import ast.RangeExpr;
 import ast.ShortCircuitAndExpr;
+import ast.ShortCircuitOrExpr;
 import ast.StringLiteralExpr;
 
 public class ExprCaseHandler {
@@ -47,8 +48,24 @@ public class ExprCaseHandler {
 
 	public static void handleShortCircuitAndExpr(ShortCircuitAndExpr node,
 			VrirXmlGen gen) {
-		System.out.println("Here");
+		
 		gen.appendToPrettyCode(ExprCaseHandler.toXMLHead("and"));
+		VType vt = HelperClass.getExprType(node, gen);
+		gen.appendToPrettyCode(vt.toXML());
+		gen.appendToPrettyCode(HelperClass.toXML("lhs"));
+		node.getLHS().analyze(gen);
+		gen.appendToPrettyCode(HelperClass.toXML("/lhs"));
+		gen.appendToPrettyCode(HelperClass.toXML("rhs"));
+		node.getRHS().analyze(gen);
+		gen.appendToPrettyCode(HelperClass.toXML("/rhs"));
+		gen.appendToPrettyCode(ExprCaseHandler.toXMLTail());
+	}
+
+	public static void handleShortCircuitOrExpr(ShortCircuitOrExpr node,
+			VrirXmlGen gen) {
+		gen.appendToPrettyCode(ExprCaseHandler.toXMLHead("or"));
+		VType vt = HelperClass.getExprType(node, gen);
+		gen.appendToPrettyCode(vt.toXML());
 		gen.appendToPrettyCode(HelperClass.toXML("lhs"));
 		node.getLHS().analyze(gen);
 		gen.appendToPrettyCode(HelperClass.toXML("/lhs"));
