@@ -33,7 +33,7 @@ public class ExprCaseHandler {
 				// Binary operator
 				ExprCaseHandler.handleOpExpr(node, gen,
 						OperatorMapper.get(node.getVarName()));
-				// ExprCaseHandler.handlePlusExpr(node, this);
+				
 
 			}
 			// Function Call
@@ -201,16 +201,14 @@ public class ExprCaseHandler {
 
 	public static void handleMatrixExpr(MatrixExpr node, VrirXmlGen gen) {
 		if (node.getRows().getNumChild() > 1) {
-			throw new UnsupportedOperationException("Multiple rows not supported");
+			throw new UnsupportedOperationException(
+					"Multiple rows not supported");
 		}
 		// for a single element
 		if (node.getRow(0).getElementList().getNumChild() == 1) {
 			node.getRow(0).getElement(0).analyze(gen);
 
 		} else {
-			// tuple type for multiple elements
-
-			// gen.appendToPrettyCode(toXMLHead("tuple", "1", "ndims"));
 			VType vt = HelperClass.getExprType(node, gen);
 			if (vt == null) {
 				throw new NullPointerException(
@@ -242,40 +240,6 @@ public class ExprCaseHandler {
 
 	public static void handleBinExpr(ParameterizedExpr node, VrirXmlGen gen,
 			String name) {
-
-		// if (name.trim().equalsIgnoreCase("mmult")) {
-		// VType vt = HelperClass.getExprType(node.getArg(0), gen);
-		// if (vt instanceof VTypeMatrix) {
-		//
-		// if (((VTypeMatrix) vt).getShape().getDimensions().get(0)
-		// .equalsOne()
-		// && ((VTypeMatrix) vt).getShape().getDimensions().get(1)
-		// .equalsOne()
-		// && (((VTypeMatrix) vt).getShape().getDimensions()
-		// .size() == 2)) {
-		// name = "mult";
-		// }
-		// } else {
-		// throw new UnsupportedOperationException(
-		// "operations on cell arrays not supported");
-		// }
-		// vt = HelperClass.getExprType(node.getArg(1), gen);
-		// if (vt instanceof VTypeMatrix) {
-		//
-		// if (((VTypeMatrix) vt).getShape().getDimensions().get(0)
-		// .equalsOne()
-		// && ((VTypeMatrix) vt).getShape().getDimensions().get(1)
-		// .equalsOne()
-		// && (((VTypeMatrix) vt).getShape().getDimensions()
-		// .size() == 2)) {
-		// name = "mult";
-		// }
-		// } else {
-		// throw new UnsupportedOperationException(
-		// "operations on cell arrays not supported");
-		// }
-		//
-		// }
 		gen.appendToPrettyCode(toXMLHead(name));
 
 		gen.appendToPrettyCode(HelperClass.getExprType(node, gen).toXML());
@@ -290,21 +254,6 @@ public class ExprCaseHandler {
 
 	public static void handleRangeExpr(RangeExpr expr, VrirXmlGen gen) {
 		Expr start, step, stop;
-		// gen.appendToPrettyCode(HelperClass.toXML("range"));
-		// gen.appendToPrettyCode(HelperClass.toXML("start"));
-		// expr.getLower().analyze(gen);
-		// gen.appendToPrettyCode(HelperClass.toXML("/start"));
-		//
-		// if (expr.hasIncr()) {
-		//
-		// gen.appendToPrettyCode(HelperClass.toXML("step"));
-		// expr.getIncr().analyze(gen);
-		// gen.appendToPrettyCode(HelperClass.toXML("/step"));
-		// }
-		// gen.appendToPrettyCode(HelperClass.toXML("stop"));
-		// expr.getUpper().analyze(gen);
-		// gen.appendToPrettyCode(HelperClass.toXML("/stop"));
-		// gen.appendToPrettyCode(HelperClass.toXML("/range"));
 		start = expr.getLower();
 		step = expr.hasIncr() ? expr.getIncr() : null;
 		stop = expr.getUpper();
@@ -400,7 +349,7 @@ public class ExprCaseHandler {
 		}
 
 		if (LibFuncMapper.containsFunc(expr.getVarName())) {
-			
+
 			handleLibCallExpr(expr, gen);
 			return;
 		}
@@ -436,7 +385,8 @@ public class ExprCaseHandler {
 	}
 
 	public static void handleColonExpr(ColonExpr node, VrirXmlGen gen) {
-		throw new UnsupportedOperationException("Colon Expression should have been converted into a range expression before hand");
+		throw new UnsupportedOperationException(
+				"Colon Expression should have been converted into a range expression before hand");
 	}
 
 	public static void handleColonCall(ParameterizedExpr expr, VrirXmlGen gen) {
@@ -544,17 +494,8 @@ public class ExprCaseHandler {
 		gen.appendToPrettyCode(toXMLHead("index", "false", "flattened",
 				"false", "copyslice", Integer.toString(sym.getId()), "arrayid"));
 		VType vt = HelperClass.getExprType(expr, gen);
-		if (vt instanceof VTypeMatrix) {
-			// if (HelperClass.isScalar(expr, gen)) {
-			// gen.appendToPrettyCode(((VTypeMatrix) vt).toXML(true));
-			// } else {
-			gen.appendToPrettyCode(vt.toXML());
-			// }
-		} else {
-			gen.appendToPrettyCode(vt.toXML());
-		}
+		gen.appendToPrettyCode(vt.toXML());
 		gen.appendToPrettyCode(HelperClass.toXML("indices"));
-
 		for (Expr arg : expr.getArgList()) {
 
 			gen.appendToPrettyCode(HelperClass
@@ -578,10 +519,6 @@ public class ExprCaseHandler {
 
 	public static void handleStringLiteralExpr(StringLiteralExpr expr,
 			VrirXmlGen gen) {
-
-		// gen.appendToPrettyCode(toXMLHead("const", expr.getValue(), "value"));
-		// gen.appendToPrettyCode(HelperClass.getExprType(expr, gen).toXML());
-		// gen.appendToPrettyCode(toXMLTail());
 		throw new RuntimeException("VRIR Does Not Support Strings");
 	}
 

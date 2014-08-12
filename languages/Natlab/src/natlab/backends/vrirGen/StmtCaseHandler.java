@@ -54,7 +54,6 @@ public class StmtCaseHandler {
 	public static void handleForStmt(ForStmt node, VrirXmlGen gen) {
 		gen.appendToPrettyCode(toXMLHead("forstmt"));
 		// TODO: Currently on range expressions are handled. Need to also handle
-		// DomainExpr and ArrayIterator.
 		gen.appendToPrettyCode(HelperClass.toXML("domain"));
 		node.getAssignStmt().getRHS().analyze(gen);
 		gen.appendToPrettyCode(HelperClass.toXML("/domain"));

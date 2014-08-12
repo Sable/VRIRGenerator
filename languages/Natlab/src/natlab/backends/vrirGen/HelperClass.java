@@ -57,8 +57,7 @@ public class HelperClass {
 	public static VType generateVType(@SuppressWarnings("rawtypes") Value value) {
 
 		if ((Object) value instanceof BasicMatrixValue) {
-			// System.out.println("matlab class"
-			// + value.getMatlabClass().getName());
+
 			String complexity = HelperClass
 					.getVrComplexity((((BasicMatrixValue) (Object) value))
 							.getisComplexInfo().geticType());
@@ -132,8 +131,6 @@ public class HelperClass {
 		} else if (complexity.equals("COMPLEX")) {
 			return "complex";
 		} else {
-			System.out.println("value is neither complex nor real "
-					+ complexity + " .Returning may complex ");
 			return "maycomplex";
 		}
 
@@ -176,17 +173,16 @@ public class HelperClass {
 	public static VType getLhsType(MatrixExpr lhsExpr, VrirXmlGen gen) {
 
 		if (((MatrixExpr) lhsExpr).getNumRow() > 1) {
-			System.out
-					.println("Multiple return types for binary expressions not supported. ");
-			System.exit(0);
-			// return null;
+			throw new UnsupportedOperationException(
+					"Multiple return types for binary expressions not supported. ");
+			
 		}
 
 		for (Row row : ((MatrixExpr) lhsExpr).getRowList()) {
 			if (row.getElementList().getNumChild() == 0) {
 				return new VoidType();
 			}
-			System.out.println("number of children" + row.getNumChild());
+			
 			if (row.getElementList().getNumChild() == 1) {
 
 				Expr expr = row.getElement(0);
@@ -228,7 +224,6 @@ public class HelperClass {
 					((NameExpr) expr).getName().getID());
 		}
 		if (expr instanceof ParameterizedExpr) {
-			System.out.println("expr name" + expr.getVarName());
 			Name tempName = (Name) gen.getAnalysisEngine()
 					.getTemporaryVariablesRemovalAnalysis()
 					.getExprToTempVarTable().get(expr);
@@ -301,7 +296,6 @@ public class HelperClass {
 		StaticFunction func = null;
 
 		if (Builtin.getInstance(expr.getVarName()) != null) {
-			System.out.println("Function is a builtin");
 			VType vtype = getExprType(expr, gen);
 
 			// TODO : What about the case of multiple returns ?
@@ -315,9 +309,6 @@ public class HelperClass {
 			}
 
 			for (Expr param : expr.getArgList()) {
-
-				System.out.println("null expr" + param.getClass() + "  "
-						+ expr.getVarName());
 				vtype = getExprType(param, gen);
 				if (vtype == null) {
 
@@ -336,9 +327,6 @@ public class HelperClass {
 
 		}
 		if (func == null) {
-
-			System.err.println("function not found in call graph" + expr);
-
 			return new VTypeFunction(new ArrayList<VType>(),
 					new ArrayList<VType>());
 		}
@@ -377,8 +365,6 @@ public class HelperClass {
 		StaticFunction func = null;
 		int i;
 		if (Builtin.getInstance(expr.getVarName()) != null) {
-			System.out.println("Function is a builtin " + expr.getVarName());
-
 			VType vtype = getExprType(expr, gen);
 			if (vtype == null) {
 				funcType.addOutType(new VoidType());
@@ -386,9 +372,6 @@ public class HelperClass {
 				// TODO : What about the case of multiple returns ?
 				funcType.addOutType(vtype);
 			}
-			// for (Expr param : expr.getArgList()) {
-			// funcType.addInType(getExprType(param, gen));
-			// }
 			funcType.addInType(new VoidType());
 			return funcType;
 
@@ -447,15 +430,6 @@ public class HelperClass {
 			}
 			argList.add(new Arg(sym.getId(), false));
 		}
-
-		// for (int i = 0; i < outParamList.getNumChild(); i++) {
-		// Symbol sym = gen.getSymbol(outParamList.getChild(i).getID());
-		// if (sym == null) {
-		// throw new NullPointerException("Symbol not found");
-		// }
-		// argList.add(new Arg(sym.getId(), false));
-		// }
-
 		return argList;
 	}
 
