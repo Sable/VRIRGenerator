@@ -36,6 +36,7 @@ import ast.RangeExpr;
 import ast.ReturnStmt;
 import ast.Row;
 import ast.ShortCircuitAndExpr;
+import ast.ShortCircuitOrExpr;
 import ast.Stmt;
 import ast.StringLiteralExpr;
 import ast.SuperClassMethodExpr;
@@ -371,7 +372,9 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	public void caseShortCircuitAndExpr(ShortCircuitAndExpr node) {
 		ExprCaseHandler.handleShortCircuitAndExpr(node, this);
 	}
-
+	public void caseShortCircuitOrExpr(ShortCircuitOrExpr node) {
+		ExprCaseHandler.handleShortCircuitOrExpr(node, this);
+	}
 	public void caseStringLiteralExpr(StringLiteralExpr node) {
 		ExprCaseHandler.handleStringLiteralExpr(node, this);
 		// caseLiteralExpr(node);
