@@ -48,7 +48,7 @@ public class ExprCaseHandler {
 
 	public static void handleShortCircuitAndExpr(ShortCircuitAndExpr node,
 			VrirXmlGen gen) {
-		
+
 		gen.appendToPrettyCode(ExprCaseHandler.toXMLHead("and"));
 		VType vt = HelperClass.getExprType(node, gen);
 		gen.appendToPrettyCode(vt.toXML());
@@ -644,9 +644,8 @@ public class ExprCaseHandler {
 
 	// TODO: Revisit . Problem with indices
 	public static void handleIndexExpr(ParameterizedExpr expr, VrirXmlGen gen) {
-		Symbol sym;
-
-		if ((sym = gen.getSymbol(expr.getVarName())) == null) {
+		Symbol sym = gen.getSymbol(expr.getVarName());
+		if (sym == null) {
 			VType vtype = HelperClass.getExprType(expr, gen);
 			if (vtype == null) {
 				throw new NullPointerException(
@@ -661,21 +660,16 @@ public class ExprCaseHandler {
 			throw new NullPointerException("Symbol not found in symbol table ");
 		}
 		gen.appendToPrettyCode(toXMLHead("index", "false", "flattened",
-				"false", "copyslice",
-				Integer.toString(gen.getSymbol(expr.getVarName()).getId()),
-				"arrayid"));
-		// gen.appendToPrettyCode(HelperClass.toXML("base"));
-		// expr.getChild(0).analyze(gen);
-		// gen.appendToPrettyCode(HelperClass.toXML("/base"));
-		VType vt = sym.getVtype();
+				"false", "copyslice", Integer.toString(sym.getId()), "arrayid"));
+		VType vt = HelperClass.getExprType(expr, gen);
 		if (vt instanceof VTypeMatrix) {
-			if (HelperClass.isScalar(expr, gen)) {
-				gen.appendToPrettyCode(((VTypeMatrix) vt).toXML(true));
-			} else {
-				gen.appendToPrettyCode(sym.getVtype().toXML());
-			}
+			// if (HelperClass.isScalar(expr, gen)) {
+			// gen.appendToPrettyCode(((VTypeMatrix) vt).toXML(true));
+			// } else {
+			gen.appendToPrettyCode(vt.toXML());
+			// }
 		} else {
-			gen.appendToPrettyCode(sym.getVtype().toXML());
+			gen.appendToPrettyCode(vt.toXML());
 		}
 		gen.appendToPrettyCode(HelperClass.toXML("indices"));
 
