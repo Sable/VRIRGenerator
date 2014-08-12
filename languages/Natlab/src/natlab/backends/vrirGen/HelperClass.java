@@ -228,6 +228,7 @@ public class HelperClass {
 					((NameExpr) expr).getName().getID());
 		}
 		if (expr instanceof ParameterizedExpr) {
+			System.out.println("expr name" + expr.getVarName());
 			Name tempName = (Name) gen.getAnalysisEngine()
 					.getTemporaryVariablesRemovalAnalysis()
 					.getExprToTempVarTable().get(expr);
@@ -237,6 +238,12 @@ public class HelperClass {
 						.get(tempName.getID()).getSingleton();
 				return generateVType(val);
 			} else if (isVar(gen, ((ParameterizedExpr) expr).getVarName())) {
+				if (expr.getParent() instanceof AssignStmt) {
+					AssignStmt parentStmt = (AssignStmt) expr.getParent();
+					if (parentStmt.getLHS() == expr) {
+						return getExprType(parentStmt.getRHS(), gen);
+					}
+				}
 				return generateVType(gen.getAnalysis(), gen.getIndex(),
 						((ParameterizedExpr) expr).getVarName());
 			}
