@@ -158,7 +158,6 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	@Override
 	@SuppressWarnings("rawtypes")
 	public void caseASTNode(ASTNode node) {
-		System.out.println("unsupported ast node" + node.getClass());
 	}
 
 	@Override
