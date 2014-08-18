@@ -33,7 +33,6 @@ public class ExprCaseHandler {
 				// Binary operator
 				ExprCaseHandler.handleOpExpr(node, gen,
 						OperatorMapper.get(node.getVarName()));
-				
 
 			}
 			// Function Call
@@ -543,12 +542,11 @@ public class ExprCaseHandler {
 	}
 
 	public static StringBuffer toXMLHead(String name) {
-		return new StringBuffer("<expr name=\"" + name + "\">\n");
+		return new StringBuffer("(" + name + "\n");
 	}
 
 	public static StringBuffer toXMLHead(String name, int id, String field) {
-		return new StringBuffer("<expr " + field + "=\"" + id + "\" name =\""
-				+ name + "\">\n");
+		return new StringBuffer("(" + name + ":" + field + id + "\n");
 	}
 
 	public static StringBuffer toXMLHead(String name, String... fields) {
@@ -558,17 +556,16 @@ public class ExprCaseHandler {
 		}
 
 		StringBuffer sb = new StringBuffer();
-		sb.append("expr ");
+		sb.append("(" + name);
 		for (int i = 0; i < fields.length; i += 2) {
-			sb.append(fields[i + 1] + "=\"" + fields[i] + "\" ");
+			sb.append(":" + fields[i + 1] + " " + fields[i]);
 		}
-		sb.append("name =\"" + name + "\"");
-		return new StringBuffer(HelperClass.toXML(sb.toString()));
+		return sb;
 
 	}
 
 	public static StringBuffer toXMLTail() {
-		return new StringBuffer("</expr>\n");
+		return new StringBuffer(")");
 	}
 
 }
