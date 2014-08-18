@@ -175,14 +175,14 @@ public class HelperClass {
 		if (((MatrixExpr) lhsExpr).getNumRow() > 1) {
 			throw new UnsupportedOperationException(
 					"Multiple return types for binary expressions not supported. ");
-			
+
 		}
 
 		for (Row row : ((MatrixExpr) lhsExpr).getRowList()) {
 			if (row.getElementList().getNumChild() == 0) {
 				return new VoidType();
 			}
-			
+
 			if (row.getElementList().getNumChild() == 1) {
 
 				Expr expr = row.getElement(0);
@@ -437,8 +437,12 @@ public class HelperClass {
 		return gen.getRemainingVars().contains(name);
 	}
 
-	public static String toXML(String str) {
-		return "<" + str + ">\n";
+	public static String toXMLHead(String str) {
+		return "(" + str + "\n";
+	}
+
+	public static String toXMLTail() {
+		return ")";
 	}
 
 	public static boolean isAllocFunc(String name) {

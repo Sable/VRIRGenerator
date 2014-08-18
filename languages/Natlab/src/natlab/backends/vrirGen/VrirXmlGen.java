@@ -191,7 +191,7 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	public void caseFunction(Function node) {
 		
 		FunctionCaseHandler.handleHeader(node, this);
-		this.appendToPrettyCode(HelperClass.toXML("body"));
+		this.appendToPrettyCode(HelperClass.toXMLHead("body"));
 		this.appendToPrettyCode(StmtCaseHandler.toListXMLHead(false));
 		for (Stmt stmt : node.getStmts()) {
 
@@ -201,7 +201,7 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 			if (!hasReturnStmt) {
 
 				this.appendToPrettyCode(StmtCaseHandler.toXMLHead("returnstmt"));
-				this.appendToPrettyCode(HelperClass.toXML("exprs"));
+				this.appendToPrettyCode(HelperClass.toXMLHead("exprs"));
 				for (Name rvar : this.getFunctionNode().getOutputParamList()) {
 					if (!this.getSymTab().contains(rvar.getID())) {
 						VType vtype = HelperClass.generateVType(
@@ -222,12 +222,12 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 					this.appendToPrettyCode(ExprCaseHandler.toXMLTail());
 				}
 
-				this.appendToPrettyCode(HelperClass.toXML("/exprs"));
+				this.appendToPrettyCode(HelperClass.toXMLHead("/exprs"));
 				this.appendToPrettyCode(StmtCaseHandler.toXMLTail());
 			}
 		}
 		this.appendToPrettyCode(StmtCaseHandler.toListXMLTail());
-		this.appendToPrettyCode(HelperClass.toXML("/body"));
+		this.appendToPrettyCode(HelperClass.toXMLHead("/body"));
 
 		this.appendToPrettyCode(symTab.toXML());
 

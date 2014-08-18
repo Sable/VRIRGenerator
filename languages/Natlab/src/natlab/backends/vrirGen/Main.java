@@ -57,7 +57,7 @@ public class Main {
 				TargetLang.Cpp, analysis.getMainNode().getFunction());
 		StringBuffer genXML = new StringBuffer();
 		VrirXmlGen.genModuleXMLHead(genXML, fileName.split("\\.")[0]);
-		genXML.append(HelperClass.toXML("fns"));
+		genXML.append(HelperClass.toXMLHead("fns"));
 		OperatorMapper.initMap();
 		VrirTypeMapper.initTypeMap();
 		HashSet<StaticFunction> funcSet = new HashSet<StaticFunction>();
@@ -112,7 +112,7 @@ public class Main {
 			}
 			funcSet.add(function);
 		}
-		genXML.append(HelperClass.toXML("/fns"));
+		genXML.append(HelperClass.toXMLHead("/fns"));
 
 		VrirXmlGen.genModuleXMLTail(genXML);
 		System.out.println(" print the generated VRIR in XML format  .\n");

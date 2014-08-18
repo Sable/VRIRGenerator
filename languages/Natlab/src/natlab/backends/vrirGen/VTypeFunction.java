@@ -45,23 +45,23 @@ public class VTypeFunction extends VType {
 	public StringBuffer toXML() {
 		// TODO Auto-generated method stub
 		StringBuffer sb = new StringBuffer();
-		sb.append(HelperClass.toXML("vtype name=\"func\""));
-		sb.append(HelperClass.toXML("intypes"));
+		sb.append(HelperClass.toXMLHead("vtype name=\"func\""));
+		sb.append(HelperClass.toXMLHead("intypes"));
 		for (VType vtype : inType) {
 
 			sb.append(vtype.toXML());
 		}
-		sb.append(HelperClass.toXML("/intypes"));
-		sb.append(HelperClass.toXML("outtypes"));
+		sb.append(HelperClass.toXMLHead("/intypes"));
+		sb.append(HelperClass.toXMLHead("outtypes"));
 		if (outType.size() > 0) {
 			for (VType vtype : outType) {
 				sb.append(vtype.toXML());
 			}
 		} else {
-			sb.append(HelperClass.toXML("vtype name=\"void\" /"));
+			sb.append(HelperClass.toXMLHead("vtype name=\"void\" /"));
 		}
-		sb.append(HelperClass.toXML("/outtypes"));
-		sb.append(HelperClass.toXML("/vtype"));
+		sb.append(HelperClass.toXMLHead("/outtypes"));
+		sb.append(HelperClass.toXMLHead("/vtype"));
 		return sb;
 	}
 

@@ -24,8 +24,8 @@ public class Arg {
 		if (aliasGroup != Integer.MIN_VALUE) {
 			head += aliasGroup;
 		}
-		sb.append(HelperClass.toXML(head));
-		sb.append(HelperClass.toXML("/arg"));
+		sb.append(HelperClass.toXMLHead(head));
+		sb.append(HelperClass.toXMLHead("/arg"));
 		return sb;
 	}
 

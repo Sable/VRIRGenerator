@@ -17,11 +17,11 @@ public class ArgList {
 
 	public StringBuffer toXML() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(HelperClass.toXML("arglist"));
+		sb.append(HelperClass.toXMLHead("arglist"));
 		for (Arg arg : inList) {
 			sb.append(arg.toXML());
 		}
-		sb.append(HelperClass.toXML("/arglist"));
+		sb.append(HelperClass.toXMLHead("/arglist"));
 		return sb;
 	}
 }

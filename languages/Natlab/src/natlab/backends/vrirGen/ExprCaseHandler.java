@@ -51,12 +51,8 @@ public class ExprCaseHandler {
 		gen.appendToPrettyCode(ExprCaseHandler.toXMLHead("and"));
 		VType vt = HelperClass.getExprType(node, gen);
 		gen.appendToPrettyCode(vt.toXML());
-		gen.appendToPrettyCode(HelperClass.toXML("lhs"));
 		node.getLHS().analyze(gen);
-		gen.appendToPrettyCode(HelperClass.toXML("/lhs"));
-		gen.appendToPrettyCode(HelperClass.toXML("rhs"));
 		node.getRHS().analyze(gen);
-		gen.appendToPrettyCode(HelperClass.toXML("/rhs"));
 		gen.appendToPrettyCode(ExprCaseHandler.toXMLTail());
 	}
 
@@ -65,12 +61,8 @@ public class ExprCaseHandler {
 		gen.appendToPrettyCode(ExprCaseHandler.toXMLHead("or"));
 		VType vt = HelperClass.getExprType(node, gen);
 		gen.appendToPrettyCode(vt.toXML());
-		gen.appendToPrettyCode(HelperClass.toXML("lhs"));
 		node.getLHS().analyze(gen);
-		gen.appendToPrettyCode(HelperClass.toXML("/lhs"));
-		gen.appendToPrettyCode(HelperClass.toXML("rhs"));
 		node.getRHS().analyze(gen);
-		gen.appendToPrettyCode(HelperClass.toXML("/rhs"));
 		gen.appendToPrettyCode(ExprCaseHandler.toXMLTail());
 	}
 
@@ -93,13 +85,13 @@ public class ExprCaseHandler {
 			}
 			gen.appendToPrettyCode(gen.getSymbol(node.getName().getID())
 					.getVtype().toXML());
+			gen.appendToPrettyCode(toXMLTail());
 		}
 
 		else {
 			handleFunCallExpr(node, gen);
 		}
 
-		gen.appendToPrettyCode(toXMLTail());
 	}
 
 	public static void handleOpExpr(ParameterizedExpr node, VrirXmlGen gen,
@@ -170,7 +162,6 @@ public class ExprCaseHandler {
 				throw new UnsupportedOperationException(
 						"operations on cell arrays not supported");
 			}
-
 		}
 		for (Expr expr : node.getArgList()) {
 			VType vt = HelperClass.getExprType(expr, gen);
@@ -215,13 +206,13 @@ public class ExprCaseHandler {
 			}
 			gen.appendToPrettyCode(toXMLHead("tuple"));
 			gen.appendToPrettyCode(vt.toXML());
-			gen.appendToPrettyCode(HelperClass.toXML("elems"));
+			gen.appendToPrettyCode(HelperClass.toXMLHead("elems"));
 			for (Expr expr : node.getRow(0).getElementList()) {
 
 				expr.analyze(gen);
 
 			}
-			gen.appendToPrettyCode(HelperClass.toXML("/elems"));
+			gen.appendToPrettyCode(HelperClass.toXMLTail());
 			gen.appendToPrettyCode(toXMLTail());
 		}
 	}
@@ -229,25 +220,17 @@ public class ExprCaseHandler {
 	public static void handleUnaryExpr(ParameterizedExpr node, VrirXmlGen gen,
 			String name) {
 		gen.appendToPrettyCode(toXMLHead(name));
-		// TODO : Get unary expression type
 		gen.appendToPrettyCode(HelperClass.getExprType(node, gen).toXML());
-		gen.appendToPrettyCode(HelperClass.toXML("base"));
 		node.getArg(0).analyze(gen);
-		gen.appendToPrettyCode(HelperClass.toXML("/base"));
 		gen.appendToPrettyCode(toXMLTail());
 	}
 
 	public static void handleBinExpr(ParameterizedExpr node, VrirXmlGen gen,
 			String name) {
 		gen.appendToPrettyCode(toXMLHead(name));
-
 		gen.appendToPrettyCode(HelperClass.getExprType(node, gen).toXML());
-		gen.appendToPrettyCode("<rhs>\n");
 		node.getArg(1).analyze(gen);
-		gen.appendToPrettyCode("</rhs>\n");
-		gen.appendToPrettyCode("<lhs>\n");
 		node.getArg(0).analyze(gen);
-		gen.appendToPrettyCode("</lhs>\n");
 		gen.appendToPrettyCode(toXMLTail());
 	}
 
@@ -352,18 +335,18 @@ public class ExprCaseHandler {
 			handleLibCallExpr(expr, gen);
 			return;
 		}
-		gen.appendToPrettyCode(toXMLHead("fncall", expr.getVarName(), "fnname"));
+		gen.appendToPrettyCode(toXMLHead("fncall", expr.getVarName(), ":fnname"));
 		VType vt = HelperClass.getExprType(expr, gen);
 		if (vt == null) {
 			throw new NullPointerException(
 					"VType of function call expression could not be generated");
 		}
 		gen.appendToPrettyCode(vt.toXML());
-		gen.appendToPrettyCode(HelperClass.toXML("args"));
+		gen.appendToPrettyCode(HelperClass.toXMLHead("args"));
 		for (Expr args : expr.getArgList()) {
 			args.analyze(gen);
 		}
-		gen.appendToPrettyCode(HelperClass.toXML("/args"));
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(toXMLTail());
 	}
 
@@ -377,8 +360,8 @@ public class ExprCaseHandler {
 					"VType of function call expression could not be generated");
 		}
 		gen.appendToPrettyCode(vt.toXML());
-		gen.appendToPrettyCode(HelperClass.toXML("args"));
-		gen.appendToPrettyCode(HelperClass.toXML("/args"));
+		gen.appendToPrettyCode(HelperClass.toXMLHead("args"));
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(toXMLTail());
 
 	}
@@ -438,7 +421,7 @@ public class ExprCaseHandler {
 			}
 
 		}
-		gen.appendToPrettyCode(toXMLHead("libcall", name, "libfunc"));
+		gen.appendToPrettyCode(toXMLHead("libcall", name, ":libfunc"));
 		if (LibFuncMapper.getFunc(expr.getVarName()) == null) {
 			throw new NullPointerException("lib call could not be found "
 					+ expr.getVarName());
@@ -449,27 +432,27 @@ public class ExprCaseHandler {
 					"VType of function call expression could not be generated");
 		}
 		gen.appendToPrettyCode(vt.toXML());
-		gen.appendToPrettyCode(HelperClass.toXML("args"));
+		gen.appendToPrettyCode(HelperClass.toXMLHead("args"));
 		for (Expr args : expr.getArgList()) {
 			args.analyze(gen);
 		}
-		gen.appendToPrettyCode(HelperClass.toXML("/args"));
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(toXMLTail());
 	}
 
 	public static void handleAllocExpr(ParameterizedExpr expr, VrirXmlGen gen) {
-		gen.appendToPrettyCode(toXMLHead("alloc", expr.getVarName(), "func"));
+		gen.appendToPrettyCode(toXMLHead("alloc", expr.getVarName(), ":func"));
 		VType vt = HelperClass.getExprType(expr, gen);
 		if (vt == null) {
 			throw new NullPointerException(
 					"VType of function call expression could not be generated");
 		}
 		gen.appendToPrettyCode(vt.toXML());
-		gen.appendToPrettyCode(HelperClass.toXML("args"));
+		gen.appendToPrettyCode(HelperClass.toXMLHead("args"));
 		for (Expr node : expr.getArgList()) {
 			node.analyze(gen);
 		}
-		gen.appendToPrettyCode(HelperClass.toXML("/args"));
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(toXMLTail());
 	}
 
@@ -490,29 +473,26 @@ public class ExprCaseHandler {
 		if (sym == null) {
 			throw new NullPointerException("Symbol not found in symbol table ");
 		}
-		gen.appendToPrettyCode(toXMLHead("index", "false", "flattened",
-				"false", "copyslice", Integer.toString(sym.getId()), "arrayid"));
+		gen.appendToPrettyCode(toXMLHead("index",Integer.toString(sym.getId()), "arrayid",
+				"false", "copyslice" ));
 		VType vt = HelperClass.getExprType(expr, gen);
 		gen.appendToPrettyCode(vt.toXML());
-		gen.appendToPrettyCode(HelperClass.toXML("indices"));
+		gen.appendToPrettyCode(HelperClass.toXMLHead("indices"));
 		for (Expr arg : expr.getArgList()) {
-
 			gen.appendToPrettyCode(HelperClass
-					.toXML("index boundscheck=\"1\" negative=\"0\""));
+					.toXMLHead("index :boundscheck=1 :negative=0"));
 			if (arg instanceof ParameterizedExpr) {
 				if (arg.getVarName().equals("colon")) {
 					handleColonCall((ParameterizedExpr) arg, gen);
-					gen.appendToPrettyCode(HelperClass.toXML("/index"));
+					gen.appendToPrettyCode(HelperClass.toXMLTail());
 					continue;
 				}
 			}
 			arg.analyze(gen);
-
-			gen.appendToPrettyCode(HelperClass.toXML("/index"));
+			gen.appendToPrettyCode(HelperClass.toXMLTail());
 
 		}
-
-		gen.appendToPrettyCode(HelperClass.toXML("/indices"));
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(toXMLTail());
 	}
 
@@ -523,22 +503,21 @@ public class ExprCaseHandler {
 
 	public static void handleRange(Expr start, Expr step, Expr stop,
 			VrirXmlGen gen) {
-		gen.appendToPrettyCode(HelperClass.toXML("range"));
+		gen.appendToPrettyCode(HelperClass.toXMLHead("range"));
 
-		gen.appendToPrettyCode(HelperClass.toXML("start"));
+		gen.appendToPrettyCode("start e1 =");
 		start.analyze(gen);
-		gen.appendToPrettyCode(HelperClass.toXML("/start"));
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
 
 		if (step != null) {
-			gen.appendToPrettyCode(HelperClass.toXML("step"));
+			gen.appendToPrettyCode("step e2 = ");
 			step.analyze(gen);
-			gen.appendToPrettyCode(HelperClass.toXML("/step"));
+			gen.appendToPrettyCode(HelperClass.toXMLTail());
 		}
-		gen.appendToPrettyCode(HelperClass.toXML("stop"));
+		gen.appendToPrettyCode("(stop + e3= ");
 		stop.analyze(gen);
-		gen.appendToPrettyCode(HelperClass.toXML("/stop"));
-
-		gen.appendToPrettyCode(HelperClass.toXML("/range"));
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
 	}
 
 	public static StringBuffer toXMLHead(String name) {
