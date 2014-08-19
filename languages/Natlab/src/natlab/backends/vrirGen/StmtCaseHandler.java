@@ -44,12 +44,12 @@ public class StmtCaseHandler {
 	}
 
 	public static void handleBreakStmt(BreakStmt node, VrirXmlGen gen) {
-		gen.appendToPrettyCode(toXMLHead("breakstmt"));
+		gen.appendToPrettyCode(toXMLHead("break"));
 		gen.appendToPrettyCode(toXMLTail());
 	}
 
 	public static void handleContinueStmt(ContinueStmt node, VrirXmlGen gen) {
-		gen.appendToPrettyCode(toXMLHead("contstmt"));
+		gen.appendToPrettyCode(toXMLHead("continue"));
 		gen.appendToPrettyCode(toXMLTail());
 	}
 
