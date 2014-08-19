@@ -332,7 +332,7 @@ public class ExprCaseHandler {
 			handleLibCallExpr(expr, gen);
 			return;
 		}
-		gen.appendToPrettyCode(toXMLHead("fncall", expr.getVarName(), ":fnname"));
+		gen.appendToPrettyCode(toXMLHead("fncall", expr.getVarName(), "fnname"));
 		VType vt = HelperClass.getExprType(expr, gen);
 		if (vt == null) {
 			throw new NullPointerException(
@@ -438,7 +438,7 @@ public class ExprCaseHandler {
 	}
 
 	public static void handleAllocExpr(ParameterizedExpr expr, VrirXmlGen gen) {
-		gen.appendToPrettyCode(toXMLHead("alloc", expr.getVarName(), ":func"));
+		gen.appendToPrettyCode(toXMLHead("alloc", expr.getVarName(), "func"));
 		VType vt = HelperClass.getExprType(expr, gen);
 		if (vt == null) {
 			throw new NullPointerException(
