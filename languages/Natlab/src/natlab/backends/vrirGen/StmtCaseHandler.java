@@ -103,7 +103,7 @@ public class StmtCaseHandler {
 			}
 			if (gen.getSymbol(rvar.getID()) != null) {
 				gen.appendToPrettyCode(ExprCaseHandler.toXMLHead("name", gen
-						.getSymbol(rvar.getID()).getId(), ":id"));
+						.getSymbol(rvar.getID()).getId(), "id"));
 			} else {
 				throw new NullPointerException("Symbol not found for "
 						+ rvar.getID());
