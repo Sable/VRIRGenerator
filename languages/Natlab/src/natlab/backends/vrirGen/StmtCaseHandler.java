@@ -55,9 +55,6 @@ public class StmtCaseHandler {
 
 	public static void handleForStmt(ForStmt node, VrirXmlGen gen) {
 		gen.appendToPrettyCode(toXMLHead("forstmt"));
-		gen.appendToPrettyCode(HelperClass.toXMLHead("loopdomain"));
-		node.getAssignStmt().getRHS().analyze(gen);
-		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(HelperClass.toXMLHead("itervars"));
 
 		if (node.getAssignStmt().getLHS() instanceof NameExpr) {
@@ -75,8 +72,12 @@ public class StmtCaseHandler {
 
 			gen.appendToPrettyCode(HelperClass.toXMLHead("sym :id "
 					+ sym.getId()));
+			gen.appendToPrettyCode(HelperClass.toXMLTail());
 		}
 
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
+		gen.appendToPrettyCode(HelperClass.toXMLHead("loopdomain"));
+		node.getAssignStmt().getRHS().analyze(gen);
 		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(HelperClass.toXMLHead("body"));
 		// gen.appendToPrettyCode(toListXMLHead(VrirXmlGen.onGPU));
@@ -123,8 +124,8 @@ public class StmtCaseHandler {
 			gen.appendToPrettyCode(HelperClass.toXMLHead("test"));
 			ifblock.getCondition().analyze(gen);
 			gen.appendToPrettyCode(HelperClass.toXMLTail());
-			gen.appendToPrettyCode("( if ilist = ");
-			// gen.appendToPrettyCode(toListXMLHead(false));
+			gen.appendToPrettyCode(HelperClass.toXMLHead("if"));
+			
 			for (Stmt stmt : ifblock.getStmtList()) {
 				stmt.analyze(gen);
 			}
@@ -133,7 +134,7 @@ public class StmtCaseHandler {
 		}
 		if (node.hasElseBlock()
 				&& node.getElseBlock().getStmtList().getNumChild() > 0) {
-			gen.appendToPrettyCode("(else elist = ");
+			gen.appendToPrettyCode("( else ");
 			for (Stmt stmt : node.getElseBlock().getStmtList()) {
 				stmt.analyze(gen);
 			}
@@ -155,7 +156,7 @@ public class StmtCaseHandler {
 	}
 
 	public static StringBuffer toXMLHead(String name) {
-		return new StringBuffer(HelperClass.toXMLHead("(" + name));
+		return new StringBuffer(HelperClass.toXMLHead(name));
 	}
 
 	public static StringBuffer toXMLTail() {

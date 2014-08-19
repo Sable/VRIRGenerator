@@ -51,8 +51,8 @@ public class VTypeMatrix extends VType {
 		this.forceArray = force;
 	}
 
-	public String getComplexity() {
-		return complexity;
+	public int getComplexity() {
+		return complexity.equals("complex") ? 1 : 0;
 	}
 
 	public void setComplexity(String complexity) {
@@ -94,10 +94,7 @@ public class VTypeMatrix extends VType {
 	}
 
 	private void genScalarXML(StringBuffer vTypeXML) {
-		vTypeXML.append("<vtype ctype= \"" + getComplexity() + "\" name= \""
-				+ getVarType() + "\"");
-		vTypeXML.append(">\n");
-		vTypeXML.append("</vtype>\n");
+		vTypeXML.append("(" + getVarType() +" :ctype "+ getComplexity() + ")");
 	}
 
 	private void genArrayXML(StringBuffer vTypeXML) {
@@ -106,11 +103,10 @@ public class VTypeMatrix extends VType {
 			genScalarXML(vTypeXML);
 			return;
 		}
-		vTypeXML.append("<vtype layout= \"" + getLayoutString()
-				+ "\" name=\"array\" ndims=\""
-				+ getShape().getDimensions().size() + "\">\n");
+		vTypeXML.append("( arraytype :layout " + getLayoutString() + ":ndims "
+				+ getShape().getDimensions().size());
 		genScalarXML(vTypeXML);
-		vTypeXML.append("</vtype>\n");
+		vTypeXML.append(")");
 	}
 
 	public StringBuffer toXML() {

@@ -37,13 +37,12 @@ public class Symbol {
 
 	public StringBuffer toXML() {
 		StringBuffer xmlBuff = new StringBuffer();
-		xmlBuff.append("<sym id=\"" + getId() + "\" name=\"" + getName()
-				+ "\">\n");
+		xmlBuff.append("(sym :id " + getId() + " :name " + getName() + "\n");
 		if (getVtype() == null) {
 			System.out.println("name of null element" + this.getName());
 		}
 		xmlBuff.append(getVtype().toXML());
-		return xmlBuff.append("</sym>\n");
+		return xmlBuff.append(")\n");
 
 	}
 }

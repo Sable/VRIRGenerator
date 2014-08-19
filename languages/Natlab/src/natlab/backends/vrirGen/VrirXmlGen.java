@@ -86,12 +86,12 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 	}
 
 	public static void genModuleXMLHead(StringBuffer target, String moduleName) {
-		target.append("<module name=\"" + moduleName + "\">\n");
+		target.append("(module :name " + moduleName + "\n");
 
 	}
 
 	public static void genModuleXMLTail(StringBuffer target) {
-		target.append("</module>\n");
+		target.append(")");
 	}
 
 	public void addToSymTab(VType vtype, String name) {
@@ -192,7 +192,7 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 		
 		FunctionCaseHandler.handleHeader(node, this);
 		this.appendToPrettyCode(HelperClass.toXMLHead("body"));
-		this.appendToPrettyCode(StmtCaseHandler.toListXMLHead(false));
+		//this.appendToPrettyCode(StmtCaseHandler.toListXMLHead(false));
 		for (Stmt stmt : node.getStmts()) {
 
 			stmt.analyze(this);
@@ -222,12 +222,12 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 					this.appendToPrettyCode(ExprCaseHandler.toXMLTail());
 				}
 
-				this.appendToPrettyCode(HelperClass.toXMLHead("/exprs"));
+				this.appendToPrettyCode(HelperClass.toXMLTail());
 				this.appendToPrettyCode(StmtCaseHandler.toXMLTail());
 			}
 		}
-		this.appendToPrettyCode(StmtCaseHandler.toListXMLTail());
-		this.appendToPrettyCode(HelperClass.toXMLHead("/body"));
+		//this.appendToPrettyCode(StmtCaseHandler.toListXMLTail());
+		this.appendToPrettyCode(HelperClass.toXMLTail());
 
 		this.appendToPrettyCode(symTab.toXML());
 

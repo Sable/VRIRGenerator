@@ -20,12 +20,9 @@ public class Arg {
 
 	public StringBuffer toXML() {
 		StringBuffer sb = new StringBuffer();
-		String head = "arg id=\"" + id + "\" restrict=\"" + restrict + "\"";
-		if (aliasGroup != Integer.MIN_VALUE) {
-			head += aliasGroup;
-		}
+		String head = "arg :id" + id;
 		sb.append(HelperClass.toXMLHead(head));
-		sb.append(HelperClass.toXMLHead("/arg"));
+		sb.append(HelperClass.toXMLTail());
 		return sb;
 	}
 

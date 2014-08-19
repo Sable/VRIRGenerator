@@ -21,7 +21,7 @@ public class ArgList {
 		for (Arg arg : inList) {
 			sb.append(arg.toXML());
 		}
-		sb.append(HelperClass.toXMLHead("/arglist"));
+		sb.append(HelperClass.toXMLTail());
 		return sb;
 	}
 }

@@ -61,12 +61,12 @@ public class SymbolTable {
 
 	public StringBuffer toXML() {
 		StringBuffer xmlBuff = new StringBuffer();
-		xmlBuff.append("<symtable>\n");
+		xmlBuff.append("(symtable");
 		for (Symbol sym : symbolMap.values()) {
 
 			xmlBuff.append(sym.toXML());
 		}
-		return xmlBuff.append("</symtable>\n");
+		return xmlBuff.append(")");
 
 	}
 }

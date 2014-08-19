@@ -32,8 +32,7 @@ public class Main {
 		/**
 		 * This main method is just for testing, doesn't follow the convention
 		 * when passing a file to a program, please replace "fileDir and fileIn"
-		 * below with your real testing file directory and its 
-		 * name, and you can
+		 * below with your real testing file directory and its name, and you can
 		 * pass the type info of the input argument to the program, currently,
 		 * the type info is composed like double&3*3&REAL.
 		 */
@@ -43,7 +42,7 @@ public class Main {
 
 		String fileIn = fileDir + fileName;
 		File file = new File(fileIn);
-		//System.out.println(file.getAbsolutePath());
+		// System.out.println(file.getAbsolutePath());
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
 		FileEnvironment env = new FileEnvironment(gFile); // get path
 		// environment obj
@@ -112,16 +111,17 @@ public class Main {
 			}
 			funcSet.add(function);
 		}
-		genXML.append(HelperClass.toXMLHead("/fns"));
+		genXML.append(HelperClass.toXMLTail());
 
 		VrirXmlGen.genModuleXMLTail(genXML);
 		System.out.println(" print the generated VRIR in XML format  .\n");
-		System.out.println("main function "
-				+ analysis.getMainNode().getFunction().getName());
-		System.out.println(wrapper.genWrapper());
+		// System.out.println("main function "
+		// + analysis.getMainNode().getFunction().getName());
+		// System.out.println(wrapper.genWrapper());
+		System.out.println(genXML);
 		try {
 			BufferedWriter buffer = Files.newBufferedWriter(
-					Paths.get(fileName.split("\\.")[0] + ".xml"),
+					Paths.get(fileName.split("\\.")[0] + ".vrir"),
 					Charset.forName("US-ASCII"));
 			buffer.write(genXML.toString());
 			buffer.close();

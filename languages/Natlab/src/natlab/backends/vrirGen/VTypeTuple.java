@@ -25,14 +25,11 @@ public class VTypeTuple extends VType {
 	public StringBuffer toXML() {
 
 		StringBuffer sb = new StringBuffer();
-		sb.append(HelperClass.toXMLHead("vtype name=\"tuple\" ndims=\""
-				+ elementList.size() + "\""));
-		sb.append(HelperClass.toXMLHead("elems"));
+		sb.append(HelperClass.toXMLHead("tupletype"));
 		for (VType vtype : elementList) {
 			sb.append(vtype.toXML());
 		}
-		sb.append(HelperClass.toXMLHead("/elems"));
-		sb.append(HelperClass.toXMLHead("/vtype"));
+		sb.append(HelperClass.toXMLTail());
 
 		return sb;
 	}

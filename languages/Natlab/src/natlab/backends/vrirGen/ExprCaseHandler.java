@@ -1,13 +1,8 @@
 package natlab.backends.vrirGen;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import natlab.backends.x10.codegen.Helper;
 import natlab.tame.classes.reference.PrimitiveClassReference;
-import natlab.tame.valueanalysis.aggrvalue.AggrValue;
-import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
 import natlab.tame.valueanalysis.components.shape.DimValue;
-import natlab.tame.valueanalysis.components.shape.Shape;
 import ast.ColonExpr;
 import ast.Expr;
 import ast.FPLiteralExpr;
@@ -24,24 +19,18 @@ public class ExprCaseHandler {
 	public static void handleParameterizedExpr(ParameterizedExpr node,
 			VrirXmlGen gen) {
 		if (gen.getRemainingVars().contains(node.getVarName())) {
-
 			ExprCaseHandler.handleIndexExpr(node, gen);
 		} else {
-
 			// Operator
 			if (OperatorMapper.isOperator(node.getVarName())) {
 				// Binary operator
 				ExprCaseHandler.handleOpExpr(node, gen,
 						OperatorMapper.get(node.getVarName()));
-
 			}
 			// Function Call
 			else {
-
 				ExprCaseHandler.handleFunCallExpr(node, gen);
-
 			}
-
 		}
 	}
 
@@ -51,8 +40,12 @@ public class ExprCaseHandler {
 		gen.appendToPrettyCode(ExprCaseHandler.toXMLHead("and"));
 		VType vt = HelperClass.getExprType(node, gen);
 		gen.appendToPrettyCode(vt.toXML());
+		gen.appendToPrettyCode(HelperClass.toXMLHead("lhs"));
 		node.getLHS().analyze(gen);
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
+		gen.appendToPrettyCode(HelperClass.toXMLHead("rhs"));
 		node.getRHS().analyze(gen);
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(ExprCaseHandler.toXMLTail());
 	}
 
@@ -229,8 +222,12 @@ public class ExprCaseHandler {
 			String name) {
 		gen.appendToPrettyCode(toXMLHead(name));
 		gen.appendToPrettyCode(HelperClass.getExprType(node, gen).toXML());
+		gen.appendToPrettyCode(HelperClass.toXMLHead("lhs"));
 		node.getArg(1).analyze(gen);
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
+		gen.appendToPrettyCode(HelperClass.toXMLHead("rhs"));
 		node.getArg(0).analyze(gen);
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(toXMLTail());
 	}
 
@@ -421,7 +418,7 @@ public class ExprCaseHandler {
 			}
 
 		}
-		gen.appendToPrettyCode(toXMLHead("libcall", name, ":libfunc"));
+		gen.appendToPrettyCode(toXMLHead("libcall", name, "libfunc"));
 		if (LibFuncMapper.getFunc(expr.getVarName()) == null) {
 			throw new NullPointerException("lib call could not be found "
 					+ expr.getVarName());
@@ -473,14 +470,14 @@ public class ExprCaseHandler {
 		if (sym == null) {
 			throw new NullPointerException("Symbol not found in symbol table ");
 		}
-		gen.appendToPrettyCode(toXMLHead("index",Integer.toString(sym.getId()), "arrayid",
-				"false", "copyslice" ));
+		gen.appendToPrettyCode(toXMLHead("index",
+				Integer.toString(sym.getId()), "arrayid", "%0", "copyslice"));
 		VType vt = HelperClass.getExprType(expr, gen);
 		gen.appendToPrettyCode(vt.toXML());
 		gen.appendToPrettyCode(HelperClass.toXMLHead("indices"));
 		for (Expr arg : expr.getArgList()) {
 			gen.appendToPrettyCode(HelperClass
-					.toXMLHead("index :boundscheck=1 :negative=0"));
+					.toXMLHead("index :boundscheck %1 :negative %0"));
 			if (arg instanceof ParameterizedExpr) {
 				if (arg.getVarName().equals("colon")) {
 					handleColonCall((ParameterizedExpr) arg, gen);
@@ -505,16 +502,16 @@ public class ExprCaseHandler {
 			VrirXmlGen gen) {
 		gen.appendToPrettyCode(HelperClass.toXMLHead("range"));
 
-		gen.appendToPrettyCode("start e1 =");
+		gen.appendToPrettyCode(HelperClass.toXMLHead("start "));
 		start.analyze(gen);
 		gen.appendToPrettyCode(HelperClass.toXMLTail());
 
 		if (step != null) {
-			gen.appendToPrettyCode("step e2 = ");
+			gen.appendToPrettyCode(HelperClass.toXMLHead("step "));
 			step.analyze(gen);
 			gen.appendToPrettyCode(HelperClass.toXMLTail());
 		}
-		gen.appendToPrettyCode("(stop + e3= ");
+		gen.appendToPrettyCode(HelperClass.toXMLHead("stop "));
 		stop.analyze(gen);
 		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(HelperClass.toXMLTail());
@@ -525,7 +522,7 @@ public class ExprCaseHandler {
 	}
 
 	public static StringBuffer toXMLHead(String name, int id, String field) {
-		return new StringBuffer("(" + name + ":" + field + id + "\n");
+		return new StringBuffer("(" + name + " :" + field + " " + id + "\n");
 	}
 
 	public static StringBuffer toXMLHead(String name, String... fields) {
@@ -537,7 +534,7 @@ public class ExprCaseHandler {
 		StringBuffer sb = new StringBuffer();
 		sb.append("(" + name);
 		for (int i = 0; i < fields.length; i += 2) {
-			sb.append(":" + fields[i + 1] + " " + fields[i]);
+			sb.append(" :" + fields[i + 1] + " " + fields[i]);
 		}
 		return sb;
 
