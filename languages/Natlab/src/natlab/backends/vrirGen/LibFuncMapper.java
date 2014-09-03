@@ -21,8 +21,8 @@ public class LibFuncMapper {
 		libFuncMap.put("sqrt", "sqrt");
 		libFuncMap.put("power", "pow");
 		libFuncMap.put("mpower", "pow");
-		libFuncMap.put("mtimes", "libmmult");
-		libFuncMap.put("transpose", "libtrans");
+		libFuncMap.put("mtimes", "mmult");
+		libFuncMap.put("transpose", "trans");
 		libFuncMap.put("plus", "libplus");
 		libFuncMap.put("minus", "libminus");
 		libFuncMap.put("times", "libmult");
