@@ -1,6 +1,5 @@
 package natlab.backends.vrirGen;
 
-import natlab.backends.x10.codegen.Helper;
 import natlab.tame.classes.reference.PrimitiveClassReference;
 import natlab.tame.valueanalysis.components.shape.DimValue;
 import ast.ColonExpr;
