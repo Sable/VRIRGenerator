@@ -1,11 +1,13 @@
 package natlab.backends.vrirGen;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,20 +39,23 @@ public class Main {
 		 * the type info is composed like double&3*3&REAL.
 		 */
 
-		String fileDir = "lgdr/";
-		String fileName = "drv_lgdr.m";
+		String fileDir = "diff/";
+		String fileName = "drv_diff.m";
 
 		String fileIn = fileDir + fileName;
 		File file = new File(fileIn);
-		// System.out.println(file.getAbsolutePath());
+		
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
+		String[] testArgs = Main.getArgs(file);
+		
+		Arrays.stream(testArgs).forEach(p-> System.out.println(p));
+		
 		FileEnvironment env = new FileEnvironment(gFile); // get path
-		// environment obj
 		SimpleFunctionCollection.convertColonToRange = true;
 		BasicTamerTool tool = new BasicTamerTool();
 		tool.setDoIntOk(false);
 		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = tool.analyze(
-				args, env);
+				testArgs, env);
 		int size = analysis.getNodeList().size();
 		WrapperGenerator wrapper = WrapperGenFactory.getWrapperGen(
 				TargetLang.Cpp, analysis.getMainNode().getFunction());
@@ -129,5 +134,22 @@ public class Main {
 			e.printStackTrace();
 		}
 
+	}
+	public static String[] getArgs(File file) {
+		try {
+			BufferedReader reader= Files.newBufferedReader(file.toPath());
+			String argStr = reader.readLine();
+			if(argStr.charAt(0) != '%'){
+				return null;
+			}
+			argStr = argStr.substring(1).trim();
+			String[] args = argStr.split(" ");
+			return args;
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		return null;
 	}
 }
