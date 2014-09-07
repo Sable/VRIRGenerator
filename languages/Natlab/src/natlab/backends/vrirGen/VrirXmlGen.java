@@ -87,7 +87,7 @@ public class VrirXmlGen extends NatlabAbstractNodeCaseHandler {
 
 	public static void genModuleXMLHead(StringBuffer target, String moduleName) {
 		target.append("(module :name " + moduleName + " :indexing 1 \n");
-
+		
 	}
 
 	public static void genModuleXMLTail(StringBuffer target) {

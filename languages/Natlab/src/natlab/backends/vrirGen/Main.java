@@ -39,23 +39,30 @@ public class Main {
 		 * the type info is composed like double&3*3&REAL.
 		 */
 
-		String fileDir = "diff/";
-		String fileName = "drv_diff.m";
+		String fileDir = "adpt/";
+		String fileName = "adapt.m";
 
 		String fileIn = fileDir + fileName;
 		File file = new File(fileIn);
-		
+
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
+		String[] inputArgs = null;
 		String[] testArgs = Main.getArgs(file);
-		
-		Arrays.stream(testArgs).forEach(p-> System.out.println(p));
+		if (testArgs != null) {
+			inputArgs = testArgs;
+		} else if (args.length > 0) {
+			inputArgs = args;
+		} else {
+			throw new NullPointerException("arguments not provided");
+		}
 		
 		FileEnvironment env = new FileEnvironment(gFile); // get path
 		SimpleFunctionCollection.convertColonToRange = true;
 		BasicTamerTool tool = new BasicTamerTool();
-		tool.setDoIntOk(false);
+		tool.setDoIntOk(true);
 		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = tool.analyze(
-				testArgs, env);
+				inputArgs, env);
+		
 		int size = analysis.getNodeList().size();
 		WrapperGenerator wrapper = WrapperGenFactory.getWrapperGen(
 				TargetLang.Cpp, analysis.getMainNode().getFunction());
@@ -78,15 +85,16 @@ public class Main {
 			 */
 			StaticFunction function = analysis.getNodeList().get(i)
 					.getFunction();
+
 			System.out.println("Analysis function  " + function.getName());
 			if (!funcSet.contains(function)) {
 
-				if (function.getName().equals(
-						analysis.getMainNode().getFunction().getName())) {
-
-					funcSet.add(function);
-					continue;
-				}
+//				if (function.getName().equals(
+//						analysis.getMainNode().getFunction().getName())) {
+//
+//					funcSet.add(function);
+//					continue;
+//				}
 				TransformationEngine transformationEngine = TransformationEngine
 						.forAST(function.getAst());
 
@@ -120,10 +128,7 @@ public class Main {
 
 		VrirXmlGen.genModuleXMLTail(genXML);
 		System.out.println(" print the generated VRIR in XML format  .\n");
-		// System.out.println("main function "
-		// + analysis.getMainNode().getFunction().getName());
-		// System.out.println(wrapper.genWrapper());
-		System.out.println(genXML);
+		 System.out.println(genXML);
 		try {
 			BufferedWriter buffer = Files.newBufferedWriter(
 					Paths.get(fileName.split("\\.")[0] + ".vrir"),
@@ -135,11 +140,12 @@ public class Main {
 		}
 
 	}
+
 	public static String[] getArgs(File file) {
 		try {
-			BufferedReader reader= Files.newBufferedReader(file.toPath());
+			BufferedReader reader = Files.newBufferedReader(file.toPath());
 			String argStr = reader.readLine();
-			if(argStr.charAt(0) != '%'){
+			if (argStr.charAt(0) != '%') {
 				return null;
 			}
 			argStr = argStr.substring(1).trim();
@@ -149,7 +155,7 @@ public class Main {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		return null;
 	}
 }

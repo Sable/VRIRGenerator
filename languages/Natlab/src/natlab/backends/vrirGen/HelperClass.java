@@ -97,9 +97,9 @@ public class HelperClass {
 	}
 
 	public static Shape<AggrValue<BasicMatrixValue>> getShape(String name,
-			VrirXmlGen gen) {
-		AggrValue<BasicMatrixValue> val = gen.getAnalysis().getNodeList()
-				.get(gen.getIndex()).getAnalysis().getCurrentOutSet().get(name)
+			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis, int graphIndex) {
+		AggrValue<BasicMatrixValue> val = analysis.getNodeList()
+				.get(graphIndex).getAnalysis().getCurrentOutSet().get(name)
 				.getSingleton();
 		if ((Object) val instanceof BasicMatrixValue) {
 
@@ -110,9 +110,9 @@ public class HelperClass {
 	}
 
 	public static PrimitiveClassReference getDataType(NameExpr node,
-			VrirXmlGen gen) {
-		AggrValue<BasicMatrixValue> val = gen.getAnalysis().getNodeList()
-				.get(gen.getIndex()).getAnalysis().getCurrentOutSet()
+			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis, int graphIndex) {
+		AggrValue<BasicMatrixValue> val = analysis.getNodeList()
+				.get(graphIndex).getAnalysis().getCurrentOutSet()
 				.get(((NameExpr) node).getName().getID()).getSingleton();
 		if ((Object) val instanceof BasicMatrixValue) {
 
