@@ -40,6 +40,7 @@ public class FuncInfoGenerator {
 		String fileIn = fileDir + fileName;
 		File file = new File(fileIn);
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
+		BasicTamerTool.setDoIntOk(false);
 		FileEnvironment env = new FileEnvironment(gFile);
 		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = BasicTamerTool
 				.analyze(args, env);

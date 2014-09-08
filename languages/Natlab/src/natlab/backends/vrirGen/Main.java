@@ -64,14 +64,14 @@ public class Main {
 
 		FileEnvironment env = new FileEnvironment(gFile); // get path
 		SimpleFunctionCollection.convertColonToRange = true;
-		BasicTamerTool tool = new BasicTamerTool();
-		tool.setDoIntOk(true);
-		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = tool.analyze(
-				inputArgs, env);
+		BasicTamerTool.setDoIntOk(true);
+		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = BasicTamerTool
+				.analyze(inputArgs, env);
 
 		int size = analysis.getNodeList().size();
 		WrapperGenerator wrapper = WrapperGenFactory.getWrapperGen(
-				TargetLang.Cpp, analysis.getMainNode().getFunction());
+				TargetLang.MEX, analysis.getMainNode().getFunction(), analysis,
+				0);
 		StringBuffer genXML = new StringBuffer();
 		VrirXmlGen.genModuleXMLHead(genXML, fileName.split("\\.")[0]);
 		genXML.append(HelperClass.toXMLHead("fns"));
