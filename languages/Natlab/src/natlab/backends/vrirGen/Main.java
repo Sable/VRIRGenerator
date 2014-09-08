@@ -3,6 +3,8 @@ package natlab.backends.vrirGen;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -10,6 +12,10 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import natlab.backends.vrirGen.WrapperGenFactory.TargetLang;
 //import natlab.backends.vrirGen.vrirCodeGen.CppCodeGen;
@@ -47,7 +53,7 @@ public class Main {
 
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
 		String[] inputArgs = null;
-		String[] testArgs = Main.getArgs(file);
+		String[] testArgs = Main.getArgs(fileDir, fileName.split("\\.")[0]);
 		if (testArgs != null) {
 			inputArgs = testArgs;
 		} else if (args.length > 0) {
@@ -55,14 +61,14 @@ public class Main {
 		} else {
 			throw new NullPointerException("arguments not provided");
 		}
-		
+
 		FileEnvironment env = new FileEnvironment(gFile); // get path
 		SimpleFunctionCollection.convertColonToRange = true;
 		BasicTamerTool tool = new BasicTamerTool();
 		tool.setDoIntOk(true);
 		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = tool.analyze(
 				inputArgs, env);
-		
+
 		int size = analysis.getNodeList().size();
 		WrapperGenerator wrapper = WrapperGenFactory.getWrapperGen(
 				TargetLang.Cpp, analysis.getMainNode().getFunction());
@@ -89,12 +95,12 @@ public class Main {
 			System.out.println("Analysis function  " + function.getName());
 			if (!funcSet.contains(function)) {
 
-//				if (function.getName().equals(
-//						analysis.getMainNode().getFunction().getName())) {
-//
-//					funcSet.add(function);
-//					continue;
-//				}
+				// if (function.getName().equals(
+				// analysis.getMainNode().getFunction().getName())) {
+				//
+				// funcSet.add(function);
+				// continue;
+				// }
 				TransformationEngine transformationEngine = TransformationEngine
 						.forAST(function.getAst());
 
@@ -128,7 +134,7 @@ public class Main {
 
 		VrirXmlGen.genModuleXMLTail(genXML);
 		System.out.println(" print the generated VRIR in XML format  .\n");
-		 System.out.println(genXML);
+		System.out.println(genXML);
 		try {
 			BufferedWriter buffer = Files.newBufferedWriter(
 					Paths.get(fileName.split("\\.")[0] + ".vrir"),
@@ -141,21 +147,23 @@ public class Main {
 
 	}
 
-	public static String[] getArgs(File file) {
+	public static String[] getArgs(String rootDir, String funcName) {
+		JSONParser parser = new JSONParser();
 		try {
-			BufferedReader reader = Files.newBufferedReader(file.toPath());
-			String argStr = reader.readLine();
-			if (argStr.charAt(0) != '%') {
-				return null;
-			}
-			argStr = argStr.substring(1).trim();
-			String[] args = argStr.split(" ");
-			return args;
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+			JSONObject obj = (JSONObject) parser.parse(new FileReader(new File(
+					rootDir + "inputArgs.json")));
+			return ((String) obj.get(funcName)).trim().split(" ");
 
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 }

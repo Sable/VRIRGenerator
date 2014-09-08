@@ -8,9 +8,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
+import com.sun.org.apache.bcel.internal.generic.FNEG;
 
 import natlab.tame.BasicTamerTool;
 import natlab.tame.callgraph.StaticFunction;
@@ -35,13 +43,13 @@ public class FuncInfoGenerator {
 		FileEnvironment env = new FileEnvironment(gFile);
 		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = BasicTamerTool
 				.analyze(args, env);
-		FuncInfoGenerator gen = new FuncInfoGenerator(analysis, fileDir);
-		Map<String, String> map = gen.genArgsStr();
-		gen.writeToFile(map);
+		FuncInfoGenerator.genFuncInfo(fileDir, analysis);
+
 	}
 
 	ValueAnalysis<AggrValue<BasicMatrixValue>> analysis;
 	String rootDir;
+	Map<String, String> funcArgMap = new HashMap<String, String>();
 
 	FuncInfoGenerator(ValueAnalysis<AggrValue<BasicMatrixValue>> analysis,
 			String rootDir) {
@@ -50,22 +58,27 @@ public class FuncInfoGenerator {
 
 	}
 
-	public Map<String, String> genArgsStr() {
+	public static void genFuncInfo(String rootDir,
+			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis) {
+		FuncInfoGenerator gen = new FuncInfoGenerator(analysis, rootDir);
+		Map<String, String> map = gen.genArgsStrMap();
+		gen.writeToFile(gen.toJSONString());
+
+	}
+
+	public Map<String, String> genArgsStrMap() {
 		HashSet<StaticFunction> set = new HashSet();
-		HashMap funcArgMap = new HashMap<String, String>();
 		for (int i = 0; i < analysis.getNodeList().size(); i++) {
 			if (!set.contains(analysis.getNodeList().get(i).getFunction())) {
 				set.add(analysis.getNodeList().get(i).getFunction());
 				StaticFunction func = analysis.getNodeList().get(i)
 						.getFunction();
-				System.out.println("function Name " + func.getName());
 				Args<AggrValue<BasicMatrixValue>> args = analysis.getNodeList()
 						.get(i).getAnalysis().getArgs();
-				String argStr = "%";
+				String argStr = "";
 				for (int j = 0; j < args.size(); j++) {
-					argStr += " " + genArgStr(args.get(j));
+					argStr += genArgStr(args.get(j)) + " ";
 				}
-				argStr += "\n";
 				funcArgMap.put(func.getName(), argStr);
 			}
 		}
@@ -105,24 +118,28 @@ public class FuncInfoGenerator {
 		return null;
 	}
 
-	public void writeToFile(Map<String, String> funcMap) {
-		for (String func : funcMap.keySet()) {
-			File file = new File(rootDir + func + ".m");
-			if (file.exists()) {
+	public String toJSONString() {
+		return (new JSONObject(funcArgMap)).toJSONString();
 
-				Path path = Paths.get(file.getAbsolutePath());
-				try {
-					RandomAccessFile writer = (new RandomAccessFile(file, "rw"));
-					writer.seek(0);
-					writer.writeChars(funcMap.get(func));
-					writer.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+	}
 
+	public void writeToFile(String str) {
+		File file = new File(rootDir + "/inputArgs.json");
+		Path path = Paths.get(file.getAbsolutePath());
+		try {
+			BufferedWriter writer;
+			if (!file.exists()) {
+				writer = Files.newBufferedWriter(path,
+						StandardOpenOption.CREATE_NEW);
+			} else {
+				writer = Files.newBufferedWriter(path,
+						StandardOpenOption.TRUNCATE_EXISTING);
 			}
-
+			writer.write(str);
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
