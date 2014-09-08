@@ -35,8 +35,8 @@ public class FuncInfoGenerator {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		String fileDir = "adpt/";
-		String fileName = "drv_adpt.m";
+		String fileDir = "scra/";
+		String fileName = "drv_scra.m";
 		String fileIn = fileDir + fileName;
 		File file = new File(fileIn);
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
