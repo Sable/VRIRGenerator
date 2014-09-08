@@ -61,4 +61,8 @@ public final class MClassToClassIDMapper {
 			String complexity) {
 		return vrTypeTable.get(type, complexity);
 	}
+
+	public static String getMxComplexity(String complexity) {
+		return complexity.equals("REAL") ? "mxREAL" : "mxCOMPLEX";
+	}
 }
