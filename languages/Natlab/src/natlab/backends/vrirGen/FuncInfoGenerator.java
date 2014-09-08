@@ -1,12 +1,17 @@
 package natlab.backends.vrirGen;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import ast.Name;
-import ast.NameExpr;
 import natlab.tame.BasicTamerTool;
 import natlab.tame.callgraph.StaticFunction;
 import natlab.tame.valueanalysis.ValueAnalysis;
@@ -31,7 +36,8 @@ public class FuncInfoGenerator {
 		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = BasicTamerTool
 				.analyze(args, env);
 		FuncInfoGenerator gen = new FuncInfoGenerator(analysis, fileDir);
-		gen.genArgsStr();
+		Map<String, String> map = gen.genArgsStr();
+		gen.writeToFile(map);
 	}
 
 	ValueAnalysis<AggrValue<BasicMatrixValue>> analysis;
@@ -59,6 +65,7 @@ public class FuncInfoGenerator {
 				for (int j = 0; j < args.size(); j++) {
 					argStr += " " + genArgStr(args.get(j));
 				}
+				argStr += "\n";
 				funcArgMap.put(func.getName(), argStr);
 			}
 		}
@@ -96,6 +103,27 @@ public class FuncInfoGenerator {
 
 	public String genComplexityStr() {
 		return null;
+	}
+
+	public void writeToFile(Map<String, String> funcMap) {
+		for (String func : funcMap.keySet()) {
+			File file = new File(rootDir + func + ".m");
+			if (file.exists()) {
+
+				Path path = Paths.get(file.getAbsolutePath());
+				try {
+					RandomAccessFile writer = (new RandomAccessFile(file, "rw"));
+					writer.seek(0);
+					writer.writeChars(funcMap.get(func));
+					writer.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+		}
 	}
 
 }
