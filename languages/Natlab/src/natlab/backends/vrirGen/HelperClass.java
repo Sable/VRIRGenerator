@@ -53,7 +53,6 @@ public class HelperClass {
 		return generateVType(temp);
 
 	}
-
 	public static VType generateVType(@SuppressWarnings("rawtypes") Value value) {
 
 		if ((Object) value instanceof BasicMatrixValue) {
@@ -84,14 +83,12 @@ public class HelperClass {
 	}
 
 	public static PrimitiveClassReference getDataType(String name,
-			VrirXmlGen gen) {
-		AggrValue<BasicMatrixValue> val = gen.getAnalysis().getNodeList()
-				.get(gen.getIndex()).getAnalysis().getCurrentOutSet().get(name)
+			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis, int graphIndex) {
+		AggrValue<BasicMatrixValue> val = analysis.getNodeList()
+				.get(graphIndex).getAnalysis().getCurrentOutSet().get(name)
 				.getSingleton();
 		if ((Object) val instanceof BasicMatrixValue) {
-
 			return (((BasicMatrixValue) (Object) val)).getMatlabClass();
-
 		}
 		return null;
 	}
@@ -102,9 +99,7 @@ public class HelperClass {
 				.get(graphIndex).getAnalysis().getCurrentOutSet().get(name)
 				.getSingleton();
 		if ((Object) val instanceof BasicMatrixValue) {
-
 			return (((BasicMatrixValue) (Object) val)).getShape();
-
 		}
 		return null;
 	}
@@ -115,9 +110,7 @@ public class HelperClass {
 				.get(graphIndex).getAnalysis().getCurrentOutSet()
 				.get(((NameExpr) node).getName().getID()).getSingleton();
 		if ((Object) val instanceof BasicMatrixValue) {
-
 			return (((BasicMatrixValue) (Object) val)).getMatlabClass();
-
 		} else {
 			throw new NullPointerException(
 					"Analyses other than cell value and Advanced matrix value not supported. are currently not supported   ");
