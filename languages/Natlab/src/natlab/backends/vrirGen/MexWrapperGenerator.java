@@ -27,8 +27,8 @@ public class MexWrapperGenerator implements WrapperGenerator {
 
 	// private ArrayList<String> headerList = new ArrayList<String>();
 	public static void main(String args[]) {
-		String fileDir = "fft/";
-		String fileName = "fft_four1.m";
+		String fileDir = "bubble/";
+		String fileName = "bubble.m";
 		String fileIn = fileDir + fileName;
 		File file = new File(fileIn);
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
@@ -53,7 +53,7 @@ public class MexWrapperGenerator implements WrapperGenerator {
 				0);
 		String wrapperStr = wrapper.genWrapper();
 		file = new File(fileName.split("\\.")[0] + ".cpp");
-		System.out.println("file name " + fileIn.split("\\.")[0] +".cpp");
+		System.out.println("file name " + fileIn.split("\\.")[0] + ".cpp");
 		try {
 			BufferedWriter writer = Files.newBufferedWriter(
 					Paths.get(file.getAbsolutePath()),
@@ -106,6 +106,9 @@ public class MexWrapperGenerator implements WrapperGenerator {
 	private String genSetterFunc() {
 		Res<AggrValue<BasicMatrixValue>> resVal = analysis.getMainNode()
 				.getAnalysis().getResult();
+		if(analysis.getMainNode().getAnalysis().getResult().size() <=0) {
+			return "";
+		}
 		if (analysis.getMainNode().getAnalysis().getResult().size() == 1) {
 			if (((BasicMatrixValue) (resVal.get(0).getSingleton())).getShape()
 					.isScalar()) {
@@ -155,6 +158,10 @@ public class MexWrapperGenerator implements WrapperGenerator {
 	}
 
 	private String genSingleAlloc() {
+		if(analysis
+				.getMainNode().getAnalysis().getResult().size() <=0) {
+			return "";
+		}
 		BasicMatrixValue analysisVal = (BasicMatrixValue) analysis
 				.getMainNode().getAnalysis().getResult().get(0).getSingleton();
 		if (analysisVal.getShape().isScalar()
@@ -214,22 +221,26 @@ public class MexWrapperGenerator implements WrapperGenerator {
 			return "struct_" + analysis.getMainNode().getFunction().getName()
 					+ "_ret retVal";
 		} else {
-			PrimitiveClassReference type = (PrimitiveClassReference) analysis
-					.getMainNode().getAnalysis().getResult().get(0)
-					.getSingleton().getMatlabClass();
-			String complexity = ((BasicMatrixValue) analysis.getMainNode()
-					.getAnalysis().getResult().get(0).getSingleton())
-					.getisComplexInfo().geticType();
-			return MClassToClassIDMapper.getVrType(type, complexity)
-					+ " retVal";
+			if (analysis.getMainNode().getAnalysis().getResult().size() > 0) {
+				PrimitiveClassReference type = (PrimitiveClassReference) analysis
+						.getMainNode().getAnalysis().getResult().get(0)
+						.getSingleton().getMatlabClass();
+				String complexity = ((BasicMatrixValue) analysis.getMainNode()
+						.getAnalysis().getResult().get(0).getSingleton())
+						.getisComplexInfo().geticType();
+				return MClassToClassIDMapper.getVrType(type, complexity)
+						+ " retVal";
+			} else {
+				return null;
+			}
 		}
 	}
 
 	private String genFuncCall() {
 		int numArgs = analysis.getNodeList().get(graphIndex).getAnalysis()
 				.getArgs().size();
-
-		String funcStr = genReturnStr() + " = "
+		String retStr = genReturnStr();
+		String funcStr = (retStr != null ? retStr + " = " : "")
 				+ analysis.getMainNode().getFunction().getName() + "(";
 		for (int i = 0; i < numArgs; i++) {
 			if (i != 0) {
@@ -252,8 +263,7 @@ public class MexWrapperGenerator implements WrapperGenerator {
 		sb.append("#include<stdio.h>\n");
 		sb.append("#include<mex.h>\n");
 		sb.append("#include\"matrix_ops.hpp\"\n");
-		// sb.append("#include\"" + func.getName() + "_impml.h \"");
-
+		sb.append("#include\""+analysis.getMainNode().getFunction().getName()+"Impl.hpp\"\n");
 		return sb.toString();
 
 	}

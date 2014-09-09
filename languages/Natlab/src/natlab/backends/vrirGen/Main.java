@@ -45,8 +45,8 @@ public class Main {
 		 * the type info is composed like double&3*3&REAL.
 		 */
 
-		String fileDir = "fft/";
-		String fileName = "fft_four1.m";
+		String fileDir = "bubble/";
+		String fileName = "bubble.m";
 
 		String fileIn = fileDir + fileName;
 		File file = new File(fileIn);

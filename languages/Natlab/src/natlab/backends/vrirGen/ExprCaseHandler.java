@@ -222,10 +222,10 @@ public class ExprCaseHandler {
 		gen.appendToPrettyCode(toXMLHead(name));
 		gen.appendToPrettyCode(HelperClass.getExprType(node, gen).toXML());
 		gen.appendToPrettyCode(HelperClass.toXMLHead("lhs"));
-		node.getArg(1).analyze(gen);
+		node.getArg(0).analyze(gen);
 		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(HelperClass.toXMLHead("rhs"));
-		node.getArg(0).analyze(gen);
+		node.getArg(1).analyze(gen);
 		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(toXMLTail());
 	}
@@ -477,12 +477,11 @@ public class ExprCaseHandler {
 		for (Expr arg : expr.getArgList()) {
 			gen.appendToPrettyCode(HelperClass
 					.toXMLHead("index :boundscheck %1 :negative %0"));
-			if (arg instanceof ParameterizedExpr) {
-				if (arg.getVarName().equals("colon")) {
-					handleColonCall((ParameterizedExpr) arg, gen);
-					gen.appendToPrettyCode(HelperClass.toXMLTail());
-					continue;
-				}
+			if (arg instanceof ParameterizedExpr
+					&& arg.getVarName().equals("colon")) {
+				handleColonCall((ParameterizedExpr) arg, gen);
+				gen.appendToPrettyCode(HelperClass.toXMLTail());
+				continue;
 			}
 			arg.analyze(gen);
 			gen.appendToPrettyCode(HelperClass.toXMLTail());
