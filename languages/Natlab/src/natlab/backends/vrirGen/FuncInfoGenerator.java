@@ -110,7 +110,9 @@ public class FuncInfoGenerator {
 			} else {
 				flag = true;
 			}
-			shapeStr += dim.hasIntValue() ? dim.getIntValue() : "?";
+
+			shapeStr += dim.hasIntValue() && dim.equalsOne() ? dim
+					.getIntValue() : "?";
 		}
 		return shapeStr;
 	}

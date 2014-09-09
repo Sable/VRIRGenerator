@@ -14,10 +14,11 @@ public final class MClassToClassIDMapper {
 			.create();
 	private static Table<PrimitiveClassReference, String, String> getterFuncTable = HashBasedTable
 			.create();
+	private static Table<PrimitiveClassReference, String, String> vrScalarTypeTable = HashBasedTable
+			.create();
 
 	public static void init() {
 		typeMap = new HashMap<PrimitiveClassReference, String>();
-
 		typeMap.put(PrimitiveClassReference.INT8, "mxINT8_CLASS");
 		typeMap.put(PrimitiveClassReference.INT16, "mxINT16_CLASS");
 		typeMap.put(PrimitiveClassReference.INT32, "mxINT32_CLASS");
@@ -47,6 +48,16 @@ public final class MClassToClassIDMapper {
 				"getVrArrayF32");
 		getterFuncTable.put(PrimitiveClassReference.SINGLE, "COMPLEX",
 				"getVrArrayCF32");
+		vrScalarTypeTable.put(PrimitiveClassReference.DOUBLE, "REAL", "double");
+		vrScalarTypeTable.put(PrimitiveClassReference.SINGLE, "REAL", "float");
+		vrScalarTypeTable.put(PrimitiveClassReference.SINGLE, "COMPLEX",
+				"float complex");
+		vrScalarTypeTable.put(PrimitiveClassReference.DOUBLE, "COMPLEX",
+				"double complex");
+		vrScalarTypeTable.put(PrimitiveClassReference.INT8, "REAL", "short");
+		vrScalarTypeTable.put(PrimitiveClassReference.INT16, "REAL", "short");
+		vrScalarTypeTable.put(PrimitiveClassReference.INT32, "REAL", "int");
+		vrScalarTypeTable.put(PrimitiveClassReference.INT64, "REAL", "long");
 	}
 
 	public static String getMxType(PrimitiveClassReference type) {
@@ -60,6 +71,11 @@ public final class MClassToClassIDMapper {
 	public static String getVrType(PrimitiveClassReference type,
 			String complexity) {
 		return vrTypeTable.get(type, complexity);
+	}
+
+	public static String getVrScalarType(PrimitiveClassReference type,
+			String complexity) {
+		return vrScalarTypeTable.get(type, complexity);
 	}
 
 	public static String getMxComplexity(String complexity) {

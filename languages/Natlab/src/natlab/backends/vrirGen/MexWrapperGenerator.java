@@ -175,11 +175,18 @@ public class MexWrapperGenerator implements WrapperGenerator {
 					.getMatlabClass();
 			String complexity = ((BasicMatrixValue) arg).getisComplexInfo()
 					.geticType();
-
-			String getStr = MClassToClassIDMapper.getVrType(type, complexity)
-					+ " inputData" + i + " = "
-					+ MClassToClassIDMapper.getFunc(type, complexity) + "(rhs["
-					+ i + "]);\n";
+			String getStr, typeStr;
+			if (((BasicMatrixValue) arg).getShape().isScalar()) {
+				typeStr = MClassToClassIDMapper.getVrScalarType(type,
+						complexity);
+				getStr = typeStr + "inputData" + i + " = " + "static_cast<"
+						+ typeStr + ">(mxGetScalar(rhs[" + i + "]));\n";
+			} else {
+				typeStr = MClassToClassIDMapper.getVrType(type, complexity);
+				getStr = typeStr + " inputData" + i + " = "
+						+ MClassToClassIDMapper.getFunc(type, complexity)
+						+ "(rhs[" + i + "]);\n";
+			}
 			sb.append(getStr);
 		}
 		return sb.toString();
