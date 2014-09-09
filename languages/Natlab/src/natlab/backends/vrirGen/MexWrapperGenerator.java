@@ -1,6 +1,11 @@
 package natlab.backends.vrirGen;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 import natlab.backends.vrirGen.WrapperGenFactory.TargetLang;
 import natlab.tame.BasicTamerTool;
@@ -22,8 +27,8 @@ public class MexWrapperGenerator implements WrapperGenerator {
 
 	// private ArrayList<String> headerList = new ArrayList<String>();
 	public static void main(String args[]) {
-		String fileDir = "adpt/";
-		String fileName = "adapt.m";
+		String fileDir = "fft/";
+		String fileName = "fft_four1.m";
 		String fileIn = fileDir + fileName;
 		File file = new File(fileIn);
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
@@ -46,8 +51,20 @@ public class MexWrapperGenerator implements WrapperGenerator {
 		WrapperGenerator wrapper = WrapperGenFactory.getWrapperGen(
 				TargetLang.MEX, analysis.getMainNode().getFunction(), analysis,
 				0);
-		System.out.println(wrapper.genWrapper());
-
+		String wrapperStr = wrapper.genWrapper();
+		file = new File(fileName.split("\\.")[0] + ".cpp");
+		System.out.println("file name " + fileIn.split("\\.")[0] +".cpp");
+		try {
+			BufferedWriter writer = Files.newBufferedWriter(
+					Paths.get(file.getAbsolutePath()),
+					StandardOpenOption.CREATE);
+			System.out.println(wrapperStr);
+			writer.write(wrapperStr);
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public StaticFunction getFunc() {
@@ -179,7 +196,7 @@ public class MexWrapperGenerator implements WrapperGenerator {
 			if (((BasicMatrixValue) arg).getShape().isScalar()) {
 				typeStr = MClassToClassIDMapper.getVrScalarType(type,
 						complexity);
-				getStr = typeStr + "inputData" + i + " = " + "static_cast<"
+				getStr = typeStr + " inputData" + i + " = " + "static_cast<"
 						+ typeStr + ">(mxGetScalar(rhs[" + i + "]));\n";
 			} else {
 				typeStr = MClassToClassIDMapper.getVrType(type, complexity);
@@ -203,7 +220,8 @@ public class MexWrapperGenerator implements WrapperGenerator {
 			String complexity = ((BasicMatrixValue) analysis.getMainNode()
 					.getAnalysis().getResult().get(0).getSingleton())
 					.getisComplexInfo().geticType();
-			return MClassToClassIDMapper.getVrType(type, complexity);
+			return MClassToClassIDMapper.getVrType(type, complexity)
+					+ " retVal";
 		}
 	}
 
