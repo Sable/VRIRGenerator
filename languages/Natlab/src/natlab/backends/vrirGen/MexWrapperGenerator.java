@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Map;
 
 import natlab.backends.vrirGen.WrapperGenFactory.TargetLang;
 import natlab.tame.BasicTamerTool;
@@ -27,9 +28,13 @@ public class MexWrapperGenerator implements WrapperGenerator {
 
 	// private ArrayList<String> headerList = new ArrayList<String>();
 	public static void main(String args[]) {
-		String fileDir = "bubble/";
-		String fileName = "bubble.m";
-		String fileIn = fileDir + fileName;
+		String fileDir = "capr";
+		String fileName = "capacitor.m";
+		// Map<String, String> dirMap = DirToEntryPointMapper.getMap();
+		// for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
+		// fileDir = rootDir;
+		// fileName = dirMap.get(rootDir);
+		String fileIn = fileDir + "/" + fileName;
 		File file = new File(fileIn);
 		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
 		String[] inputArgs = null;
@@ -43,7 +48,7 @@ public class MexWrapperGenerator implements WrapperGenerator {
 		}
 		FileEnvironment env = new FileEnvironment(gFile); // get path
 		SimpleFunctionCollection.convertColonToRange = true;
-		BasicTamerTool.setDoIntOk(true);
+		BasicTamerTool.setDoIntOk(false);
 		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = BasicTamerTool
 				.analyze(inputArgs, env);
 
@@ -55,9 +60,16 @@ public class MexWrapperGenerator implements WrapperGenerator {
 		file = new File(fileName.split("\\.")[0] + ".cpp");
 		System.out.println("file name " + fileIn.split("\\.")[0] + ".cpp");
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(
-					Paths.get(file.getAbsolutePath()),
-					StandardOpenOption.CREATE);
+			BufferedWriter writer;
+			if (!file.exists()) {
+				writer = Files.newBufferedWriter(
+						Paths.get(file.getAbsolutePath()),
+						StandardOpenOption.CREATE);
+			} else {
+				writer = Files.newBufferedWriter(
+						Paths.get(file.getAbsolutePath()),
+						StandardOpenOption.TRUNCATE_EXISTING);
+			}
 			System.out.println(wrapperStr);
 			writer.write(wrapperStr);
 			writer.close();
@@ -65,6 +77,7 @@ public class MexWrapperGenerator implements WrapperGenerator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		// }
 	}
 
 	public StaticFunction getFunc() {
@@ -106,7 +119,7 @@ public class MexWrapperGenerator implements WrapperGenerator {
 	private String genSetterFunc() {
 		Res<AggrValue<BasicMatrixValue>> resVal = analysis.getMainNode()
 				.getAnalysis().getResult();
-		if(analysis.getMainNode().getAnalysis().getResult().size() <=0) {
+		if (analysis.getMainNode().getAnalysis().getResult().size() <= 0) {
 			return "";
 		}
 		if (analysis.getMainNode().getAnalysis().getResult().size() == 1) {
@@ -158,8 +171,7 @@ public class MexWrapperGenerator implements WrapperGenerator {
 	}
 
 	private String genSingleAlloc() {
-		if(analysis
-				.getMainNode().getAnalysis().getResult().size() <=0) {
+		if (analysis.getMainNode().getAnalysis().getResult().size() <= 0) {
 			return "";
 		}
 		BasicMatrixValue analysisVal = (BasicMatrixValue) analysis
@@ -228,6 +240,12 @@ public class MexWrapperGenerator implements WrapperGenerator {
 				String complexity = ((BasicMatrixValue) analysis.getMainNode()
 						.getAnalysis().getResult().get(0).getSingleton())
 						.getisComplexInfo().geticType();
+				if (((BasicMatrixValue) analysis.getMainNode().getAnalysis()
+						.getResult().get(0).getSingleton()).getShape()
+						.isScalar()) {
+					return MClassToClassIDMapper.getVrScalarType(type,
+							complexity) + " retVal";
+				}
 				return MClassToClassIDMapper.getVrType(type, complexity)
 						+ " retVal";
 			} else {
@@ -237,8 +255,7 @@ public class MexWrapperGenerator implements WrapperGenerator {
 	}
 
 	private String genFuncCall() {
-		int numArgs = analysis.getNodeList().get(graphIndex).getAnalysis()
-				.getArgs().size();
+		int numArgs = analysis.getMainNode().getAnalysis().getArgs().size();
 		String retStr = genReturnStr();
 		String funcStr = (retStr != null ? retStr + " = " : "")
 				+ analysis.getMainNode().getFunction().getName() + "(";
@@ -263,7 +280,8 @@ public class MexWrapperGenerator implements WrapperGenerator {
 		sb.append("#include<stdio.h>\n");
 		sb.append("#include<mex.h>\n");
 		sb.append("#include\"matrix_ops.hpp\"\n");
-		sb.append("#include\""+analysis.getMainNode().getFunction().getName()+"Impl.hpp\"\n");
+		sb.append("#include\"" + analysis.getMainNode().getFunction().getName()
+				+ "Impl.hpp\"\n");
 		return sb.toString();
 
 	}

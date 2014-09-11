@@ -394,7 +394,7 @@ public class ExprCaseHandler {
 								.equalsOne()
 						&& (((VTypeMatrix) vt).getShape().getDimensions()
 								.size() == 2)) {
-					name = "mult";
+					name = "libmult";
 				}
 			} else {
 				throw new UnsupportedOperationException(
@@ -409,7 +409,7 @@ public class ExprCaseHandler {
 								.equalsOne()
 						&& (((VTypeMatrix) vt).getShape().getDimensions()
 								.size() == 2)) {
-					name = "mult";
+					name = "libmult";
 				}
 			} else {
 				throw new UnsupportedOperationException(
