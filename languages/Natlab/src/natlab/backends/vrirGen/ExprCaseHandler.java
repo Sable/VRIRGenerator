@@ -498,7 +498,7 @@ public class ExprCaseHandler {
 
 	public static void handleRange(Expr start, Expr step, Expr stop,
 			VrirXmlGen gen) {
-		gen.appendToPrettyCode(HelperClass.toXMLHead("range"));
+		gen.appendToPrettyCode(HelperClass.toXMLHead("range :exclude %0"));
 
 		gen.appendToPrettyCode(HelperClass.toXMLHead("start "));
 		start.analyze(gen);
