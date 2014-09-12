@@ -42,6 +42,7 @@ public class DirectoryInfoGenerator {
 		dirToDriverMap.put("fdtd", "drv_fdtd.m");
 		dirToDriverMap.put("fft", "drv_fft.m");
 		dirToDriverMap.put("fiff", "drv_fiff.m");
+		dirToDriverMap.put("dich","drv_dich.m");
 	}
 
 	public void walk(String[] args) {

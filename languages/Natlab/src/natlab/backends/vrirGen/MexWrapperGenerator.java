@@ -28,8 +28,8 @@ public class MexWrapperGenerator implements WrapperGenerator {
 
 	// private ArrayList<String> headerList = new ArrayList<String>();
 	public static void main(String args[]) {
-		String fileDir = "capr";
-		String fileName = "capacitor.m";
+		String fileDir = "mbrt";
+		String fileName = "mandelbrot.m";
 		// Map<String, String> dirMap = DirToEntryPointMapper.getMap();
 		// for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
 		// fileDir = rootDir;
@@ -203,8 +203,7 @@ public class MexWrapperGenerator implements WrapperGenerator {
 
 	private String genGetterFunctions() {
 		StringBuffer sb = new StringBuffer();
-		Args<AggrValue<BasicMatrixValue>> args = analysis.getNodeList()
-				.get(graphIndex).getAnalysis().getArgs();
+		Args<AggrValue<BasicMatrixValue>> args = analysis.getMainNode().getAnalysis().getArgs();
 		for (int i = 0; i < args.size(); i++) {
 			AggrValue<BasicMatrixValue> arg = args.get(i);
 			PrimitiveClassReference type = (PrimitiveClassReference) arg

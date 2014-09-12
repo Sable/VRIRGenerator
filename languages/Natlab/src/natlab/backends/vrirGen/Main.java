@@ -46,12 +46,12 @@ public class Main {
 		 * the type info is composed like double&3*3&REAL.
 		 */
 
-		String fileDir = "scra";
-		String fileName = "scra.m";
-		Map<String, String> dirMap = DirToEntryPointMapper.getMap();
-		for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
-			fileDir = rootDir;
-			fileName = dirMap.get(rootDir);
+		String fileDir = "dich";
+		String fileName = "dirich.m";
+//		Map<String, String> dirMap = DirToEntryPointMapper.getMap();
+//		for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
+//			fileDir = rootDir;
+//			fileName = dirMap.get(rootDir);
 
 			String fileIn = fileDir + "/" + fileName;
 			File file = new File(fileIn);
@@ -69,6 +69,7 @@ public class Main {
 			FileEnvironment env = new FileEnvironment(gFile); // get path
 			SimpleFunctionCollection.convertColonToRange = true;
 			BasicTamerTool.setDoIntOk(true);
+			
 			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = BasicTamerTool
 					.analyze(inputArgs, env);
 
@@ -148,7 +149,7 @@ public class Main {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
+		//}
 
 	}
 

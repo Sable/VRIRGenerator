@@ -46,13 +46,13 @@ public class HelperClass {
 	public static VType generateVType(
 			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis,
 			int graphIndex, String name) {
-
 		AggrValue<?> temp = analysis.getNodeList().get(graphIndex)
 				.getAnalysis().getCurrentOutSet().get(name).getSingleton();
 
 		return generateVType(temp);
 
 	}
+
 	public static VType generateVType(@SuppressWarnings("rawtypes") Value value) {
 
 		if ((Object) value instanceof BasicMatrixValue) {
