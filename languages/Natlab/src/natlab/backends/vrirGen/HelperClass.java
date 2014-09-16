@@ -256,9 +256,7 @@ public class HelperClass {
 				throw new NullPointerException(
 						"Temporary variable for the expression not found");
 			}
-			//System.out.println("tempName" + tempName.getID());
-			System.out.println(gen.getAnalysis().getNodeList()
-					.get(gen.getIndex()).getAnalysis().getCurrentOutSet());
+			
 			AggrValue<?> val = gen.getAnalysis().getNodeList()
 					.get(gen.getIndex()).getAnalysis().getCurrentOutSet()
 					.get(tempName.getID()).getSingleton();
