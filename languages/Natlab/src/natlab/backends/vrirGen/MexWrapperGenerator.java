@@ -28,56 +28,56 @@ public class MexWrapperGenerator implements WrapperGenerator {
 
 	// private ArrayList<String> headerList = new ArrayList<String>();
 	public static void main(String args[]) {
-		String fileDir = "mbrt";
-		String fileName = "mandelbrot.m";
-		// Map<String, String> dirMap = DirToEntryPointMapper.getMap();
-		// for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
-		// fileDir = rootDir;
-		// fileName = dirMap.get(rootDir);
-		String fileIn = fileDir + "/" + fileName;
-		File file = new File(fileIn);
-		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
-		String[] inputArgs = null;
-		String[] testArgs = Main.getArgs(fileDir, fileName.split("\\.")[0]);
-		if (testArgs != null) {
-			inputArgs = testArgs;
-		} else if (args.length > 0) {
-			inputArgs = args;
-		} else {
-			throw new NullPointerException("arguments not provided");
-		}
-		FileEnvironment env = new FileEnvironment(gFile); // get path
-		SimpleFunctionCollection.convertColonToRange = true;
-		BasicTamerTool.setDoIntOk(false);
-		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = BasicTamerTool
-				.analyze(inputArgs, env);
-
-		int size = analysis.getNodeList().size();
-		WrapperGenerator wrapper = WrapperGenFactory.getWrapperGen(
-				TargetLang.MEX, analysis.getMainNode().getFunction(), analysis,
-				0);
-		String wrapperStr = wrapper.genWrapper();
-		file = new File(fileName.split("\\.")[0] + ".cpp");
-		System.out.println("file name " + fileIn.split("\\.")[0] + ".cpp");
-		try {
-			BufferedWriter writer;
-			if (!file.exists()) {
-				writer = Files.newBufferedWriter(
-						Paths.get(file.getAbsolutePath()),
-						StandardOpenOption.CREATE);
+		 String fileDir = "adpt";
+		 String fileName = "adapt.m";
+		Map<String, String> dirMap = DirToEntryPointMapper.getMap();
+		for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
+			fileDir = rootDir;
+			fileName = dirMap.get(rootDir);
+			String fileIn = fileDir + "/" + fileName;
+			File file = new File(fileIn);
+			GenericFile gFile = GenericFile.create(file.getAbsolutePath());
+			String[] inputArgs = null;
+			String[] testArgs = Main.getArgs(fileDir, fileName.split("\\.")[0]);
+			if (testArgs != null) {
+				inputArgs = testArgs;
+			} else if (args.length > 0) {
+				inputArgs = args;
 			} else {
-				writer = Files.newBufferedWriter(
-						Paths.get(file.getAbsolutePath()),
-						StandardOpenOption.TRUNCATE_EXISTING);
+				throw new NullPointerException("arguments not provided");
 			}
-			System.out.println(wrapperStr);
-			writer.write(wrapperStr);
-			writer.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			FileEnvironment env = new FileEnvironment(gFile); // get path
+			SimpleFunctionCollection.convertColonToRange = true;
+			BasicTamerTool.setDoIntOk(false);
+			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = BasicTamerTool
+					.analyze(inputArgs, env);
+
+			int size = analysis.getNodeList().size();
+			WrapperGenerator wrapper = WrapperGenFactory.getWrapperGen(
+					TargetLang.MEX, analysis.getMainNode().getFunction(),
+					analysis, 0);
+			String wrapperStr = wrapper.genWrapper();
+			file = new File(fileName.split("\\.")[0] + ".cpp");
+			System.out.println("file name " + fileIn.split("\\.")[0] + ".cpp");
+			try {
+				BufferedWriter writer;
+				if (!file.exists()) {
+					writer = Files.newBufferedWriter(
+							Paths.get(file.getAbsolutePath()),
+							StandardOpenOption.CREATE);
+				} else {
+					writer = Files.newBufferedWriter(
+							Paths.get(file.getAbsolutePath()),
+							StandardOpenOption.TRUNCATE_EXISTING);
+				}
+				System.out.println(wrapperStr);
+				writer.write(wrapperStr);
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		// }
 	}
 
 	public StaticFunction getFunc() {
@@ -203,7 +203,8 @@ public class MexWrapperGenerator implements WrapperGenerator {
 
 	private String genGetterFunctions() {
 		StringBuffer sb = new StringBuffer();
-		Args<AggrValue<BasicMatrixValue>> args = analysis.getMainNode().getAnalysis().getArgs();
+		Args<AggrValue<BasicMatrixValue>> args = analysis.getMainNode()
+				.getAnalysis().getArgs();
 		for (int i = 0; i < args.size(); i++) {
 			AggrValue<BasicMatrixValue> arg = args.get(i);
 			PrimitiveClassReference type = (PrimitiveClassReference) arg

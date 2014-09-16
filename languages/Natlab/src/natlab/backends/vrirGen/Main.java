@@ -46,8 +46,8 @@ public class Main {
 		 * the type info is composed like double&3*3&REAL.
 		 */
 
-		String fileDir = "dich";
-		String fileName = "dirich.m";
+		String fileDir = "adpt";
+		String fileName = "adapt.m";
 //		Map<String, String> dirMap = DirToEntryPointMapper.getMap();
 //		for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
 //			fileDir = rootDir;
@@ -99,13 +99,6 @@ public class Main {
 
 				System.out.println("Analysis function  " + function.getName());
 				if (!funcSet.contains(function)) {
-
-					// if (function.getName().equals(
-					// analysis.getMainNode().getFunction().getName())) {
-					//
-					// funcSet.add(function);
-					// continue;
-					// }
 					TransformationEngine transformationEngine = TransformationEngine
 							.forAST(function.getAst());
 

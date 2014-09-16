@@ -43,6 +43,7 @@ public class DirectoryInfoGenerator {
 		dirToDriverMap.put("fft", "drv_fft.m");
 		dirToDriverMap.put("fiff", "drv_fiff.m");
 		dirToDriverMap.put("dich","drv_dich.m");
+		dirToDriverMap.put("witnesses","drv_witnesses.m");
 	}
 
 	public void walk(String[] args) {
@@ -59,7 +60,7 @@ public class DirectoryInfoGenerator {
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 			}
-			BasicTamerTool.setDoIntOk(false);
+			BasicTamerTool.setDoIntOk(true);
 			FuncInfoGenerator.genFuncInfo(fileDir, analysis);
 			System.out.println("fileDir " + fileDir);
 		}
