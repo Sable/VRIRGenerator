@@ -54,7 +54,11 @@ public class StmtCaseHandler {
 	}
 
 	public static void handleForStmt(ForStmt node, VrirXmlGen gen) {
-		gen.appendToPrettyCode(toXMLHead("forstmt"));
+		if (node.isParfor()) {
+			gen.appendToPrettyCode(toXMLHead("pforstmt"));
+		} else {
+			gen.appendToPrettyCode(toXMLHead("forstmt"));
+		}
 		gen.appendToPrettyCode(HelperClass.toXMLHead("itervars"));
 
 		if (node.getAssignStmt().getLHS() instanceof NameExpr) {
@@ -125,7 +129,7 @@ public class StmtCaseHandler {
 			ifblock.getCondition().analyze(gen);
 			gen.appendToPrettyCode(HelperClass.toXMLTail());
 			gen.appendToPrettyCode(HelperClass.toXMLHead("if"));
-			
+
 			for (Stmt stmt : ifblock.getStmtList()) {
 				stmt.analyze(gen);
 			}
