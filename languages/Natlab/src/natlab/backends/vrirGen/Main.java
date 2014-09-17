@@ -46,8 +46,8 @@ public class Main {
 		 * the type info is composed like double&3*3&REAL.
 		 */
 
-		String fileDir = "adpt";
-		String fileName = "adapt.m";
+		String fileDir = "mcpi";
+		String fileName = "mcpi_p.m";
 //		Map<String, String> dirMap = DirToEntryPointMapper.getMap();
 //		for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
 //			fileDir = rootDir;

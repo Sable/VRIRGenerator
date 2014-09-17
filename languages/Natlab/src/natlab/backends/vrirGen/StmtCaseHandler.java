@@ -55,6 +55,8 @@ public class StmtCaseHandler {
 
 	public static void handleForStmt(ForStmt node, VrirXmlGen gen) {
 		if (node.isParfor()) {
+			int indx = node.getParent().getIndexOfChild(node);
+			System.out.println("prev node"+node.getParent().getChild(indx - 1));
 			gen.appendToPrettyCode(toXMLHead("pforstmt"));
 		} else {
 			gen.appendToPrettyCode(toXMLHead("forstmt"));
