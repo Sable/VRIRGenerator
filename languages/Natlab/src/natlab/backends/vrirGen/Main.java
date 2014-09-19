@@ -1,6 +1,6 @@
 package natlab.backends.vrirGen;
 
-import java.io.BufferedReader;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,17 +9,12 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import natlab.backends.vrirGen.WrapperGenFactory.TargetLang;
-//import natlab.backends.vrirGen.vrirCodeGen.CppCodeGen;
 import natlab.tame.BasicTamerTool;
 import natlab.tame.callgraph.SimpleFunctionCollection;
 import natlab.tame.callgraph.StaticFunction;
@@ -46,8 +41,8 @@ public class Main {
 		 * the type info is composed like double&3*3&REAL.
 		 */
 
-		String fileDir = "adpt";
-		String fileName = "adapt.m";
+		String fileDir = "matmul";
+		String fileName = "matmul_p.m";
 //		Map<String, String> dirMap = DirToEntryPointMapper.getMap();
 //		for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
 //			fileDir = rootDir;

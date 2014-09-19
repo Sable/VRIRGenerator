@@ -1,21 +1,34 @@
 package natlab.backends.vrirGen;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import ast.ASTNode;
 import ast.AssignStmt;
 import ast.BreakStmt;
 import ast.ContinueStmt;
+import ast.Expr;
 import ast.ForStmt;
 import ast.IfBlock;
 import ast.IfStmt;
 import ast.Name;
 import ast.NameExpr;
+import ast.ParameterizedExpr;
 import ast.ReturnStmt;
 import ast.Stmt;
+import ast.StringLiteralExpr;
 import ast.WhileStmt;
+import ast.MatrixExpr;
 
 public class StmtCaseHandler {
 	public static void handleAssignStmt(AssignStmt node, VrirXmlGen gen) {
+		if (node.getRHS().getVarName().equals("pForFunc")) {
+			return;
+		}
 		gen.appendToPrettyCode(toXMLHead("assignstmt"));
+
 		gen.appendToPrettyCode(HelperClass.toXMLHead("lhs"));
+
 		node.getLHS().analyze(gen);
 		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(HelperClass.toXMLHead("rhs"));
@@ -54,7 +67,34 @@ public class StmtCaseHandler {
 	}
 
 	public static void handleForStmt(ForStmt node, VrirXmlGen gen) {
-		gen.appendToPrettyCode(toXMLHead("forstmt"));
+		ArrayList<Integer> sharedVar = null;
+		if (node.isParfor()) {
+			int indx = node.getParent().getIndexOfChild(node);
+			ASTNode prevNode = node.getParent().getChild(indx - 2);
+			if (prevNode instanceof AssignStmt
+					&& ((AssignStmt) prevNode).getRHS() instanceof ParameterizedExpr) {
+				if (((AssignStmt) prevNode).getRHS().getVarName()
+						.equals("pForFunc")) {
+					sharedVar = new ArrayList<Integer>();
+					ParameterizedExpr rhsExpr = (ParameterizedExpr) ((AssignStmt) prevNode)
+							.getRHS();
+					for (Expr expr : rhsExpr.getArgList()) {
+
+						if (expr instanceof StringLiteralExpr) {
+							int id = gen.getSymbol(
+									((StringLiteralExpr) expr).getValue())
+									.getId();
+							sharedVar.add(id);
+						}
+					}
+				}
+			}
+
+			gen.appendToPrettyCode(toXMLHead("pforstmt"));
+
+		} else {
+			gen.appendToPrettyCode(toXMLHead("forstmt"));
+		}
 		gen.appendToPrettyCode(HelperClass.toXMLHead("itervars"));
 
 		if (node.getAssignStmt().getLHS() instanceof NameExpr) {
@@ -79,6 +119,14 @@ public class StmtCaseHandler {
 		gen.appendToPrettyCode(HelperClass.toXMLHead("loopdomain"));
 		node.getAssignStmt().getRHS().analyze(gen);
 		gen.appendToPrettyCode(HelperClass.toXMLTail());
+		if (sharedVar != null) {
+			String str = "";
+			for (int id : sharedVar) {
+				str += " " + id;
+			}
+			gen.appendToPrettyCode(HelperClass.toXMLHead("shared" + str)
+					+ HelperClass.toXMLTail());
+		}
 		gen.appendToPrettyCode(HelperClass.toXMLHead("body"));
 		// gen.appendToPrettyCode(toListXMLHead(VrirXmlGen.onGPU));
 
@@ -125,7 +173,7 @@ public class StmtCaseHandler {
 			ifblock.getCondition().analyze(gen);
 			gen.appendToPrettyCode(HelperClass.toXMLTail());
 			gen.appendToPrettyCode(HelperClass.toXMLHead("if"));
-			
+
 			for (Stmt stmt : ifblock.getStmtList()) {
 				stmt.analyze(gen);
 			}
