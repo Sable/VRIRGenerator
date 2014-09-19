@@ -452,7 +452,6 @@ public class ExprCaseHandler {
 		gen.appendToPrettyCode(toXMLTail());
 	}
 
-	// TODO: Revisit . Problem with indices
 	public static void handleIndexExpr(ParameterizedExpr expr, VrirXmlGen gen) {
 		Symbol sym = gen.getSymbol(expr.getVarName());
 		if (sym == null) {
@@ -498,7 +497,7 @@ public class ExprCaseHandler {
 
 	public static void handleRange(Expr start, Expr step, Expr stop,
 			VrirXmlGen gen) {
-		gen.appendToPrettyCode(HelperClass.toXMLHead("range :exclude"));
+		gen.appendToPrettyCode(HelperClass.toXMLHead("range :exclude %0"));
 
 		gen.appendToPrettyCode(HelperClass.toXMLHead("start "));
 		start.analyze(gen);

@@ -10,9 +10,7 @@ public class VoidType extends VType {
 	@Override
 	public StringBuffer toXML() {
 		// TODO Auto-generated method stub
-
-		return new StringBuffer("(void)"); 
-				 
+		return new StringBuffer("(void)");
 	}
 
 }
