@@ -103,7 +103,7 @@ public class VTypeMatrix extends VType {
 			genScalarXML(vTypeXML);
 			return;
 		}
-		vTypeXML.append("( arraytype :layout " + getLayoutString() + ":ndims "
+		vTypeXML.append("( arraytype :layout " + getLayoutString() + " :ndims "
 				+ getShape().getDimensions().size());
 		genScalarXML(vTypeXML);
 		vTypeXML.append(")");
