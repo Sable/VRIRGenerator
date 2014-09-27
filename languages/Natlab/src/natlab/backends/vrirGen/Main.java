@@ -40,107 +40,102 @@ public class Main {
 		 * the type info is composed like double&3*3&REAL.
 		 */
 
-		String fileDir = "mcpi";
-		String fileName = "mcpi_p.m";
-//		Map<String, String> dirMap = DirToEntryPointMapper.getMap();
-//		for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
-//			fileDir = rootDir;
-//			fileName = dirMap.get(rootDir);
+		String fileDir = "matmul";
+		String fileName = "matmul_p.m";
+		// Map<String, String> dirMap = DirToEntryPointMapper.getMap();
+		// for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
+		// fileDir = rootDir;
+		// fileName = dirMap.get(rootDir);
 
-			String fileIn = fileDir + "/" + fileName;
-			File file = new File(fileIn);
-			GenericFile gFile = GenericFile.create(file.getAbsolutePath());
-			String[] inputArgs = null;
-			String[] testArgs = Main.getArgs(fileDir, fileName.split("\\.")[0]);
-			if (testArgs != null) {
-				inputArgs = testArgs;
-			} else if (args.length > 0) {
-				inputArgs = args;
-			} else {
-				throw new NullPointerException("arguments not provided");
-			}
+		String fileIn = fileDir + "/" + fileName;
+		File file = new File(fileIn);
+		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
+		String[] inputArgs = null;
+		String[] testArgs = Main.getArgs(fileDir, fileName.split("\\.")[0]);
+		if (testArgs != null) {
+			inputArgs = testArgs;
+		} else if (args.length > 0) {
+			inputArgs = args;
+		} else {
+			throw new NullPointerException("arguments not provided");
+		}
 
-			FileEnvironment env = new FileEnvironment(gFile); // get path
-			SimpleFunctionCollection.convertColonToRange = true;
-			BasicTamerTool.setDoIntOk(true);
-			
-			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = BasicTamerTool
-					.analyze(inputArgs, env);
+		FileEnvironment env = new FileEnvironment(gFile); // get path
+		SimpleFunctionCollection.convertColonToRange = true;
+		BasicTamerTool.setDoIntOk(true);
 
-			int size = analysis.getNodeList().size();
-			WrapperGenerator wrapper = WrapperGenFactory.getWrapperGen(
-					TargetLang.MEX, analysis.getMainNode().getFunction(),
-					analysis, 0);
-			StringBuffer genXML = new StringBuffer();
-			VrirXmlGen.genModuleXMLHead(genXML, fileName.split("\\.")[0]);
-			genXML.append(HelperClass.toXMLHead("fns"));
-			OperatorMapper.initMap();
-			VrirTypeMapper.initTypeMap();
-			HashSet<StaticFunction> funcSet = new HashSet<StaticFunction>();
-			for (int i = 0; i < size; i++) {
-				StringBuffer sb;
-				/*
-				 * type inference.
-				 */
-				ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet = analysis
-						.getNodeList().get(i).getAnalysis().getCurrentOutSet();
+		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = BasicTamerTool
+				.analyze(inputArgs, env);
+		int size = analysis.getNodeList().size();
+		WrapperGenerator wrapper = WrapperGenFactory.getWrapperGen(
+				TargetLang.MEX, analysis.getMainNode().getFunction(), analysis,
+				0);
+		StringBuffer genXML = new StringBuffer();
+		VrirXmlGen.genModuleXMLHead(genXML, fileName.split("\\.")[0]);
+		genXML.append(HelperClass.toXMLHead("fns"));
+		OperatorMapper.initMap();
+		VrirTypeMapper.initTypeMap();
+		HashSet<StaticFunction> funcSet = new HashSet<StaticFunction>();
+		for (int i = 0; i < size; i++) {
+			StringBuffer sb;
+			/*
+			 * type inference.
+			 */
+			ValueFlowMap<AggrValue<BasicMatrixValue>> currentOutSet = analysis
+					.getNodeList().get(i).getAnalysis().getCurrentOutSet();
 
-				/*
-				 * tamer plus analysis.
-				 */
-				StaticFunction function = analysis.getNodeList().get(i)
-						.getFunction();
+			/*
+			 * tamer plus analysis.
+			 */
+			StaticFunction function = analysis.getNodeList().get(i)
+					.getFunction();
 
-				System.out.println("Analysis function  " + function.getName());
-				if (!funcSet.contains(function)) {
-					if(function.getName().equals("pForFunc")){
-						continue;
-					}
-					TransformationEngine transformationEngine = TransformationEngine
-							.forAST(function.getAst());
+			System.out.println("Analysis function  " + function.getName());
+			if (!funcSet.contains(function)) {
+				TransformationEngine transformationEngine = TransformationEngine
+						.forAST(function.getAst());
 
-					AnalysisEngine analysisEngine = transformationEngine
-							.getAnalysisEngine();
-					
-					@SuppressWarnings("rawtypes")
-					ASTNode fTree = transformationEngine
-							.getTIRToMcSAFIRWithoutTemp().getTransformedTree();
-					Set<String> remainingVars = analysisEngine
-							.getTemporaryVariablesRemovalAnalysis()
-							.getRemainingVariablesNames();
+				AnalysisEngine analysisEngine = transformationEngine
+						.getAnalysisEngine();
+				@SuppressWarnings("rawtypes")
+				ASTNode fTree = transformationEngine
+						.getTIRToMcSAFIRWithoutTemp().getTransformedTree();
+				Set<String> remainingVars = analysisEngine
+						.getTemporaryVariablesRemovalAnalysis()
+						.getRemainingVariablesNames();
 
-					System.out.println("\ntamer plus analysis result: \n"
-							+ fTree.getPrettyPrinted() + "\n");
-					try {
-						sb = VrirXmlGen.generateVrir((Function) fTree,
-								remainingVars, analysis, currentOutSet, i,
-								size, analysisEngine);
-						genXML.append(sb);
-					} catch (RuntimeException e) {
-						System.out.println("did not work for "
-								+ function.getName());
-						System.out.println(fTree.getPrettyPrinted());
-						e.printStackTrace();
-						System.exit(0);
-					}
+				System.out.println("\ntamer plus analysis result: \n"
+						+ fTree.getPrettyPrinted() + "\n");
+				try {
+					sb = VrirXmlGen.generateVrir((Function) fTree,
+							remainingVars, analysis, currentOutSet, i, size,
+							analysisEngine);
+					genXML.append(sb);
+				} catch (RuntimeException e) {
+					System.out
+							.println("did not work for " + function.getName());
+					System.out.println(fTree.getPrettyPrinted());
+					e.printStackTrace();
+					System.exit(0);
 				}
-				funcSet.add(function);
 			}
-			genXML.append(HelperClass.toXMLTail());
+			funcSet.add(function);
+		}
+		genXML.append(HelperClass.toXMLTail());
 
-			VrirXmlGen.genModuleXMLTail(genXML);
-			System.out.println(" print the generated VRIR in XML format  .\n");
-			System.out.println(genXML);
-			try {
-				BufferedWriter buffer = Files.newBufferedWriter(
-						Paths.get(fileName.split("\\.")[0] + ".vrir"),
-						Charset.forName("US-ASCII"));
-				buffer.write(genXML.toString());
-				buffer.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		//}
+		VrirXmlGen.genModuleXMLTail(genXML);
+		System.out.println(" print the generated VRIR in XML format  .\n");
+		System.out.println(genXML);
+		try {
+			BufferedWriter buffer = Files.newBufferedWriter(
+					Paths.get(fileName.split("\\.")[0] + ".vrir"),
+					Charset.forName("US-ASCII"));
+			buffer.write(genXML.toString());
+			buffer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		// }
 
 	}
 
