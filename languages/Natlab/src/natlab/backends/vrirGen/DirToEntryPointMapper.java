@@ -27,6 +27,7 @@ public class DirToEntryPointMapper {
 		dirToEntryPointMap.put("numprime", "prime_total.m");
 		dirToEntryPointMap.put("optstop", "osp.m");
 		dirToEntryPointMap.put("quadrature", "quad_par.m");
+		dirToEntryPointMap.put("capr", "capacitor.m");
 		//dirToEntryPointMap.put("scra", "scra.m");
 		dirToEntryPointMap.put("spqr", "spqr.m");
 	}
