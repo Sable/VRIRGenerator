@@ -9,10 +9,13 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
 import natlab.backends.vrirGen.WrapperGenFactory.TargetLang;
 import natlab.tame.BasicTamerTool;
 import natlab.tame.callgraph.SimpleFunctionCollection;
@@ -40,8 +43,8 @@ public class Main {
 		 * the type info is composed like double&3*3&REAL.
 		 */
 
-		String fileDir = "matmul";
-		String fileName = "matmul_p.m";
+		String fileDir = "crni";
+		String fileName = "crnich.m";
 		// Map<String, String> dirMap = DirToEntryPointMapper.getMap();
 		// for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
 		// fileDir = rootDir;

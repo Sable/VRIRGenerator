@@ -16,6 +16,7 @@ public class DirToEntryPointMapper {
 		dirToEntryPointMap.put("bubble", "bubble.m");
 		dirToEntryPointMap.put("clos", "closure.m");
 		dirToEntryPointMap.put("diff", "diffraction.m");
+		dirToEntryPointMap.put("crni", "crnich.m");
 		dirToEntryPointMap.put("fdtd", "fdtd.m");
 		dirToEntryPointMap.put("fft", "fft_four1.m");
 		dirToEntryPointMap.put("fiff", "finediff.m");
@@ -28,7 +29,7 @@ public class DirToEntryPointMapper {
 		dirToEntryPointMap.put("optstop", "osp.m");
 		dirToEntryPointMap.put("quadrature", "quad_par.m");
 		dirToEntryPointMap.put("capr", "capacitor.m");
-		//dirToEntryPointMap.put("scra", "scra.m");
+		// dirToEntryPointMap.put("scra", "scra.m");
 		dirToEntryPointMap.put("spqr", "spqr.m");
 	}
 
@@ -39,8 +40,7 @@ public class DirToEntryPointMapper {
 		return dirToEntryPointMap;
 	}
 
-	public static void setMap(
-			Map<String, String> dirToEntryPointMap) {
+	public static void setMap(Map<String, String> dirToEntryPointMap) {
 		DirToEntryPointMapper.dirToEntryPointMap = dirToEntryPointMap;
 	}
 

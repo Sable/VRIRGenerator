@@ -1,5 +1,7 @@
 package natlab.backends.vrirGen;
 
+import java.math.BigDecimal;
+
 import natlab.tame.classes.reference.PrimitiveClassReference;
 import natlab.tame.valueanalysis.components.shape.DimValue;
 import ast.ColonExpr;
@@ -307,8 +309,16 @@ public class ExprCaseHandler {
 				throw new UnsupportedOperationException("Cannot identify VType"
 						+ vt.getClass());
 			}
-			gen.appendToPrettyCode(toXMLHead("realconst", expr.getValue()
-					.getValue().toString(), field));
+			BigDecimal bigDec = expr.getValue().getValue();
+			String val = "";
+			if (field.equals("ival")) {
+				
+				val = Long.toString(bigDec.longValue());
+				System.out.println("long value " + val);
+			} else {
+				val = bigDec.toString();
+			}
+			gen.appendToPrettyCode(toXMLHead("realconst", val, field));
 		}
 		if (vt instanceof VTypeMatrix) {
 			gen.appendToPrettyCode(((VTypeMatrix) vt).toXML(true));
@@ -492,7 +502,7 @@ public class ExprCaseHandler {
 
 	public static void handleStringLiteralExpr(StringLiteralExpr expr,
 			VrirXmlGen gen) {
-		//throw new RuntimeException("VRIR Does Not Support Strings");
+		// throw new RuntimeException("VRIR Does Not Support Strings");
 	}
 
 	public static void handleRange(Expr start, Expr step, Expr stop,
