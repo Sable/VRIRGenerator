@@ -1,6 +1,5 @@
 package natlab.backends.vrirGen;
 
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,8 +40,8 @@ public class Main {
 		 * the type info is composed like double&3*3&REAL.
 		 */
 
-		String fileDir = "matmul";
-		String fileName = "matmul_p.m";
+		String fileDir = "mcpi";
+		String fileName = "mcpi_p.m";
 //		Map<String, String> dirMap = DirToEntryPointMapper.getMap();
 //		for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
 //			fileDir = rootDir;
@@ -94,11 +93,15 @@ public class Main {
 
 				System.out.println("Analysis function  " + function.getName());
 				if (!funcSet.contains(function)) {
+					if(function.getName().equals("pForFunc")){
+						continue;
+					}
 					TransformationEngine transformationEngine = TransformationEngine
 							.forAST(function.getAst());
 
 					AnalysisEngine analysisEngine = transformationEngine
 							.getAnalysisEngine();
+					
 					@SuppressWarnings("rawtypes")
 					ASTNode fTree = transformationEngine
 							.getTIRToMcSAFIRWithoutTemp().getTransformedTree();
