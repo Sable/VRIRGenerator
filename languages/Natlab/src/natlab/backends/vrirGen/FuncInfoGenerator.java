@@ -18,8 +18,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import com.sun.org.apache.bcel.internal.generic.FNEG;
-
 import natlab.tame.BasicTamerTool;
 import natlab.tame.callgraph.StaticFunction;
 import natlab.tame.valueanalysis.ValueAnalysis;
