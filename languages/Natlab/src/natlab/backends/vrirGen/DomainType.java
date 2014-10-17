@@ -20,6 +20,12 @@ public class DomainType extends VType {
 		this.ndims = 1;
 	}
 
+	DomainType(VType vtype) {
+		this.vtype = new VType[1];
+		this.vtype[0] = vtype;
+		this.ndims = 1;
+	}
+
 	@Override
 	public StringBuffer toXML() {
 		// TODO Auto-generated method stub

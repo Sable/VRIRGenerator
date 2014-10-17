@@ -112,11 +112,18 @@ public class StmtCaseHandler {
 			gen.appendToPrettyCode(HelperClass.toXMLHead("sym :id "
 					+ sym.getId()));
 			gen.appendToPrettyCode(HelperClass.toXMLTail());
+		} else {
+			throw new NullPointerException(
+					"Iter vars can not not be Name Expressions");
 		}
 
 		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(HelperClass.toXMLHead("loopdomain"));
+		VType vtype = gen.getSymbol(((NameExpr)node.getAssignStmt().getLHS()).getName().getID()).getVtype();
+		gen.appendToPrettyCode(HelperClass.toXMLHead("domain"));
+		gen.appendToPrettyCode((new DomainType(vtype)).toXML());
 		node.getAssignStmt().getRHS().analyze(gen);
+		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		if (sharedVar != null) {
 			String str = "";
