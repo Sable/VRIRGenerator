@@ -226,11 +226,24 @@ public class HelperClass {
 						.get(tempName.getID()).getSingleton();
 				return generateVType(val);
 			} else if (isVar(gen, ((ParameterizedExpr) expr).getVarName())) {
+				System.out.println("expr name"
+						+ ((ParameterizedExpr) expr).getVarName());
 				if (expr.getParent() instanceof AssignStmt) {
 					AssignStmt parentStmt = (AssignStmt) expr.getParent();
 					if (parentStmt.getLHS() == expr) {
 						return getExprType(parentStmt.getRHS(), gen);
+					} else if(parentStmt.getRHS() == expr) {
+						Expr lhsExpr = ((AssignStmt) expr.getParent()).getLHS();
+						if (lhsExpr instanceof MatrixExpr) {
+							return getLhsType((MatrixExpr) lhsExpr, gen);
+						} else if (lhsExpr instanceof NameExpr) {
+							return getLhsType((NameExpr) lhsExpr, gen);
+						} else if (lhsExpr instanceof ParameterizedExpr) {
+							return getLhsType((ParameterizedExpr) lhsExpr, gen);
+						}
 					}
+				} else {
+					System.out.println("Expression parent" + expr.getParent());
 				}
 				return generateVType(gen.getAnalysis(), gen.getIndex(),
 						((ParameterizedExpr) expr).getVarName());
@@ -238,6 +251,15 @@ public class HelperClass {
 		}
 		if (expr.getParent() instanceof AssignStmt) {
 			Expr lhsExpr = ((AssignStmt) expr.getParent()).getLHS();
+			if (lhsExpr instanceof MatrixExpr) {
+				return getLhsType((MatrixExpr) lhsExpr, gen);
+			} else if (lhsExpr instanceof NameExpr) {
+				return getLhsType((NameExpr) lhsExpr, gen);
+			} else if (lhsExpr instanceof ParameterizedExpr) {
+				return getLhsType((ParameterizedExpr) lhsExpr, gen);
+			}
+		} else if(expr.getParent().getParent() instanceof AssignStmt){
+			Expr lhsExpr = ((AssignStmt) expr.getParent().getParent()).getLHS();
 			if (lhsExpr instanceof MatrixExpr) {
 				return getLhsType((MatrixExpr) lhsExpr, gen);
 			} else if (lhsExpr instanceof NameExpr) {
@@ -256,7 +278,7 @@ public class HelperClass {
 				throw new NullPointerException(
 						"Temporary variable for the expression not found");
 			}
-			
+
 			AggrValue<?> val = gen.getAnalysis().getNodeList()
 					.get(gen.getIndex()).getAnalysis().getCurrentOutSet()
 					.get(tempName.getID()).getSingleton();
