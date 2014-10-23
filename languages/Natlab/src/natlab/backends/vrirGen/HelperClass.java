@@ -210,6 +210,16 @@ public class HelperClass {
 	}
 
 	public static VType getExprType(Expr expr, VrirXmlGen gen) {
+		if (gen.getAnalysisEngine().getTemporaryVariablesRemovalAnalysis()
+				.getExprToTempVarTable().get(expr) != null) {
+			Name tempName = (Name) gen.getAnalysisEngine()
+					.getTemporaryVariablesRemovalAnalysis()
+					.getExprToTempVarTable().get(expr);
+			AggrValue<?> val = gen.getAnalysis().getNodeList()
+					.get(gen.getIndex()).getAnalysis().getCurrentOutSet()
+					.get(tempName.getID()).getSingleton();
+			return generateVType(val);
+		}
 		if (expr instanceof NameExpr
 				&& isVar(gen, ((NameExpr) expr).getName().getID())) {
 
@@ -232,7 +242,7 @@ public class HelperClass {
 					AssignStmt parentStmt = (AssignStmt) expr.getParent();
 					if (parentStmt.getLHS() == expr) {
 						return getExprType(parentStmt.getRHS(), gen);
-					} else if(parentStmt.getRHS() == expr) {
+					} else if (parentStmt.getRHS() == expr) {
 						Expr lhsExpr = ((AssignStmt) expr.getParent()).getLHS();
 						if (lhsExpr instanceof MatrixExpr) {
 							return getLhsType((MatrixExpr) lhsExpr, gen);
@@ -258,7 +268,7 @@ public class HelperClass {
 			} else if (lhsExpr instanceof ParameterizedExpr) {
 				return getLhsType((ParameterizedExpr) lhsExpr, gen);
 			}
-		} else if(expr.getParent().getParent() instanceof AssignStmt){
+		} else if (expr.getParent().getParent() instanceof AssignStmt) {
 			Expr lhsExpr = ((AssignStmt) expr.getParent().getParent()).getLHS();
 			if (lhsExpr instanceof MatrixExpr) {
 				return getLhsType((MatrixExpr) lhsExpr, gen);
