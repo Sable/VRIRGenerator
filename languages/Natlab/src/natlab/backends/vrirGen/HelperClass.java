@@ -210,8 +210,12 @@ public class HelperClass {
 	}
 
 	public static VType getExprType(Expr expr, VrirXmlGen gen) {
-		if (gen.getAnalysisEngine().getTemporaryVariablesRemovalAnalysis()
-				.getExprToTempVarTable().get(expr) != null) {
+		System.out.println("Expression name " + expr.getVarName());
+		if (!(expr instanceof NameExpr)
+				&& !(expr instanceof ParameterizedExpr)
+				&& gen.getAnalysisEngine()
+						.getTemporaryVariablesRemovalAnalysis()
+						.getExprToTempVarTable().get(expr) != null) {
 			Name tempName = (Name) gen.getAnalysisEngine()
 					.getTemporaryVariablesRemovalAnalysis()
 					.getExprToTempVarTable().get(expr);

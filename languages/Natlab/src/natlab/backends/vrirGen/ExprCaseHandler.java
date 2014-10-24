@@ -312,7 +312,7 @@ public class ExprCaseHandler {
 			BigDecimal bigDec = expr.getValue().getValue();
 			String val = "";
 			if (field.equals("ival")) {
-				
+
 				val = Long.toString(bigDec.longValue());
 				System.out.println("long value " + val);
 			} else {
@@ -465,7 +465,10 @@ public class ExprCaseHandler {
 	public static void handleIndexExpr(ParameterizedExpr expr, VrirXmlGen gen) {
 		Symbol sym = gen.getSymbol(expr.getVarName());
 		if (sym == null) {
-			VType vtype = HelperClass.getExprType(expr, gen);
+			// VType vtype = HelperClass.getExprType(expr, gen);
+			VType vtype = HelperClass.generateVType(gen.getAnalysis(),
+					gen.getIndex(), expr.getVarName());
+			gen.getSymTab().putSymbol(vtype, expr.getVarName());
 			if (vtype == null) {
 				throw new NullPointerException(
 						"No Vtype found for paratemerized expression "
