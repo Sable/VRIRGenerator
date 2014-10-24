@@ -538,4 +538,11 @@ public class HelperClass {
 		}
 		return true;
 	}
+
+	public static String addCopyCall(StringBuffer sb, Expr expr, VrirXmlGen gen) {
+		String copyStr = "( libcall :libfunc copy "
+				+ getExprType(expr, gen).toXML() + " (args " + sb.toString()
+				+ "))";
+		return copyStr;
+	}
 }

@@ -17,6 +17,8 @@ import ast.ShortCircuitOrExpr;
 import ast.StringLiteralExpr;
 
 public class ExprCaseHandler {
+	private static boolean isArg = false;
+
 	public static void handleParameterizedExpr(ParameterizedExpr node,
 			VrirXmlGen gen) {
 		if (gen.getRemainingVars().contains(node.getVarName())) {
@@ -61,6 +63,7 @@ public class ExprCaseHandler {
 	}
 
 	public static void handleNameExpr(NameExpr node, VrirXmlGen gen) {
+		StringBuffer sb = new StringBuffer();
 		if (HelperClass.isVar(gen, node.getName().getID())) {
 
 			if (!gen.getSymTab().contains(node.getName().getID())) {
@@ -70,19 +73,22 @@ public class ExprCaseHandler {
 				gen.getSymTab().putSymbol(vtype, node.getName().getID());
 			}
 			if (gen.getSymbol(node.getName().getID()) != null) {
-				gen.appendToPrettyCode(toXMLHead("name",
+				sb.append(toXMLHead("name",
 						gen.getSymbol(node.getName().getID()).getId(), "id"));
 
 			} else {
 				throw new NullPointerException("Symbol not found for "
 						+ node.getName().getID());
 			}
-			gen.appendToPrettyCode(gen.getSymbol(node.getName().getID())
-					.getVtype().toXML());
-			gen.appendToPrettyCode(toXMLTail());
-		}
+			sb.append(gen.getSymbol(node.getName().getID()).getVtype().toXML());
+			sb.append(toXMLTail());
+			if (isArg) {
+				gen.appendToPrettyCode(HelperClass.addCopyCall(sb, node, gen));
 
-		else {
+			} else {
+				gen.appendToPrettyCode(sb.toString());
+			}
+		} else {
 			handleFunCallExpr(node, gen);
 		}
 
@@ -349,9 +355,11 @@ public class ExprCaseHandler {
 		}
 		gen.appendToPrettyCode(vt.toXML());
 		gen.appendToPrettyCode(HelperClass.toXMLHead("args"));
+		isArg = true;
 		for (Expr args : expr.getArgList()) {
 			args.analyze(gen);
 		}
+		isArg = false;
 		gen.appendToPrettyCode(HelperClass.toXMLTail());
 		gen.appendToPrettyCode(toXMLTail());
 	}
