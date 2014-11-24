@@ -24,12 +24,14 @@ public final class MClassToClassIDMapper {
 		typeMap.put(PrimitiveClassReference.INT32, "mxINT32_CLASS");
 		typeMap.put(PrimitiveClassReference.SINGLE, "mxSINGLE_CLASS");
 		typeMap.put(PrimitiveClassReference.DOUBLE, "mxDOUBLE_CLASS");
+		typeMap.put(PrimitiveClassReference.LOGICAL,"mxLOGICAL_CLASS");
 
 		vrTypeTable.put(PrimitiveClassReference.INT8, "REAL", "VrArrayI8");
 		vrTypeTable.put(PrimitiveClassReference.INT16, "REAL", "VrArrayI16");
 		vrTypeTable.put(PrimitiveClassReference.INT32, "REAL", "VrArrayI32");
 		vrTypeTable.put(PrimitiveClassReference.SINGLE, "REAL", "VrArrayF32");
 		vrTypeTable.put(PrimitiveClassReference.DOUBLE, "REAL", "VrArrayF64");
+		vrTypeTable.put(PrimitiveClassReference.LOGICAL, "REAL", "VrArrayB");
 		vrTypeTable.put(PrimitiveClassReference.INT8, "COMPLEX", "VrArrayCI8");
 		vrTypeTable
 				.put(PrimitiveClassReference.INT16, "COMPLEX", "VrArrayCI16");
