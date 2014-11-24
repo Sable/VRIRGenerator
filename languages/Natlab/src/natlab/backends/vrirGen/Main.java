@@ -43,9 +43,9 @@ public class Main {
 		 * the type info is composed like double&3*3&REAL.
 		 */
 
-		String fileDir = "crni";
-		String fileName = "crnich.m";
-		Map<String, String> dirMap = DirToEntryPointMapper.getMap();
+		String fileDir = "mcpi";
+		String fileName = "mcpi_p.m";
+//		Map<String, String> dirMap = DirToEntryPointMapper.getMap();
 //		for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
 //			fileDir = rootDir;
 //			fileName = dirMap.get(rootDir);
@@ -65,7 +65,7 @@ public class Main {
 
 			FileEnvironment env = new FileEnvironment(gFile); // get path
 			SimpleFunctionCollection.convertColonToRange = true;
-			BasicTamerTool.setDoIntOk(false);
+			BasicTamerTool.setDoIntOk(true);
 
 			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = BasicTamerTool
 					.analyze(inputArgs, env);
@@ -138,7 +138,7 @@ public class Main {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-	//	}
+//		}
 
 	}
 
