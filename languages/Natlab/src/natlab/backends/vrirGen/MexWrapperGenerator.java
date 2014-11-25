@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
+import ast.Function;
 import natlab.backends.vrirGen.WrapperGenFactory.TargetLang;
 import natlab.tame.BasicTamerTool;
 import natlab.tame.callgraph.SimpleFunctionCollection;
@@ -28,56 +29,56 @@ public class MexWrapperGenerator implements WrapperGenerator {
 
 	// private ArrayList<String> headerList = new ArrayList<String>();
 	public static void main(String args[]) {
-		 String fileDir = "adpt";
-		 String fileName = "adapt.m";
-		Map<String, String> dirMap = DirToEntryPointMapper.getMap();
-		for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
-			fileDir = rootDir;
-			fileName = dirMap.get(rootDir);
-			String fileIn = fileDir + "/" + fileName;
-			File file = new File(fileIn);
-			GenericFile gFile = GenericFile.create(file.getAbsolutePath());
-			String[] inputArgs = null;
-			String[] testArgs = Main.getArgs(fileDir, fileName.split("\\.")[0]);
-			if (testArgs != null) {
-				inputArgs = testArgs;
-			} else if (args.length > 0) {
-				inputArgs = args;
-			} else {
-				throw new NullPointerException("arguments not provided");
-			}
-			FileEnvironment env = new FileEnvironment(gFile); // get path
-			SimpleFunctionCollection.convertColonToRange = true;
-			BasicTamerTool.setDoIntOk(false);
-			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = BasicTamerTool
-					.analyze(inputArgs, env);
-
-			int size = analysis.getNodeList().size();
-			WrapperGenerator wrapper = WrapperGenFactory.getWrapperGen(
-					TargetLang.MEX, analysis.getMainNode().getFunction(),
-					analysis, 0);
-			String wrapperStr = wrapper.genWrapper();
-			file = new File(fileName.split("\\.")[0] + ".cpp");
-			System.out.println("file name " + fileIn.split("\\.")[0] + ".cpp");
-			try {
-				BufferedWriter writer;
-				if (!file.exists()) {
-					writer = Files.newBufferedWriter(
-							Paths.get(file.getAbsolutePath()),
-							StandardOpenOption.CREATE);
-				} else {
-					writer = Files.newBufferedWriter(
-							Paths.get(file.getAbsolutePath()),
-							StandardOpenOption.TRUNCATE_EXISTING);
-				}
-				System.out.println(wrapperStr);
-				writer.write(wrapperStr);
-				writer.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		String fileDir = "capr";
+		String fileName = "capacitor.m";
+		// Map<String, String> dirMap = DirToEntryPointMapper.getMap();
+		// for (String rootDir : DirToEntryPointMapper.getMap().keySet()) {
+		// fileDir = rootDir;
+		// fileName = dirMap.get(rootDir);
+		String fileIn = fileDir + "/" + fileName;
+		File file = new File(fileIn);
+		GenericFile gFile = GenericFile.create(file.getAbsolutePath());
+		String[] inputArgs = null;
+		String[] testArgs = Main.getArgs(fileDir, fileName.split("\\.")[0]);
+		if (testArgs != null) {
+			inputArgs = testArgs;
+		} else if (args.length > 0) {
+			inputArgs = args;
+		} else {
+			throw new NullPointerException("arguments not provided");
 		}
+		FileEnvironment env = new FileEnvironment(gFile); // get path
+		SimpleFunctionCollection.convertColonToRange = true;
+		BasicTamerTool.setDoIntOk(false);
+		ValueAnalysis<AggrValue<BasicMatrixValue>> analysis = BasicTamerTool
+				.analyze(inputArgs, env);
+
+		int size = analysis.getNodeList().size();
+		WrapperGenerator wrapper = WrapperGenFactory.getWrapperGen(
+				TargetLang.MEX, analysis.getMainNode().getFunction(), analysis,
+				0);
+		String wrapperStr = wrapper.genWrapper();
+		file = new File(fileName.split("\\.")[0] + ".cpp");
+		System.out.println("file name " + fileIn.split("\\.")[0] + ".cpp");
+		try {
+			BufferedWriter writer;
+			if (!file.exists()) {
+				writer = Files.newBufferedWriter(
+						Paths.get(file.getAbsolutePath()),
+						StandardOpenOption.CREATE);
+			} else {
+				writer = Files.newBufferedWriter(
+						Paths.get(file.getAbsolutePath()),
+						StandardOpenOption.TRUNCATE_EXISTING);
+			}
+			System.out.println(wrapperStr);
+			writer.write(wrapperStr);
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// }
 	}
 
 	public StaticFunction getFunc() {
@@ -125,7 +126,15 @@ public class MexWrapperGenerator implements WrapperGenerator {
 		if (analysis.getMainNode().getAnalysis().getResult().size() == 1) {
 			if (((BasicMatrixValue) (resVal.get(0).getSingleton())).getShape()
 					.isScalar()) {
-				return "";
+				if (((BasicMatrixValue) (resVal.get(0).getSingleton()))
+						.getMatlabClass()
+						.equals(PrimitiveClassReference.DOUBLE)) {
+					return "";
+				} else {
+					return "(*static_cast<"+MClassToClassIDMapper.getVrScalarType(((BasicMatrixValue) (resVal.get(0).getSingleton()))
+						.getMatlabClass(),((BasicMatrixValue) (resVal.get(0).getSingleton()))
+						.getisComplexInfo().geticType()) + ">(mxGetData(plhs[0]))) = retVal;\n";  
+				}
 			}
 			return "mxSetData(plhs[0],retVal.data);\n";
 		}
@@ -153,16 +162,24 @@ public class MexWrapperGenerator implements WrapperGenerator {
 	}
 
 	private String genAllocStmt(String varName, BasicMatrixValue analysisVal) {
-		if (analysisVal.getShape().isScalar()
-				&& analysisVal.getMatlabClass().equals(
-						PrimitiveClassReference.DOUBLE)) {
-			return "mxCreateDoubleScalar(" + varName + ")";
+		if (analysisVal.getShape().isScalar()) {
+			if (analysisVal.getMatlabClass().equals(
+					PrimitiveClassReference.DOUBLE)) {
+				return "mxCreateDoubleScalar(" + varName + ")";
+			} else {
+				return "mxCreateNumericMatrix(1,1,"
+						+ MClassToClassIDMapper.getMxType(analysisVal
+								.getMatlabClass())
+						+ ","
+						+ MClassToClassIDMapper.getMxComplexity(analysisVal
+								.getisComplexInfo().geticType());
+			}
 		}
 		return "mxCreateNumericArray("
-				+ varName
-				+ ".ndims,"
-				+ varName
-				+ ".dims, "
+
+				+ "0,"
+
+				+ "NULL, "
 				+ MClassToClassIDMapper.getMxType(analysisVal.getMatlabClass())
 				+ ", "
 				+ MClassToClassIDMapper.getMxComplexity(analysisVal
@@ -176,13 +193,25 @@ public class MexWrapperGenerator implements WrapperGenerator {
 		}
 		BasicMatrixValue analysisVal = (BasicMatrixValue) analysis
 				.getMainNode().getAnalysis().getResult().get(0).getSingleton();
-		if (analysisVal.getShape().isScalar()
-				&& analysisVal.getMatlabClass().equals(
-						PrimitiveClassReference.DOUBLE)) {
-			return "plhs[0] = mxCreateDoubleScalar(retVal);\n";
+		if (analysisVal.getShape().isScalar()) {
+			if (analysisVal.getMatlabClass().equals(
+					PrimitiveClassReference.DOUBLE)) {
+				return "plhs[0] = mxCreateDoubleScalar(retVal);\n";
+			}
+			return "plhs[0]" + genAllocStmt("retVal", analysisVal);
+
 		} else {
-			return "plhs[0] = " + genAllocStmt("retVal", analysisVal) + ";\n";
+			return "plhs[0] = " + genAllocStmt("retVal", analysisVal) + ";\n"
+					+ genSetDimStmt("plhs[" + 0 + "]", "retVal") + ";\n";
 		}
+	}
+
+	private String genSetDimStmt(String mxArrayName, String vrArrayName) {
+		String setDimsStr = "mxSetDimensions(";
+		setDimsStr += mxArrayName + ", ";
+		setDimsStr += vrArrayName + ".dims" + ", ";
+		setDimsStr += vrArrayName + ".ndims)";
+		return setDimsStr;
 	}
 
 	private String genMultAlloc() {
@@ -197,6 +226,12 @@ public class MexWrapperGenerator implements WrapperGenerator {
 					+ genAllocStmt(structName + ".ret_data" + i,
 							(BasicMatrixValue) analysisResult.get(i)
 									.getSingleton()) + ";\n");
+			if (!((BasicMatrixValue) analysisResult.get(i).getSingleton())
+					.getShape().isScalar()) {
+				sb.append(genSetDimStmt("plhs[" + i + "]", structName
+						+ ".ret_data" + i)
+						+ ";\n");
+			}
 		}
 		return sb.toString();
 	}
@@ -205,6 +240,7 @@ public class MexWrapperGenerator implements WrapperGenerator {
 		StringBuffer sb = new StringBuffer();
 		Args<AggrValue<BasicMatrixValue>> args = analysis.getMainNode()
 				.getAnalysis().getArgs();
+		Function func = analysis.getMainNode().getFunction().getAst();
 		for (int i = 0; i < args.size(); i++) {
 			AggrValue<BasicMatrixValue> arg = args.get(i);
 			PrimitiveClassReference type = (PrimitiveClassReference) arg
@@ -215,8 +251,10 @@ public class MexWrapperGenerator implements WrapperGenerator {
 			if (((BasicMatrixValue) arg).getShape().isScalar()) {
 				typeStr = MClassToClassIDMapper.getVrScalarType(type,
 						complexity);
-				getStr = typeStr + " inputData" + i + " = " + "static_cast<"
-						+ typeStr + ">(mxGetScalar(rhs[" + i + "]));\n";
+				getStr = typeStr + " "
+						+ func.getInputParams().getChild(i).getID() + " = "
+						+ "static_cast<" + typeStr + ">(mxGetScalar(rhs[" + i
+						+ "]));\n";
 			} else {
 				typeStr = MClassToClassIDMapper.getVrType(type, complexity);
 				getStr = typeStr + " inputData" + i + " = "
@@ -259,11 +297,12 @@ public class MexWrapperGenerator implements WrapperGenerator {
 		String retStr = genReturnStr();
 		String funcStr = (retStr != null ? retStr + " = " : "")
 				+ analysis.getMainNode().getFunction().getName() + "(";
+		Function func = analysis.getMainNode().getFunction().getAst();
 		for (int i = 0; i < numArgs; i++) {
 			if (i != 0) {
 				funcStr += ",";
 			}
-			funcStr += "inputData" + i;
+			funcStr += func.getInputParams().getChild(i).getID();
 		}
 		funcStr += ");\n";
 		return funcStr;

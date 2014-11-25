@@ -60,7 +60,7 @@ public class DirectoryInfoGenerator {
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 			}
-			BasicTamerTool.setDoIntOk(true);
+			BasicTamerTool.setDoIntOk(false);
 			FuncInfoGenerator.genFuncInfo(fileDir, analysis);
 			System.out.println("fileDir " + fileDir);
 		}

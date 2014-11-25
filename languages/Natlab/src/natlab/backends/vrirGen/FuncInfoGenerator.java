@@ -20,6 +20,7 @@ import org.json.simple.JSONValue;
 
 import natlab.tame.BasicTamerTool;
 import natlab.tame.callgraph.StaticFunction;
+import natlab.tame.classes.reference.PrimitiveClassReference;
 import natlab.tame.valueanalysis.ValueAnalysis;
 import natlab.tame.valueanalysis.aggrvalue.AggrValue;
 import natlab.tame.valueanalysis.basicmatrix.BasicMatrixValue;
@@ -86,7 +87,7 @@ public class FuncInfoGenerator {
 
 	public String genArgStr(AggrValue<BasicMatrixValue> arg) {
 		if (arg instanceof BasicMatrixValue) {
-			return arg.getMatlabClass() + "&"
+			return ((PrimitiveClassReference)arg.getMatlabClass()).name() + "&"
 					+ genShapeStr(((BasicMatrixValue) arg).getShape()) + "&"
 					+ ((BasicMatrixValue) arg).getisComplexInfo().geticType();
 		} else {
