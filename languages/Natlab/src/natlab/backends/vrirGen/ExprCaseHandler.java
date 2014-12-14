@@ -341,7 +341,9 @@ public class ExprCaseHandler {
 			return;
 
 		}
-
+		if(expr.getVarName().equals("pForFunc")) {
+			return;
+		}
 		if (LibFuncMapper.containsFunc(expr.getVarName())) {
 
 			handleLibCallExpr(expr, gen);
