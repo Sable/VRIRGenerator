@@ -21,10 +21,8 @@
 
 package natlab;
 
-
 import natlab.backends.vrirGen.VRIRGenerator;
 import natlab.options.VRIROptions;
-
 
 /**
  * Main entry point for McLab compiler. Includes a main method that deals with
@@ -59,12 +57,14 @@ public class Main {
 					 * file.
 					 */
 					options.files().add(options.main());
-					return;
 				} else {
 					System.err
 							.println("No files provided, must have at least one file.");
 				}
-				return;
+				
+			}
+			if (options.main() == null || options.main().length() == 0) {
+				options.setMain(options.files().get(0));
 			}
 			VRIRGenerator.compile(options);
 		} else {

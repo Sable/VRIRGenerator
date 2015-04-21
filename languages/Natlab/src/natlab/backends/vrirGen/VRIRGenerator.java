@@ -10,15 +10,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
 import natlab.backends.vrirGen.WrapperGenFactory.TargetLang;
-import natlab.options.Options;
 import natlab.options.VRIROptions;
 import natlab.tame.BasicTamerTool;
 import natlab.tame.callgraph.SimpleFunctionCollection;
@@ -247,25 +243,38 @@ public class VRIRGenerator {
 	public static void compile(VRIROptions options) {
 		FileEnvironment env = new FileEnvironment(options);
 		String args[] = null;
-		if (options.arguments() != null || options.arguments().length() > 0) {
+		if (options.arguments() != null && options.arguments().length() > 0) {
 			args = options.arguments().split(" ");
+		} else if (options.argsFile().length() > 0) {
+
+			args = getArgs(options.argsFile(), (new File(options.main()))
+					.getName().split("\\.")[0]);
+
 		}
 		if (options.vrir()) {
 			if (DEBUG) {
 				System.out.println(" print the generated VRIR in XML format.");
 			}
 			String genXML = generateVrir(env, args);
-			System.out.println(genXML);
-			writeToFile(Paths.get(options.main().split("\\.")[0] + ".vrir"),
-					genXML.toString());
+
+			if (options.outFile().length() > 0) {
+				writeToFile(Paths.get((new File(options.outFile())
+						.getAbsolutePath())), genXML.toString());
+			} else {
+				System.out.println(genXML);
+			}
 		} else if (options.mex()) {
 			if (DEBUG) {
 				System.out.println("print the generated Mex Function.");
 			}
 			String genMex = generateMex(env, args);
-			System.out.println(genMex);
-			writeToFile(Paths.get(options.main().split("\\.")[0] + ".cpp"),
-					genMex.toString());
+
+			if (options.outFile().length() > 0) {
+				writeToFile(Paths.get((new File(options.outFile())
+						.getAbsolutePath())), genMex.toString());
+			} else {
+				System.out.println(genMex);
+			}
 		}
 
 	}
@@ -288,11 +297,11 @@ public class VRIRGenerator {
 		}
 	}
 
-	public static String[] getArgs(String rootDir, String funcName) {
+	public static String[] getArgs(String argFileName, String funcName) {
 		JSONParser parser = new JSONParser();
 		try {
 			JSONObject obj = (JSONObject) parser.parse(new FileReader(new File(
-					rootDir + "/inputArgs.json")));
+					argFileName)));
 			return ((String) obj.get(funcName)).trim().split(" ");
 
 		} catch (FileNotFoundException e) {
