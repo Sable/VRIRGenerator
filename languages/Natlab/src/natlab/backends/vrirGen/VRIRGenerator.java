@@ -19,6 +19,7 @@ import org.json.simple.parser.ParseException;
 
 import natlab.backends.vrirGen.WrapperGenFactory.TargetLang;
 import natlab.options.Options;
+import natlab.options.VRIROptions;
 import natlab.tame.BasicTamerTool;
 import natlab.tame.callgraph.SimpleFunctionCollection;
 import natlab.tame.callgraph.StaticFunction;
@@ -243,7 +244,7 @@ public class VRIRGenerator {
 		return genXML.toString();
 	}
 
-	public static void compile(Options options) {
+	public static void compile(VRIROptions options) {
 		FileEnvironment env = new FileEnvironment(options);
 		String args[] = null;
 		if (options.arguments() != null || options.arguments().length() > 0) {

@@ -6,15 +6,8 @@
 -->
 <project name="CommandLineInterface">
 	<!-- Command-line targets -->
-	<target name="build" depends="gen, compile" />
+	<target name="build" depends="compile" />
 
-	<target name="clean" depends="clean.gen, clean.compile" />
+	<target name="clean" depends="clean.compile" />
 
-	<target name="test" depends="set.bin.dir, gen, gen.tests, compile.with.tests">
-		<junit fork="true" haltonerror="true">
-			<formatter type="plain" usefile="false" />
-			<classpath refid="test.classpath" />
-			<test name="${test.suite.name}" />
-		</junit>
-	</target>
 </project>

@@ -12,5 +12,4 @@
 
 	<target name="eclipse.build" depends="set.eclipse, build" />
 	<target name="eclipse.clean" depends="set.eclipse, clean" />
-	<target name="eclipse.test" depends="set.eclipse, test" />
 </project>
