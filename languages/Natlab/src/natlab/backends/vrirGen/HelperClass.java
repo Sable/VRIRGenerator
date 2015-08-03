@@ -93,7 +93,7 @@ public class HelperClass {
 		return null;
 	}
 
-	public static Shape<AggrValue<BasicMatrixValue>> getShape(String name,
+	public static Shape getShape(String name,
 			ValueAnalysis<AggrValue<BasicMatrixValue>> analysis, int graphIndex) {
 		AggrValue<BasicMatrixValue> val = analysis.getNodeList()
 				.get(graphIndex).getAnalysis().getCurrentOutSet().get(name)
@@ -129,7 +129,7 @@ public class HelperClass {
 
 	}
 
-	public static Shape<AggrValue<BasicMatrixValue>> getShape(NameExpr node,
+	public static Shape getShape(NameExpr node,
 			VrirXmlGen gen) {
 		AggrValue<BasicMatrixValue> val = gen.getAnalysis().getNodeList()
 				.get(gen.getIndex()).getAnalysis().getCurrentOutSet()

@@ -25,13 +25,13 @@ public class VTypeMatrix extends VType {
 
 	}
 
-	Shape<AggrValue<BasicMatrixValue>> shape;
+	Shape shape;
 	PrimitiveClassReference type;
 	Layout layout;
 	String complexity;
 	boolean forceArray;
 
-	VTypeMatrix(Shape<AggrValue<BasicMatrixValue>> shape,
+	VTypeMatrix(Shape shape,
 			PrimitiveClassReference type, Layout layout, String complexity) {
 		this.shape = shape;
 		this.type = type;
@@ -41,7 +41,7 @@ public class VTypeMatrix extends VType {
 
 	}
 
-	VTypeMatrix(Shape<AggrValue<BasicMatrixValue>> shape,
+	VTypeMatrix(Shape shape,
 			PrimitiveClassReference type, Layout layout, String complexity,
 			boolean force) {
 		this.shape = shape;
@@ -59,11 +59,11 @@ public class VTypeMatrix extends VType {
 		this.complexity = complexity;
 	}
 
-	public Shape<AggrValue<BasicMatrixValue>> getShape() {
+	public Shape getShape() {
 		return shape;
 	}
 
-	public void setShape(Shape<AggrValue<BasicMatrixValue>> shape) {
+	public void setShape(Shape shape) {
 		this.shape = shape;
 	}
 

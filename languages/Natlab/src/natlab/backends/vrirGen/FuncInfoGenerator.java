@@ -100,7 +100,7 @@ public class FuncInfoGenerator {
 
 	}
 
-	public String genShapeStr(Shape<AggrValue<BasicMatrixValue>> shape) {
+	public String genShapeStr(Shape shape) {
 		String shapeStr = "";
 		boolean flag = false;
 		for (DimValue dim : shape.getDimensions()) {
